@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 class ApiService {
   Future<String> getTest() async {
     final url = Uri.parse(
-      'http://localhost:3000/api/test',
+      'http://localhost:3000/test/get',
     ); // O usa localhost si emulas en web
     final response = await http.get(url);
 

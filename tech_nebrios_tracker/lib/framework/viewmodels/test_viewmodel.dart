@@ -6,4 +6,11 @@ class TestViewModel {
   Future<String> fetchMessage() async {
     return await _apiService.getTest();
   }
+
+  Future<String> sendMessage(
+    String nombreComida,
+    String descripcionComida,
+  ) async {
+    return await _apiService.postTest(nombreComida, descripcionComida);
+  }
 }

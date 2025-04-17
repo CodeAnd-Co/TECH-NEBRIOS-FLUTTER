@@ -1,5 +1,3 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
 import '../framework/views/vista_charolas.dart';
 
@@ -16,7 +14,8 @@ class MyApp extends StatelessWidget {
       title: 'Charolas App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: const Color(0xFFF5F7FA),
+        useMaterial3: true,
       ),
       home: const VistaCharolas(),
     );

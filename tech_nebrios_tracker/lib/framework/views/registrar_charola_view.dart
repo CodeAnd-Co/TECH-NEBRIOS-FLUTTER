@@ -10,28 +10,62 @@ class RegistrarCharolaView extends StatelessWidget {
     final viewModel = Provider.of<RegistrarCharolaViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Registrar Charola')),
+      appBar: AppBar(
+        title: const Text('Registrar Charola'),
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontSize: 35,
+          color: Colors.black,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: ListView(
+        child: Column(
           children: [
-            const Text(
-              'Ingresa una charola nueva',
-              style: TextStyle(fontSize: 18),
+            const Divider(thickness: 4, color: Color.fromRGBO(56, 88, 129, 1)),
+            const SizedBox(height: 10),
+            const Center(
+              child: Text(
+                'Ingresa una charola nueva',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
             ),
             const SizedBox(height: 20),
-
-            _buildTextField('Nombre', viewModel.nombreController),
-            _buildTextField('Frass', viewModel.frassController),
-            _buildTextField('Fecha (dd/mm/yyyy)', viewModel.fechaController),
-            _buildTextField('Alimentación', viewModel.comidaController),
-            _buildTextField(
-              'Peso',
-              viewModel.pesoController,
-              keyboardType: TextInputType.number,
+            SizedBox(
+              height: 400,
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 5,
+                childAspectRatio: 2,
+                shrinkWrap: true, // Importante para evitar conflictos de tamaño
+                physics:
+                    const NeverScrollableScrollPhysics(), // Desactiva el scroll interno
+                children: [
+                  _buildTextField('Nombre', viewModel.nombreController),
+                  _buildTextField('Frass', viewModel.frassController),
+                  _buildTextField(
+                    'Fecha (dd/mm/yyyy)',
+                    viewModel.fechaController,
+                  ),
+                  _buildTextField('Alimentación', viewModel.comidaController),
+                  _buildTextField(
+                    'Peso (kg)',
+                    viewModel.pesoController,
+                    keyboardType: TextInputType.number,
+                  ),
+                  _buildTextField(
+                    'Hidratación',
+                    viewModel.hidratacionController,
+                  ),
+                ],
+              ),
             ),
-            _buildTextField('Hidratación', viewModel.hidratacionController),
-
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: viewModel.registrarCharola,

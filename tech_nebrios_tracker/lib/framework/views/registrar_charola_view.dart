@@ -21,73 +21,81 @@ class RegistrarCharolaView extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const Divider(thickness: 4, color: Color.fromRGBO(56, 88, 129, 1)),
-            const SizedBox(height: 10),
-            const Center(
-              child: Text(
-                'Ingresa una charola nueva',
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Divider(
+                thickness: 4,
+                color: Color.fromRGBO(56, 88, 129, 1),
+              ),
+              const SizedBox(height: 10),
+              const Center(
+                child: Text(
+                  'Ingresa una charola nueva',
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 400,
-              child: GridView.count(
+              const SizedBox(height: 20),
+              GridView.count(
                 crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 5,
-                childAspectRatio: 2,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 1,
+                childAspectRatio: 4.5,
                 shrinkWrap: true, // Importante para evitar conflictos de tamaño
                 physics:
                     const NeverScrollableScrollPhysics(), // Desactiva el scroll interno
                 children: [
-                  _buildTextField('Nombre', viewModel.nombreController),
-                  _buildTextField('Frass', viewModel.frassController),
-                  _buildTextField(
+                  _buildTextFieldContainer(
+                    'Nombre',
+                    viewModel.nombreController,
+                  ),
+                  _buildTextFieldContainer('Frass', viewModel.frassController),
+                  _buildTextFieldContainer(
                     'Fecha (dd/mm/yyyy)',
                     viewModel.fechaController,
                   ),
-                  _buildTextField('Alimentación', viewModel.comidaController),
-                  _buildTextField(
+                  _buildTextFieldContainer(
+                    'Alimentación',
+                    viewModel.comidaController,
+                  ),
+                  _buildTextFieldContainer(
                     'Peso (kg)',
                     viewModel.pesoController,
                     keyboardType: TextInputType.number,
                   ),
-                  _buildTextField(
+                  _buildTextFieldContainer(
                     'Hidratación',
                     viewModel.hidratacionController,
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: viewModel.registrarCharola,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
-              child: const Text(
-                'Registrar',
-                style: TextStyle(color: Colors.white),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: viewModel.registrarCharola,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+                child: const Text(
+                  'Registrar',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTextField(
+  Widget _buildTextFieldContainer(
     String label,
     TextEditingController controller, {
     TextInputType keyboardType = TextInputType.text,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+    return Container(
+      margin: const EdgeInsets.all(5), // Margen alrededor del TextField
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,

@@ -12,7 +12,7 @@ class ExcelApiServico {
     
       if (response.statusCode == 200) {
         // 📅 Crear nombre único con fecha y hora
-        final String timestamp = DateFormat('yyyy/MM/dd_HH:mm:ss').format(DateTime.now());
+        final String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
         final String fileName = 'charola_$timestamp.xlsx';
         final Directory homeDir = Directory('/Users/${Platform.environment['USER']}');
         final String downloadsPath = path.join(homeDir.path, 'Downloads');

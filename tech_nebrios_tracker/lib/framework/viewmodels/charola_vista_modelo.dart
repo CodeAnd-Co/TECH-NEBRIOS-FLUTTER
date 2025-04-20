@@ -26,10 +26,9 @@ class CharolaViewModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final response = await getCharolasUseCase.execute(page: currentPage, limit: limit);
-    print('Cargando página: $currentPage');
-    print('Charolas recibidas: ${response?.data.length}');
+    print("🔗 ViewModel intenta cargar charolas desde la API (page: $currentPage, limit: $limit)");
 
+    final response = await getCharolasUseCase.execute(page: currentPage, limit: limit);
 
     if (response != null) {
       charolas.addAll(response.data);

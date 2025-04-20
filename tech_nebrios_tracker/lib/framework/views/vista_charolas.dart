@@ -1,5 +1,7 @@
-// lib/views/vista_charolas.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../framework/viewmodels/charola_vista_modelo.dart';
+import '../../data/models/charola_modelo.dart';
 
 class CharolaCard extends StatelessWidget {
   final String fecha;
@@ -81,61 +83,63 @@ class VistaCharolas extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            const Text(
-              'Charolas',
-              style: TextStyle(
-                fontSize: 32, 
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Divider( 
-              color: Color(0xFF385881),
-              thickness: 3,
-              // indent: 32,
-              // endIndent: 32,
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: GridView.builder(
-                  itemCount: 16,
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 220,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 1.3,
-                  ),
-                  itemBuilder: (context, index) {
-                    return CharolaCard(
-                      fecha: "12/11/2025",
-                      nombreCharola: "C-111",
-                      color: colores[index % colores.length],
-                      onTap: () {
-                        // Puedes cambiar esto por navegación u otro modal
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text("Charola seleccionada"),
-                            content: Text("Has tocado la charola C-111 (índice $index)"),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("Cerrar"),
+        child: Consumer<CharolaViewModel>(
+          builder: (context, vm, _) {
+            if (vm.isLoading && vm.charolas.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return Column(
+              children: [
+                const SizedBox(height: 16),
+                const Text(
+                  'Charolas',
+                  style: TextStyle(fontSize: 32),
+                ),
+                const SizedBox(height: 8),
+                const Divider(color: Color(0xFF385881), thickness: 3),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: GridView.builder(
+                      itemCount: vm.charolas.length,
+                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 220,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        childAspectRatio: 1.3,
+                      ),
+                      itemBuilder: (context, index) {
+                        final Charola charola = vm.charolas[index];
+                        return CharolaCard(
+                          fecha:
+                              "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
+                          nombreCharola: charola.nombreCharola,
+                          color: colores[index % colores.length],
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text("Charola seleccionada"),
+                                content: Text("Has tocado la charola ${charola.nombreCharola}"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("Cerrar"),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );

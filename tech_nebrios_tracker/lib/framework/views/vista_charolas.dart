@@ -82,7 +82,14 @@ class VistaCharolas extends StatelessWidget {
             if (vm.cargando && vm.charolas.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
-
+            if (!vm.cargando && vm.charolas.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No hay charolas registradas 🧺',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                ),
+              );
+            }
             return Column(
               children: [
                 const SizedBox(height: 16),

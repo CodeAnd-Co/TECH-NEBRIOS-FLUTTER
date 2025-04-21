@@ -74,12 +74,6 @@ class VistaCharolas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Color> colores = [
-      const Color(0xFF22A63A),
-      const Color(0xFF3CB3C8),
-      const Color(0xFFE2387B),
-    ];
-
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(
@@ -98,6 +92,18 @@ class VistaCharolas extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 const Divider(color: Color(0xFF385881), thickness: 3),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: const [
+                      _EtiquetaColor(color: Color(0xFF22A63A), label: 'C- (Tenebrios)'),
+                      _EtiquetaColor(color: Color(0xFF3CB3C8), label: 'T1-T4 (Tamizado)'),
+                      _EtiquetaColor(color: Color(0xFFE2387B), label: 'E- (Incubación)'),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 16),
                 Expanded(
                   child: Padding(
@@ -116,7 +122,7 @@ class VistaCharolas extends StatelessWidget {
                           fecha:
                               "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
                           nombreCharola: charola.nombreCharola,
-                          color: colores[index % colores.length],
+                          color: obtenerColorPorNombre(charola.nombreCharola),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -137,11 +143,100 @@ class VistaCharolas extends StatelessWidget {
                     ),
                   ),
                 ),
+                Text(
+                  "Página ${vm.currentPage - 1} de ${vm.totalPages}",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 0.5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Consumer<CharolaViewModel>(
+                    builder: (context, vm, _) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFE9EEF6),
+                              foregroundColor: const Color(0xFF385881),
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                              textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: vm.currentPage > 1
+                              ? () => vm.cargarPaginaAnterior()
+                              : null,
+                            icon: const Icon(Icons.arrow_back, size: 35),
+                            label: const Text("Anterior"),
+                          ),
+                          const SizedBox(width: 16),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFE9EEF6),
+                              foregroundColor: const Color(0xFF385881),
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                              textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: vm.currentPage < vm.totalPages
+                              ? () => vm.cargarPaginaSiguiente()
+                              : null,
+                            icon: const Icon(Icons.arrow_forward, size: 35),
+                            label: const Text("Siguiente"),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ],
             );
           },
         ),
       ),
+    );
+  }
+}
+
+Color obtenerColorPorNombre(String nombre) {
+  if (nombre.startsWith('C-')) {
+    return const Color(0xFF22A63A); // Verde
+  } else if (nombre.startsWith('E-')) {
+    return const Color(0xFFE2387B); // Rosa
+  } else if (nombre.startsWith('T1-') ||
+             nombre.startsWith('T2-') ||
+             nombre.startsWith('T3-') ||
+             nombre.startsWith('T4-')) {
+    return const Color(0xFF3CB3C8); // Azul
+  }
+  return Colors.grey; // Color por defecto
+}
+
+class _EtiquetaColor extends StatelessWidget {
+  final Color color;
+  final String label;
+
+  const _EtiquetaColor({
+    required this.color,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 16,
+          height: 16,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14),
+        ),
+      ],
     );
   }
 }

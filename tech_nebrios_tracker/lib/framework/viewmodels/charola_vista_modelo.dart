@@ -10,15 +10,15 @@ class CharolaViewModel extends ChangeNotifier {
 
   List<Charola> charolas = [];
   int currentPage = 1;
-  final int limit = 10;
+  final int limit = 12;
   bool isLoading = false;
   bool hasMore = true;
+  int totalPages = 1;
 
   Future<void> loadCharolas({bool refresh = false}) async {
     if (isLoading) return;
 
     if (refresh) {
-      currentPage = 1;
       charolas.clear();
       hasMore = true;
     }
@@ -32,11 +32,26 @@ class CharolaViewModel extends ChangeNotifier {
 
     if (response != null) {
       charolas.addAll(response.data);
-      hasMore = currentPage < response.totalPages;
-      currentPage++;
+      totalPages = response.totalPages; 
+      hasMore = currentPage < totalPages;
     }
 
     isLoading = false;
     notifyListeners();
   }
+
+  void cargarPaginaAnterior() {
+  if (currentPage > 1) {
+    currentPage--;
+    loadCharolas(refresh: true); // limpiar antes de cargar
+  }
+}
+
+void cargarPaginaSiguiente() {
+  if (currentPage < totalPages) {
+    currentPage++;
+    loadCharolas(refresh: true); 
+  }
+}
+
 }

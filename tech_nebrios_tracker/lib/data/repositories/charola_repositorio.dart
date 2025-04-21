@@ -7,16 +7,16 @@ class CharolaRepositorio implements CharolaServicioApi {
   static const String _baseUrl = 'http://localhost:3000/api';
 
   @override
-  Future<Map<String, dynamic>?> fetchCharolasPaginated(int page, int limit) async {
-    final uri = Uri.parse('$_baseUrl/charolas?page=$page&limit=$limit');
+  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite) async {
+    final uri = Uri.parse('$_baseUrl/charolas?page=$pag&limit=$limite');
 
     try {
-      final response = await http.get(uri);
+      final respuesta = await http.get(uri);
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+      if (respuesta.statusCode == 200) {
+        return jsonDecode(respuesta.body);
       } else {
-        print("Error HTTP: ${response.statusCode}");
+        print("Error HTTP: ${respuesta.statusCode}");
       }
     } catch (e) {
       print("Error al conectarse al backend: $e");
@@ -25,8 +25,8 @@ class CharolaRepositorio implements CharolaServicioApi {
     return null;
   }
 
-  Future<CharolaTarjerta?> getCharolaResponse(int page, int limit) async {
-    final data = await fetchCharolasPaginated(page, limit);
+  Future<CharolaTarjerta?> obtenerCharolaRespuesta(int pag, int limite) async {
+    final data = await obtenerCharolasPaginadas(pag, limite);
     if (data != null) {
       return CharolaTarjerta.fromJson(data);
     }

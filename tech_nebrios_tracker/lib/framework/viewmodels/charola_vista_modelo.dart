@@ -3,54 +3,54 @@ import '../../data/models/charola_modelo.dart';
 import '../../domain/get_charolas_paginacion_casousuario.dart';
 
 class CharolaVistaModelo extends ChangeNotifier {
-  final GetCharolasPaginacionCasousuario getCharolasUseCase;
+  final GetCharolasPaginacionCasousuario obtenerCharolasCasoUso;
 
-  CharolaVistaModelo({GetCharolasPaginacionCasousuario? useCase})
-      : getCharolasUseCase = useCase ?? GetCharolasCasoUsoImpl();
+  CharolaVistaModelo({GetCharolasPaginacionCasousuario? casoUso})
+      : obtenerCharolasCasoUso = casoUso ?? GetCharolasCasoUsoImpl();
 
   List<Charola> charolas = [];
-  int currentPage = 1;
-  final int limit = 12;
-  bool isLoading = false;
-  bool hasMore = true;
-  int totalPages = 1;
+  int pagActual = 1;
+  final int limite = 12;
+  bool cargando = false;
+  bool hayMas = true;
+  int totalPags = 1;
 
-  Future<void> loadCharolas({bool refresh = false}) async {
-    if (isLoading) return;
+  Future<void> cargarCharolas({bool refresh = false}) async {
+    if (cargando) return;
 
     if (refresh) {
       charolas.clear();
-      hasMore = true;
+      hayMas = true;
     }
 
-    isLoading = true;
+    cargando = true;
     notifyListeners();
 
-    print("🔗 ViewModel intenta cargar charolas desde la API (page: $currentPage, limit: $limit)");
+    print("🔗 ViewModel intenta cargar charolas desde la API (page: $pagActual, limit: $limite)");
 
-    final response = await getCharolasUseCase.execute(page: currentPage, limit: limit);
+    final respuesta = await obtenerCharolasCasoUso.ejecutar(pag: pagActual, limite: limite);
 
-    if (response != null) {
-      charolas.addAll(response.data);
-      totalPages = response.totalPages; 
-      hasMore = currentPage < totalPages;
+    if (respuesta != null) {
+      charolas.addAll(respuesta.data);
+      totalPags = respuesta.totalPags; 
+      hayMas = pagActual < totalPags;
     }
 
-    isLoading = false;
+    cargando = false;
     notifyListeners();
   }
 
   void cargarPaginaAnterior() {
-  if (currentPage > 1) {
-    currentPage--;
-    loadCharolas(refresh: true); // limpiar antes de cargar
+  if (pagActual > 1) {
+    pagActual--;
+    cargarCharolas(refresh: true); // limpiar antes de cargar
   }
 }
 
 void cargarPaginaSiguiente() {
-  if (currentPage < totalPages) {
-    currentPage++;
-    loadCharolas(refresh: true); 
+  if (pagActual < totalPags) {
+    pagActual++;
+    cargarCharolas(refresh: true); 
   }
 }
 

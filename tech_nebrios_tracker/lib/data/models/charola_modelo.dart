@@ -17,25 +17,25 @@ class Charola {
 
 class CharolaTarjerta {
   final int total;
-  final int page;
-  final int limit;
-  final int totalPages;
+  final int pag;
+  final int limite;
+  final int totalPags;
   final List<Charola> data;
 
   CharolaTarjerta({
     required this.total,
-    required this.page,
-    required this.limit,
-    required this.totalPages,
+    required this.pag,
+    required this.limite,
+    required this.totalPags,
     required this.data,
   });
 
   factory CharolaTarjerta.fromJson(Map<String, dynamic> json) {
     return CharolaTarjerta(
       total: json['total'],
-      page: json['page'],
-      limit: json['limit'],
-      totalPages: json['totalPages'],
+      pag: json['page'],
+      limite: json['limit'],
+      totalPags: json['totalPages'],
       data: (json['data'] as List)
           .map((item) => Charola.fromJson(item))
           .toList(),

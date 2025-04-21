@@ -7,7 +7,7 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CharolaVistaModelo()..loadCharolas()),
+        ChangeNotifierProvider(create: (_) => CharolaVistaModelo()..cargarCharolas()),
       ],
       child: const MyApp(),
     ),

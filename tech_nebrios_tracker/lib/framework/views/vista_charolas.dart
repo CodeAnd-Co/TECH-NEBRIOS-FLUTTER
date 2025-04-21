@@ -79,7 +79,7 @@ class VistaCharolas extends StatelessWidget {
       body: SafeArea(
         child: Consumer<CharolaVistaModelo>(
           builder: (context, vm, _) {
-            if (vm.isLoading && vm.charolas.isEmpty) {
+            if (vm.cargando && vm.charolas.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
 
@@ -144,7 +144,7 @@ class VistaCharolas extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "Página ${vm.currentPage - 1} de ${vm.totalPages}",
+                  "Página ${vm.pagActual - 1} de ${vm.totalPags}",
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 0.5),
@@ -162,7 +162,7 @@ class VistaCharolas extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                               textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                            onPressed: vm.currentPage > 1
+                            onPressed: vm.pagActual > 1
                               ? () => vm.cargarPaginaAnterior()
                               : null,
                             icon: const Icon(Icons.arrow_back, size: 35),
@@ -176,7 +176,7 @@ class VistaCharolas extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                               textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                            onPressed: vm.currentPage < vm.totalPages
+                            onPressed: vm.pagActual < vm.totalPags
                               ? () => vm.cargarPaginaSiguiente()
                               : null,
                             icon: const Icon(Icons.arrow_forward, size: 35),

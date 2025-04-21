@@ -1,3 +1,3 @@
 abstract class CharolaServicioApi {
-  Future<Map<String, dynamic>?> fetchCharolasPaginated(int page, int limit);
+  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite);
 }

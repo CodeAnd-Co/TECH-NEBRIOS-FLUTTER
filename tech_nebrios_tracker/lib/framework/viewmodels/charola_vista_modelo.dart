@@ -3,10 +3,10 @@ import '../../data/models/charola_modelo.dart';
 import '../../domain/get_charolas_paginacion_casousuario.dart';
 
 class CharolaVistaModelo extends ChangeNotifier {
-  final GetCharolasPaginacionCasousuario obtenerCharolasCasoUso;
+  final ObtenerCharolasPaginacionCasousuario obtenerCharolasCasoUso;
 
-  CharolaVistaModelo({GetCharolasPaginacionCasousuario? casoUso})
-      : obtenerCharolasCasoUso = casoUso ?? GetCharolasCasoUsoImpl();
+  CharolaVistaModelo({ObtenerCharolasPaginacionCasousuario? casoUso})
+      : obtenerCharolasCasoUso = casoUso ?? ObtenerCharolasCasoUsoImpl();
 
   List<Charola> charolas = [];
   int pagActual = 1;

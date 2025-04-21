@@ -1,14 +1,14 @@
 import '../data/models/charola_modelo.dart';
 import '../data/repositories/charola_repositorio.dart';
 
-abstract class GetCharolasPaginacionCasousuario {
+abstract class ObtenerCharolasPaginacionCasousuario {
   Future<CharolaTarjerta?> ejecutar({int pag, int limite});
 }
 
-class GetCharolasCasoUsoImpl implements GetCharolasPaginacionCasousuario {
+class ObtenerCharolasCasoUsoImpl implements ObtenerCharolasPaginacionCasousuario {
   final CharolaRepositorio repositorio;
 
-  GetCharolasCasoUsoImpl({CharolaRepositorio? repositorio})
+  ObtenerCharolasCasoUsoImpl({CharolaRepositorio? repositorio})
       : repositorio = repositorio ?? CharolaRepositorio();
 
   @override

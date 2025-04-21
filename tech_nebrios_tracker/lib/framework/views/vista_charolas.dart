@@ -77,7 +77,7 @@ class VistaCharolas extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(
-        child: Consumer<CharolaViewModel>(
+        child: Consumer<CharolaVistaModelo>(
           builder: (context, vm, _) {
             if (vm.isLoading && vm.charolas.isEmpty) {
               return const Center(child: CircularProgressIndicator());
@@ -150,7 +150,7 @@ class VistaCharolas extends StatelessWidget {
                 const SizedBox(height: 0.5),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Consumer<CharolaViewModel>(
+                  child: Consumer<CharolaVistaModelo>(
                     builder: (context, vm, _) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,

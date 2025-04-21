@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../../data/models/charola_modelo.dart';
 import '../../domain/get_charolas_paginacion_casousuario.dart';
 
-class CharolaViewModel extends ChangeNotifier {
-  final GetCharolasUseCase getCharolasUseCase;
+class CharolaVistaModelo extends ChangeNotifier {
+  final GetCharolasPaginacionCasousuario getCharolasUseCase;
 
-  CharolaViewModel({GetCharolasUseCase? useCase})
-      : getCharolasUseCase = useCase ?? GetCharolasUseCaseImpl();
+  CharolaVistaModelo({GetCharolasPaginacionCasousuario? useCase})
+      : getCharolasUseCase = useCase ?? GetCharolasCasoUsoImpl();
 
   List<Charola> charolas = [];
   int currentPage = 1;

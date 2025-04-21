@@ -1,18 +1,18 @@
 import '../data/models/charola_modelo.dart';
 import '../data/repositories/charola_repositorio.dart';
 
-abstract class GetCharolasUseCase {
-  Future<CharolaResponse?> execute({int page, int limit});
+abstract class GetCharolasPaginacionCasousuario {
+  Future<CharolaTarjerta?> execute({int page, int limit});
 }
 
-class GetCharolasUseCaseImpl implements GetCharolasUseCase {
-  final CharolaRepository repository;
+class GetCharolasCasoUsoImpl implements GetCharolasPaginacionCasousuario {
+  final CharolaRepositorio repository;
 
-  GetCharolasUseCaseImpl({CharolaRepository? repository})
-      : repository = repository ?? CharolaRepository();
+  GetCharolasCasoUsoImpl({CharolaRepositorio? repository})
+      : repository = repository ?? CharolaRepositorio();
 
   @override
-  Future<CharolaResponse?> execute({int page = 1, int limit = 10}) {
+  Future<CharolaTarjerta?> execute({int page = 1, int limit = 10}) {
     return repository.getCharolaResponse(page, limit);
   }
 }

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/charola_modelo.dart';
 import '../services/charola_servicio_api.dart';
 
-class CharolaRepository implements CharolaApiService {
+class CharolaRepositorio implements CharolaServicioApi {
   static const String _baseUrl = 'http://localhost:3000/api';
 
   @override
@@ -25,10 +25,10 @@ class CharolaRepository implements CharolaApiService {
     return null;
   }
 
-  Future<CharolaResponse?> getCharolaResponse(int page, int limit) async {
+  Future<CharolaTarjerta?> getCharolaResponse(int page, int limit) async {
     final data = await fetchCharolasPaginated(page, limit);
     if (data != null) {
-      return CharolaResponse.fromJson(data);
+      return CharolaTarjerta.fromJson(data);
     }
     return null;
   }

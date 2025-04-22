@@ -41,9 +41,9 @@ class RegistrarCharolaView extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               GridView.count(
-                crossAxisCount: 2,
+                crossAxisCount: 3,
                 crossAxisSpacing: 5,
-                mainAxisSpacing: 1,
+                mainAxisSpacing: 5,
                 childAspectRatio: 4.5,
                 shrinkWrap: true, // Importante para evitar conflictos de tamaño
                 physics:
@@ -54,13 +54,18 @@ class RegistrarCharolaView extends StatelessWidget {
                     viewModel.nombreController,
                   ),
                   _buildTextFieldContainer('Frass', viewModel.frassController),
-                  _buildTextFieldContainer(
+                  _buildDateFieldContainer(
                     'Fecha (dd/mm/yyyy)',
                     viewModel.fechaController,
+                    context,
                   ),
                   _buildTextFieldContainer(
                     'Alimentación',
                     viewModel.comidaController,
+                  ),
+                  _buildTextFieldContainer(
+                    'Cantidad de alimento (Kg)',
+                    viewModel.cantidadComidaController,
                   ),
                   _buildTextFieldContainer(
                     'Peso (kg)',
@@ -70,6 +75,10 @@ class RegistrarCharolaView extends StatelessWidget {
                   _buildTextFieldContainer(
                     'Hidratación',
                     viewModel.hidratacionController,
+                  ),
+                  _buildTextFieldContainer(
+                    'Cantidad de hidratación (litros)',
+                    viewModel.cantidadHidratacionController,
                   ),
                 ],
               ),
@@ -85,6 +94,41 @@ class RegistrarCharolaView extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDateFieldContainer(
+    String label,
+    TextEditingController controller,
+    BuildContext context,
+  ) {
+    return Container(
+      margin: const EdgeInsets.all(5), // Margen alrededor del TextField
+      child: TextField(
+        controller: controller,
+        readOnly: true, // Evita que el usuario escriba manualmente
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+          suffixIcon: const Icon(Icons.calendar_today), // Ícono de calendario
+        ),
+        onTap: () async {
+          // Mostrar el selector de fecha
+          DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(), // Fecha inicial
+            firstDate: DateTime(2000), // Fecha mínima
+            lastDate: DateTime(2100), // Fecha máxima
+          );
+
+          if (pickedDate != null) {
+            // Formatear la fecha seleccionada
+            String formattedDate =
+                "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+            controller.text = formattedDate; // Actualizar el TextField
+          }
+        },
       ),
     );
   }

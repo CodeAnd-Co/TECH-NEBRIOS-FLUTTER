@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../data/models/charola_model.dart';
+import '../../domain/registrar_charola.dart';
 
 class RegistrarCharolaViewModel extends ChangeNotifier {
+  final RegistrarCharola registrarCharolaUseCase;
+
+  RegistrarCharolaViewModel(this.registrarCharolaUseCase);
+
   final nombreController = TextEditingController();
   final frassController = TextEditingController();
   final fechaController = TextEditingController();
@@ -12,7 +17,7 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
   final cantidadHidratacionController = TextEditingController();
 
   void registrarCharola() {
-    // Aquí puedes manejar la lógica para guardar los datos
+    // Crear el modelo de charola
     CharolaModel charola = CharolaModel(
       nombre: nombreController.text,
       frass: frassController.text,
@@ -25,10 +30,10 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
           double.tryParse(cantidadHidratacionController.text) ?? 0.0,
     );
 
-    // Simulación: imprimir en consola
-    print("Charola registrada: ${charola.nombre}");
+    // Llamar al caso de uso para guardar la charola
+    registrarCharolaUseCase.execute(charola);
 
-    // Limpia los campos si quieres
+    // Limpia los campos
     nombreController.clear();
     frassController.clear();
     fechaController.clear();

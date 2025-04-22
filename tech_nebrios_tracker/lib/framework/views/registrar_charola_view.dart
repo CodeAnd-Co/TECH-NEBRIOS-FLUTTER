@@ -8,6 +8,7 @@ class RegistrarCharolaView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<RegistrarCharolaViewModel>(context);
+    String? selectedAlimentacion;
 
     return Scaffold(
       appBar: AppBar(
@@ -39,7 +40,7 @@ class RegistrarCharolaView extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 75),
               GridView.count(
                 crossAxisCount: 3,
                 crossAxisSpacing: 5,
@@ -59,9 +60,18 @@ class RegistrarCharolaView extends StatelessWidget {
                     viewModel.fechaController,
                     context,
                   ),
-                  _buildTextFieldContainer(
+                  _buildDropdownFieldContainer(
                     'Alimentación',
-                    viewModel.comidaController,
+                    [
+                      'Opción 1',
+                      'Opción 2',
+                      'Opción 3',
+                    ], // Opciones del dropdown
+                    selectedAlimentacion,
+                    (value) {
+                      selectedAlimentacion =
+                          value; // Actualiza el valor seleccionado
+                    },
                   ),
                   _buildTextFieldContainer(
                     'Cantidad de alimento (Kg)',
@@ -82,13 +92,19 @@ class RegistrarCharolaView extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: viewModel.registrarCharola,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink,
+                  minimumSize: const Size(200, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
                 child: const Text(
                   'Registrar',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ),
             ],
@@ -105,30 +121,33 @@ class RegistrarCharolaView extends StatelessWidget {
   ) {
     return Container(
       margin: const EdgeInsets.all(5), // Margen alrededor del TextField
-      child: TextField(
-        controller: controller,
-        readOnly: true, // Evita que el usuario escriba manualmente
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          suffixIcon: const Icon(Icons.calendar_today), // Ícono de calendario
-        ),
-        onTap: () async {
-          // Mostrar el selector de fecha
-          DateTime? pickedDate = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now(), // Fecha inicial
-            firstDate: DateTime(2000), // Fecha mínima
-            lastDate: DateTime(2100), // Fecha máxima
-          );
+      child: SizedBox(
+        width: 200, // Ancho fijo para el campo de fecha
+        child: TextField(
+          controller: controller,
+          readOnly: true, // Evita que el usuario escriba manualmente
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            suffixIcon: const Icon(Icons.calendar_today), // Ícono de calendario
+          ),
+          onTap: () async {
+            // Mostrar el selector de fecha
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(), // Fecha inicial
+              firstDate: DateTime(2000), // Fecha mínima
+              lastDate: DateTime(2100), // Fecha máxima
+            );
 
-          if (pickedDate != null) {
-            // Formatear la fecha seleccionada
-            String formattedDate =
-                "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-            controller.text = formattedDate; // Actualizar el TextField
-          }
-        },
+            if (pickedDate != null) {
+              // Formatear la fecha seleccionada
+              String formattedDate =
+                  "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+              controller.text = formattedDate; // Actualizar el TextField
+            }
+          },
+        ),
       ),
     );
   }
@@ -140,12 +159,43 @@ class RegistrarCharolaView extends StatelessWidget {
   }) {
     return Container(
       margin: const EdgeInsets.all(5), // Margen alrededor del TextField
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
+      child: SizedBox(
+        width: 200, // Ancho fijo para los TextFields
+        child: TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDropdownFieldContainer(
+    String label,
+    List<String> items,
+    String? selectedValue,
+    ValueChanged<String?> onChanged,
+  ) {
+    return Container(
+      margin: const EdgeInsets.all(5), // Margen alrededor del Dropdown
+      child: SizedBox(
+        width: 200, // Ancho fijo para el Dropdown
+        child: DropdownButtonFormField<String>(
+          value: selectedValue,
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          ),
+          items:
+              items
+                  .map(
+                    (item) => DropdownMenuItem(value: item, child: Text(item)),
+                  )
+                  .toList(),
+          onChanged: onChanged,
         ),
       ),
     );

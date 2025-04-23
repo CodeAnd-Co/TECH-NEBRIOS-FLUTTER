@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/charola_modelo.dart';
-import '../services/charola_servicio_api.dart';
+import '../models/menu_charolas.model.dart';
+import '../services/menu_charolasAPI.service.dart';
 
 class CharolaRepositorio implements CharolaServicioApi {
   static const String _baseUrl = 'http://localhost:3000/api';

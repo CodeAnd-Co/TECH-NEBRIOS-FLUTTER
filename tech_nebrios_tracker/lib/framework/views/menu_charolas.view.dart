@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../framework/viewmodels/charola_vista_modelo.dart';
-import '../../data/models/charola_modelo.dart';
+import '../viewmodels/menu_charolas.viewmodel.dart';
+import '../../data/models/menu_charolas.model.dart';
 
 class CharolaCard extends StatelessWidget {
   final String fecha;
@@ -100,18 +100,6 @@ class VistaCharolas extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Divider(color: Color(0xFF385881), thickness: 3),
                 const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      _EtiquetaColor(color: Color(0xFF22A63A), label: 'C- (Tenebrios)'),
-                      _EtiquetaColor(color: Color(0xFF3CB3C8), label: 'T1-T4 (Tamizado)'),
-                      _EtiquetaColor(color: Color(0xFFE2387B), label: 'E- (Incubación)'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -205,45 +193,14 @@ class VistaCharolas extends StatelessWidget {
 
 Color obtenerColorPorNombre(String nombre) {
   if (nombre.startsWith('C-')) {
-    return const Color(0xFF22A63A); // Verde
+    return const Color(0xFF22A63A); 
   } else if (nombre.startsWith('E-')) {
-    return const Color(0xFFE2387B); // Rosa
+    return const Color(0xFFE2387B); 
   } else if (nombre.startsWith('T1-') ||
              nombre.startsWith('T2-') ||
              nombre.startsWith('T3-') ||
              nombre.startsWith('T4-')) {
-    return const Color(0xFF3CB3C8); // Azul
+    return const Color(0xFF22A63A); 
   }
   return Colors.grey; // Color por defecto
-}
-
-class _EtiquetaColor extends StatelessWidget {
-  final Color color;
-  final String label;
-
-  const _EtiquetaColor({
-    required this.color,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 16,
-          height: 16,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 14),
-        ),
-      ],
-    );
-  }
 }

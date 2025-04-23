@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../framework/views/vista_charolas.dart';
-import '../framework/viewmodels/charola_vista_modelo.dart';
+import 'framework/views/menu_charolas.view.dart';
+import 'framework/viewmodels/menu_charolas.viewmodel.dart';
 
 void main() {
   runApp(

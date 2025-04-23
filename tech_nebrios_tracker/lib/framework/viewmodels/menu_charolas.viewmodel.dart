@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../data/models/charola_modelo.dart';
-import '../../domain/get_charolas_paginacion_casousuario.dart';
+import '../../data/models/menu_charolas.model.dart';
+import '../../domain/get_menu_charolas.dart';
 
 class CharolaVistaModelo extends ChangeNotifier {
-  final ObtenerCharolasPaginacionCasousuario obtenerCharolasCasoUso;
+  final ObtenerMenuCharolas obtenerCharolasCasoUso;
 
-  CharolaVistaModelo({ObtenerCharolasPaginacionCasousuario? casoUso})
+  CharolaVistaModelo({ObtenerMenuCharolas? casoUso})
       : obtenerCharolasCasoUso = casoUso ?? ObtenerCharolasCasoUsoImpl();
 
   List<Charola> charolas = [];

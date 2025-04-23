@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'data/services/excel_api_servicio.dart';
-import 'data/repositories/excel_repositorio.dart';
+import 'data/services/excelAPI.service.dart';
+import 'data/repositories/excel.repository.dart';
 import 'domain/excel.dart';
-import 'framework/viewmodels/excel_vista_modelo.dart';
-import 'framework/views/excel_vista.dart';
+import 'framework/viewmodels/excel.viewmodel.dart';
+import 'framework/views/excel.view.dart';
 
 void main() {
   final servicio = ExcelApiServico();

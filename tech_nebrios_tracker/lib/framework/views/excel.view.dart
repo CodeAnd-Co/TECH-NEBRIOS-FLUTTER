@@ -1,7 +1,7 @@
 //lib/framework/views/excel_vista.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/excel_vista_modelo.dart';
+import '../viewmodels/excel.viewmodel.dart';
 
 class ExcelVista extends StatelessWidget {
   @override

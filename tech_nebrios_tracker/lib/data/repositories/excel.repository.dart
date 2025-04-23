@@ -1,6 +1,6 @@
 //lib/data/repositories/excel_repositorio.dart
 import '../../domain/excel.dart';
-import '../services/excel_api_servicio.dart';
+import '../services/excelAPI.service.dart';
 
 class RepositorioExcelImpl implements ExcelRepositorio {
   final ExcelApiServico api;

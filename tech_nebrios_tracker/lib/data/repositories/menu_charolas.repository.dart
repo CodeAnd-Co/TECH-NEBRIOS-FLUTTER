@@ -25,10 +25,10 @@ class CharolaRepositorio implements CharolaServicioApi {
     return null;
   }
 
-  Future<CharolaTarjerta?> obtenerCharolaRespuesta(int pag, int limite) async {
+  Future<CharolaTarjeta?> obtenerCharolaRespuesta(int pag, int limite) async {
     final data = await obtenerCharolasPaginadas(pag, limite);
     if (data != null) {
-      return CharolaTarjerta.fromJson(data);
+      return CharolaTarjeta.fromJson(data);
     }
     return null;
   }

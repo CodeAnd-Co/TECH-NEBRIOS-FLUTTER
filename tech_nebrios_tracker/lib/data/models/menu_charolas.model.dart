@@ -15,14 +15,14 @@ class Charola {
   }
 }
 
-class CharolaTarjerta {
+class CharolaTarjeta {
   final int total;
   final int pag;
   final int limite;
   final int totalPags;
   final List<Charola> data;
 
-  CharolaTarjerta({
+  CharolaTarjeta({
     required this.total,
     required this.pag,
     required this.limite,
@@ -30,8 +30,8 @@ class CharolaTarjerta {
     required this.data,
   });
 
-  factory CharolaTarjerta.fromJson(Map<String, dynamic> json) {
-    return CharolaTarjerta(
+  factory CharolaTarjeta.fromJson(Map<String, dynamic> json) {
+    return CharolaTarjeta(
       total: json['total'],
       pag: json['page'],
       limite: json['limit'],

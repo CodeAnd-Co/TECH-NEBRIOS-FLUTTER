@@ -10,6 +10,8 @@ class RegistrarCharolaView extends StatelessWidget {
     final viewModel = Provider.of<RegistrarCharolaViewModel>(context);
     String? selectedAlimentacion;
 
+    viewModel.cargarAlimentos();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar Charola'),
@@ -54,7 +56,10 @@ class RegistrarCharolaView extends StatelessWidget {
                     'Nombre',
                     viewModel.nombreController,
                   ),
-                  _buildTextFieldContainer('Frass', viewModel.frassController),
+                  _buildTextFieldContainer(
+                    'Densidad de Larva',
+                    viewModel.densidadLarvaController,
+                  ),
                   _buildDateFieldContainer(
                     'Fecha (dd/mm/yyyy)',
                     viewModel.fechaController,
@@ -62,15 +67,17 @@ class RegistrarCharolaView extends StatelessWidget {
                   ),
                   _buildDropdownFieldContainer(
                     'Alimentación',
-                    [
-                      'Opción 1',
-                      'Opción 2',
-                      'Opción 3',
-                    ], // Opciones del dropdown
-                    selectedAlimentacion,
+                    viewModel.alimentos,
+                    viewModel.selectedAlimentacion != null &&
+                            viewModel.alimentos.contains(
+                              viewModel.selectedAlimentacion,
+                            )
+                        ? viewModel.selectedAlimentacion
+                        : null, // Asegúrate de que el valor seleccionado sea válido
                     (value) {
-                      selectedAlimentacion =
-                          value; // Actualiza el valor seleccionado
+                      viewModel.selectedAlimentacion = value;
+                      viewModel
+                          .notifyListeners(); // Notifica a la vista que el valor ha cambiado
                     },
                   ),
                   _buildTextFieldContainer(

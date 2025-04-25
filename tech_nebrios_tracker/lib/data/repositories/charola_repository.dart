@@ -14,16 +14,35 @@ class CharolaRepository {
   // Metodo para obtener datos de alimentacion desde el backend
   Future<List<String>> getAlimentos() async {
     final url = Uri.parse(
-      'https://localhost:3000/', // Cambia por tu endpoint
-    ); // Cambia por tu endpoint
+      'http://localhost:3000/comida/obtener-comida', // Cambia por tu endpoint
+    );
+    print('Realizando la peticion a la API a $url'); // Cambia por tu endpoint
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
-      // Decodifica la respuesta JSON
-      final List<dynamic> data = json.decode(response.body);
-      // Convierte los datos en una lista de strings
-      return data.map((item) => item['nombre'].toString()).toList();
+      print('Respuesta del servidor: ${response.body}');
+      final Map<String, dynamic> decodedResponse = json.decode(response.body);
+
+      // Verifica si la respuesta tiene el formato esperado
+      if (decodedResponse['status'] == 'success' &&
+          decodedResponse['data'] != null &&
+          decodedResponse['data']['comida'] != null) {
+        final comida = decodedResponse['data']['comida'];
+
+        // Si `comida` es un objeto, extrae el nombre
+        if (comida is Map<String, dynamic>) {
+          return [comida['NOMBRE'].toString()];
+        }
+
+        // Si `comida` es una lista, mapea los nombres
+        if (comida is List<dynamic>) {
+          return comida.map((item) => item['NOMBRE'].toString()).toList();
+        }
+      }
+
+      throw Exception('Estructura de respuesta inesperada');
     } else {
+      print('Error en la solicitud: ${response.statusCode}');
       throw Exception('Error al obtener los alimentos: ${response.statusCode}');
     }
   }

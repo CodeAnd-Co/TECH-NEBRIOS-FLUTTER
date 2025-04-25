@@ -4,11 +4,14 @@ import '../../domain/registrar_charola.dart';
 
 class RegistrarCharolaViewModel extends ChangeNotifier {
   final RegistrarCharola registrarCharolaUseCase;
+  List<String> alimentos = [];
+  String? selectedAlimentacion;
+  bool _alimentosCargados = false; // Indicador para evitar múltiples cargas
 
   RegistrarCharolaViewModel(this.registrarCharolaUseCase);
 
   final nombreController = TextEditingController();
-  final frassController = TextEditingController();
+  final densidadLarvaController = TextEditingController();
   final fechaController = TextEditingController();
   final comidaController = TextEditingController();
   final cantidadComidaController = TextEditingController();
@@ -16,11 +19,27 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
   final hidratacionController = TextEditingController();
   final cantidadHidratacionController = TextEditingController();
 
+  Future<void> cargarAlimentos() async {
+    if (_alimentosCargados) return; // Evita cargar los datos más de una vez
+    try {
+      print('Cargando alimentos...');
+      alimentos = await registrarCharolaUseCase.repository.getAlimentos();
+      if (selectedAlimentacion == null && alimentos.isNotEmpty) {
+        selectedAlimentacion = alimentos.first; // Establece un valor inicial
+      }
+      _alimentosCargados = true; // Marca los datos como cargados
+      print('Alimentos cargados: $alimentos');
+      notifyListeners(); // Notifica a la vista que los datos han cambiado
+    } catch (e) {
+      print('Error al cargar los alimentos: $e');
+    }
+  }
+
   void registrarCharola() {
     // Crear el modelo de charola
     CharolaModel charola = CharolaModel(
       nombre: nombreController.text,
-      frass: frassController.text,
+      frass: densidadLarvaController.text,
       fecha: DateTime.tryParse(fechaController.text) ?? DateTime.now(),
       comida: comidaController.text,
       cantidadComida: double.tryParse(cantidadComidaController.text) ?? 0.0,
@@ -35,7 +54,7 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
 
     // Limpia los campos
     nombreController.clear();
-    frassController.clear();
+    densidadLarvaController.clear();
     fechaController.clear();
     comidaController.clear();
     cantidadComidaController.clear();
@@ -49,7 +68,7 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
   @override
   void dispose() {
     nombreController.dispose();
-    frassController.dispose();
+    densidadLarvaController.dispose();
     fechaController.dispose();
     comidaController.dispose();
     cantidadComidaController.dispose();

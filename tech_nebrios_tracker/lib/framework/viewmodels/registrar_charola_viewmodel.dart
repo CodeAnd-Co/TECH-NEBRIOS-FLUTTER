@@ -8,6 +8,10 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
   String? selectedAlimentacion;
   bool _alimentosCargados = false; // Indicador para evitar múltiples cargas
 
+  List<String> hidratacion = [];
+  String? selectedHidratacion;
+  bool _hidratacionCargados = false; // Indicador para evitar múltiples cargas
+
   RegistrarCharolaViewModel(this.registrarCharolaUseCase);
 
   final nombreController = TextEditingController();
@@ -24,7 +28,7 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
     try {
       print('Cargando alimentos...');
       alimentos = await registrarCharolaUseCase.repository.getAlimentos();
-      if (selectedAlimentacion == null && alimentos.isNotEmpty) {
+      if (alimentos.isNotEmpty) {
         selectedAlimentacion = alimentos.first; // Establece un valor inicial
       }
       _alimentosCargados = true; // Marca los datos como cargados
@@ -32,6 +36,22 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
       print('Error al cargar los alimentos: $e');
+    }
+  }
+
+  Future<void> cargarHidratacion() async {
+    if (_hidratacionCargados) return; // Evita cargar los datos más de una vez
+    try {
+      print('Cargando hidratación...');
+      hidratacion = await registrarCharolaUseCase.repository.getHidratacion();
+      if (hidratacion.isNotEmpty) {
+        selectedHidratacion = hidratacion.first; // Establece un valor inicial
+      }
+      _hidratacionCargados = true; // Marca los datos como cargados
+      print('Hidratación cargada: $hidratacion');
+      notifyListeners(); // Notifica a la vista que los datos han cambiado
+    } catch (e) {
+      print('Error al cargar la hidratación: $e');
     }
   }
 

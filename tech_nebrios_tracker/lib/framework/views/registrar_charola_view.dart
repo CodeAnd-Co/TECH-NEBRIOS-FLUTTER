@@ -10,6 +10,7 @@ class RegistrarCharolaView extends StatelessWidget {
     final viewModel = Provider.of<RegistrarCharolaViewModel>(context);
 
     viewModel.cargarAlimentos();
+    viewModel.cargarHidratacion();
 
     return Scaffold(
       appBar: AppBar(
@@ -88,9 +89,20 @@ class RegistrarCharolaView extends StatelessWidget {
                     viewModel.pesoController,
                     keyboardType: TextInputType.number,
                   ),
-                  _buildTextFieldContainer(
+                  _buildDropdownFieldContainer(
                     'Hidratación',
-                    viewModel.hidratacionController,
+                    viewModel.hidratacion,
+                    viewModel.selectedHidratacion != null &&
+                            viewModel.hidratacion.contains(
+                              viewModel.selectedHidratacion,
+                            )
+                        ? viewModel.selectedHidratacion
+                        : null,
+                    (value) {
+                      viewModel.selectedHidratacion = value;
+                      viewModel
+                          .notifyListeners(); // Notifica a la vista que el valor ha cambiado
+                    }, // Asegúrate de que el valor seleccionado sea válido
                   ),
                   _buildTextFieldContainer(
                     'Cantidad de hidratación (litros)',

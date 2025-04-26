@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 // Aquí puedes importar tus viewmodels reales cuando estén listos
 // import 'framework/viewmodels/alimentacion_viewmodel.dart';
 
-import 'framework/views/registrarCharola_view.dart'; // Asegúrate de importar bien tu pantalla
+import 'framework/views/modificar_alimento_hidratacion_view.dart'; // Asegúrate de importar bien tu pantalla
 
 void main() {
   runApp(const NebriosApp());

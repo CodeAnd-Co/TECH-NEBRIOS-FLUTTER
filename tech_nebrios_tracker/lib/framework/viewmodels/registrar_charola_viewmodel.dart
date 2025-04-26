@@ -35,34 +35,38 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
     }
   }
 
-  void registrarCharola() {
-    // Crear el modelo de charola
-    CharolaModel charola = CharolaModel(
-      nombre: nombreController.text,
-      frass: densidadLarvaController.text,
-      fecha: DateTime.tryParse(fechaController.text) ?? DateTime.now(),
-      comida: comidaController.text,
-      cantidadComida: double.tryParse(cantidadComidaController.text) ?? 0.0,
-      peso: double.tryParse(pesoController.text) ?? 0.0,
-      hidratacion: hidratacionController.text,
-      cantidadHidratacion:
-          double.tryParse(cantidadHidratacionController.text) ?? 0.0,
-    );
+  Future<void> registrarCharola() async {
+    try {
+      // Crear el modelo de charola con los datos del formulario
+      final charola = CharolaModel(
+        nombre: nombreController.text,
+        densidadLarva: densidadLarvaController.text,
+        fechaCreacion: DateTime.parse(fechaController.text),
+        comidaCiclo: comidaController.text,
+        cantidadComida: double.parse(cantidadComidaController.text),
+        pesoCharola: double.parse(pesoController.text),
+        hidratacionCiclo: hidratacionController.text,
+        cantidadHidratacion: double.parse(cantidadHidratacionController.text),
+      );
 
-    // Llamar al caso de uso para guardar la charola
-    registrarCharolaUseCase.execute(charola);
+      // Llamar al caso de uso para registrar la charola
+      await registrarCharolaUseCase.execute(charola);
+      print('Charola registrada exitosamente');
 
-    // Limpia los campos
-    nombreController.clear();
-    densidadLarvaController.clear();
-    fechaController.clear();
-    comidaController.clear();
-    cantidadComidaController.clear();
-    pesoController.clear();
-    hidratacionController.clear();
-    cantidadHidratacionController.clear();
+      // Limpia los campos del formulario
+      nombreController.clear();
+      densidadLarvaController.clear();
+      fechaController.clear();
+      comidaController.clear();
+      cantidadComidaController.clear();
+      pesoController.clear();
+      hidratacionController.clear();
+      cantidadHidratacionController.clear();
 
-    notifyListeners();
+      notifyListeners();
+    } catch (e) {
+      print('Error al registrar la charola: $e');
+    }
   }
 
   @override

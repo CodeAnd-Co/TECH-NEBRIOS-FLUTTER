@@ -8,7 +8,6 @@ class RegistrarCharolaView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<RegistrarCharolaViewModel>(context);
-    String? selectedAlimentacion;
 
     viewModel.cargarAlimentos();
 
@@ -101,10 +100,12 @@ class RegistrarCharolaView extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               ElevatedButton(
-                onPressed: viewModel.registrarCharola,
+                onPressed: () async {
+                  await viewModel.registrarCharola();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.pink,
-                  minimumSize: const Size(200, 50),
+                  minimumSize: const Size(200, 70),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

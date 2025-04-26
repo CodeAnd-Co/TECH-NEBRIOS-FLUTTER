@@ -1,21 +1,21 @@
 class CharolaModel {
   String nombre;
-  String frass;
-  DateTime fecha;
-  String comida;
+  String densidadLarva;
+  DateTime fechaCreacion;
+  String comidaCiclo;
   double cantidadComida;
-  double peso;
-  String hidratacion;
+  double pesoCharola;
+  String hidratacionCiclo;
   double cantidadHidratacion;
 
   CharolaModel({
     required this.nombre,
-    required this.frass,
-    required this.fecha,
-    required this.comida,
+    required this.densidadLarva,
+    required this.fechaCreacion,
+    required this.comidaCiclo,
     required this.cantidadComida,
-    required this.peso,
-    required this.hidratacion,
+    required this.pesoCharola,
+    required this.hidratacionCiclo,
     required this.cantidadHidratacion,
   });
 }

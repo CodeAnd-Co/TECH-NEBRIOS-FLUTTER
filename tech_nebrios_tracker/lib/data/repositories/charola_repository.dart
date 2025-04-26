@@ -6,9 +6,33 @@ class CharolaRepository {
   final List<CharolaModel> _charolas = []; // Simulacion de almacenamiento
 
   // Metodo para guardar una charola
-  void saveCharola(CharolaModel charola) {
-    _charolas.add(charola);
-    print("Charola guardada: ${charola.nombre}");
+  Future<void> registrarCharola(CharolaModel charola) async {
+    final url = Uri.parse(
+      'http://localhost:3000/charola/registrar',
+    ); // Cambia por tu endpoint
+    print('Enviando datos de la charola a $url');
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'nombre': charola.nombre,
+        'densidadLarva': charola.densidadLarva,
+        'fechaCreacion': charola.fechaCreacion.toIso8601String(),
+        'comidaCiclo': charola.comidaCiclo,
+        'cantidadComida': charola.cantidadComida,
+        'pesoCharola': charola.pesoCharola,
+        'hidratacionCiclo': charola.hidratacionCiclo,
+        'cantidadHidratacion': charola.cantidadHidratacion,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Charola registrada exitosamente: ${response.body}');
+    } else {
+      print('Error al registrar la charola: ${response.statusCode}');
+      throw Exception('Error al registrar la charola: ${response.statusCode}');
+    }
   }
 
   // Metodo para obtener datos de alimentacion desde el backend

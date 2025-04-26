@@ -6,7 +6,7 @@ class RegistrarCharola {
 
   RegistrarCharola(this.repository);
 
-  void execute(CharolaModel charola) {
-    repository.saveCharola(charola);
+  Future<void> execute(CharolaModel charola) async {
+    await repository.registrarCharola(charola);
   }
 }

@@ -1,6 +1,6 @@
-## ¿Que es un organismo en Atomic Design?
+## ¿Qué es un Organismo en Atomic Design?
 
-Convinaciones de átomos y moléculas que forman una sección autonoma de la interfaz
+Conbinaciones de átomos y moléculas que forman una sección autónoma de la interfaz
 
 ### Ejemplos
 
@@ -9,3 +9,7 @@ Convinaciones de átomos y moléculas que forman una sección autonoma de la int
 - AppBar
 - Tarjeta
 - Formulario
+
+| **Tipo de Versión** | **Descripción**                      | **Fecha**   | **Colaborador**           |
+| ------------------- | ------------------------------------ | ----------- | ------------------------- |
+| **1.0**             | Incorporación de atomic design       | 25/4/2025   | Juan Eduardo Rosas Cerón  |

@@ -1,11 +1,15 @@
-## ¿Que es una molécula en Atomic Design?
+## ¿Qué es una Molécula en Atomic Design?
 
-Convinaciones simples de átomos que trabajan juntas para formar una funcionalidad.
+Convinaciones simples de Átomos que trabajan juntos para formar una funcionalidad.
 
 ### Ejemplos
 
-- Busqueda
+- Búsqueda
 - Alerta
-- Boton con icono y texto
+- Botón con icono y texto
 - Texto con etiquetas
 - Mini perfil
+
+| **Tipo de Versión** | **Descripción**                      | **Fecha**   | **Colaborador**           |
+| ------------------- | ------------------------------------ | ----------- | ------------------------- |
+| **1.0**             | Incorporación de atomic design       | 25/4/2025   | Juan Eduardo Rosas Cerón  |

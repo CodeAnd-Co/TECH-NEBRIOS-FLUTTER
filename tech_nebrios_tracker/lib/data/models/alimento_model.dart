@@ -9,9 +9,11 @@ class Alimento {
     required this.descripcionAlimento,
   });
 
-  factory Alimento.fromJson(Map<String, dynamic> json) => Alimento(
-    idAlimento: json['idAlimento'],
-    nombreAlimento: json['nombreAlimento'],
-    descripcionAlimento: json['descripcionAlimento'],
-  );
+  factory Alimento.fromJson(Map<String, dynamic> json) {
+    return Alimento(
+      idAlimento: json['comidaId'] as int,
+      nombreAlimento:    json['nombre']   as String,
+      descripcionAlimento: json['descripcion'] as String,
+    );
+  }
 }

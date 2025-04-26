@@ -17,7 +17,6 @@ class AlimentacionViewModel extends ChangeNotifier {
   String? get error => _error;
   List<Alimento> get alimentos => List.unmodifiable(_alimentos);
 
-  /// Carga inicial de datos
   Future<void> cargarAlimentos() async {
     _setLoading(true);
     try {
@@ -29,20 +28,14 @@ class AlimentacionViewModel extends ChangeNotifier {
     _setLoading(false);
   }
 
-  /// Edita un alimento existente
-  Future<void> editarAlimento(Alimento alimento) async {
+  Future<void> eliminarAlimento(int id) async {
     _setLoading(true);
     try {
-      await _repo.editarAlimento(alimento);
-      final idx = _alimentos.indexWhere(
-        (a) => a.idAlimento == alimento.idAlimento,
-      );
-      if (idx != -1) {
-        _alimentos[idx] = alimento;
-      }
+      await _repo.eliminarAlimento(id);
+      _alimentos.removeWhere((c) => c.idAlimento == id);
       _error = null;
     } catch (e) {
-      _error = 'Error al editar alimento: $e';
+      _error = 'Error al eliminar alimento: $e';
     }
     _setLoading(false);
   }

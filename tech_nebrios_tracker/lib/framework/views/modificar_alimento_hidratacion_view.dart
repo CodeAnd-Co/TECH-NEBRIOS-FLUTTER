@@ -13,7 +13,12 @@ class AlimentacionScreen extends StatefulWidget {
 class _AlimentacionScreenState extends State<AlimentacionScreen> {
   late final AlimentoRepository _repo;
   List<Alimento> alimentos = [];
-  final List<String> hidrataciones = ['ejemplo', 'ejemplo', 'ejemplo', 'ejemplo'];
+  final List<String> hidrataciones = [
+    'ejemplo',
+    'ejemplo',
+    'ejemplo',
+    'ejemplo',
+  ];
 
   @override
   void initState() {
@@ -44,11 +49,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           ),
           const Padding(
             padding: EdgeInsets.only(top: 4.0),
-            child: Divider(
-              color: Color(0xFF385881),
-              thickness: 2,
-              height: 20,
-            ),
+            child: Divider(color: Color(0xFF385881), thickness: 2, height: 20),
           ),
           const Text(
             'Selecciona el dato a editar',
@@ -64,13 +65,9 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Row(
                 children: [
-                  Expanded(
-                    child: _buildColumnSectionAlimentos(),
-                  ),
+                  Expanded(child: _buildColumnSectionAlimentos()),
                   const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildColumnSectionHydratacion(),
-                  ),
+                  Expanded(child: _buildColumnSectionHydratacion()),
                 ],
               ),
             ),
@@ -133,7 +130,6 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: () {}, // aqui va _onAgregarHidratacion
-
               ),
             ],
           ),
@@ -156,14 +152,11 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       child: Row(
         children: [
           Expanded(child: Text(alimento.nombreAlimento)),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => _onEditarAlimento(alimento, index),
+          IconButton(icon: const Icon(Icons.edit),  onPressed: () {},
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () async { // aqui va _onEliminarAlimento
-            },
+            onPressed: () => _onEliminarAlimento(alimento),
           ),
         ],
       ),
@@ -181,71 +174,49 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
         children: [
           Expanded(child: Text(text)),
           IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () {},
+          ),
         ],
       ),
     );
   }
 
   void _onAgregarAlimento() {
-    final nombreCtrl = TextEditingController();
-    final descCtrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Nuevo alimento'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: nombreCtrl, decoration: const InputDecoration(hintText: 'Nombre')),
-            TextField(controller: descCtrl, decoration: const InputDecoration(hintText: 'Descripción')),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
-          ElevatedButton(
-            onPressed: () async {
-              // Guardar el nuevo alimento 
-            },
-            child: const Text('Guardar'),
-          ),
-        ],
-      ),
-    );
+    // Aquí va la lógica para agregar un alimento
   }
 
-  void _onEditarAlimento(Alimento alimento, int index) {
-    final nombreCtrl = TextEditingController(text: alimento.nombreAlimento);
-    final descCtrl = TextEditingController(text: alimento.descripcionAlimento);
-    showDialog(
+  void _onEliminarAlimento(Alimento alimento) async {
+    final confirm = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Editar alimento'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: nombreCtrl, decoration: const InputDecoration(hintText: 'Nombre')),
-            TextField(controller: descCtrl, decoration: const InputDecoration(hintText: 'Descripción')),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
-          ElevatedButton(
-            onPressed: () async {
-              final updated = Alimento(
-                idAlimento: alimento.idAlimento,
-                nombreAlimento: nombreCtrl.text.trim(),
-                descripcionAlimento: descCtrl.text.trim(),
-              );
-              await _repo.editarAlimento(updated);
-              setState(() => alimentos[index] = updated);
-              Navigator.pop(context);
-            },
-            child: const Text('Guardar'),
+      builder:
+          (_) => AlertDialog(
+            title: const Text('Eliminar alimento'),
+            content: const Text('¿Estás seguro de eliminar este alimento?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancelar'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Eliminar'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
+    if (confirm == true) {
+      try {
+        await _repo.eliminarAlimento(alimento.idAlimento);
+        setState(() {
+          alimentos.removeWhere((c) => c.idAlimento == alimento.idAlimento);
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al eliminar alimento: $e')),
+        );
+      }
+    }
   }
 }
-

@@ -5,48 +5,30 @@ import '../models/alimento_model.dart';
 class AlimentacionService {
   static const _baseUrl = 'http://localhost:3000';
 
-  // Temporal: datos de ejemplo sin usar la API
+  // Obtiene la lista de alimentos
   Future<List<Alimento>> obtenerAlimentos() async {
-    // Simula un retardo como si fuera una llamada de red
-    await Future.delayed(const Duration(milliseconds: 500));
-    return [
-      Alimento(
-        idAlimento: 1,
-        nombreAlimento: 'Manzana',
-        descripcionAlimento: 'Fruta roja',
-      ),
-      Alimento(
-        idAlimento: 2,
-        nombreAlimento: 'Zanahoria',
-        descripcionAlimento: 'Verdura anaranjada',
-      ),
-      Alimento(
-        idAlimento: 3,
-        nombreAlimento: 'Lechuga',
-        descripcionAlimento: 'Hoja verde',
-      ),
-    ];
-  }
-
-  /// Envía la petición de editar
-  Future<void> editarAlimento(Alimento alimento) async {
-    final uri = Uri.parse(
-      '$_baseUrl/alimentacion/editar/${alimento.idAlimento}',
-    );
-    final payload = {
-      'nombreAlimento': alimento.nombreAlimento,
-      'descripcionAlimento': alimento.descripcionAlimento,
-    };
-
-    final response = await http.put(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(payload),
-    );
+    final uri = Uri.parse('$_baseUrl/alimentacion');
+    final response = await http.get(uri);
 
     if (response.statusCode != 200) {
       throw Exception(
-        'Error al editar alimento (${response.statusCode}): ${response.body}',
+        'Error al cargar alimentos (${response.statusCode}): ${response.body}'
+      );
+    }
+
+    final List<dynamic> data = jsonDecode(response.body);
+    return data.map((item) => Alimento.fromJson(item)).toList();
+  }
+
+ /// Envía la petición de eliminar
+  Future<void> eliminarAlimento(int idAlimento) async {
+    final uri = Uri.parse('$_baseUrl/alimentacion/eliminar/$idAlimento');
+
+    final response = await http.delete(uri);
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Error al eliminar alimento (${response.statusCode}): ${response.body}',
       );
     }
   }

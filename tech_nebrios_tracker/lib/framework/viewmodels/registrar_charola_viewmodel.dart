@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/models/charola_model.dart';
 import '../../domain/registrar_charola.dart';
+import 'package:intl/intl.dart';
 
 class RegistrarCharolaViewModel extends ChangeNotifier {
   final RegistrarCharola registrarCharolaUseCase;
@@ -28,9 +29,6 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
     try {
       print('Cargando alimentos...');
       alimentos = await registrarCharolaUseCase.repository.getAlimentos();
-      if (alimentos.isNotEmpty) {
-        selectedAlimentacion = alimentos.first; // Establece un valor inicial
-      }
       _alimentosCargados = true; // Marca los datos como cargados
       print('Alimentos cargados: $alimentos');
       notifyListeners(); // Notifica a la vista que los datos han cambiado
@@ -44,9 +42,6 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
     try {
       print('Cargando hidratación...');
       hidratacion = await registrarCharolaUseCase.repository.getHidratacion();
-      if (hidratacion.isNotEmpty) {
-        selectedHidratacion = hidratacion.first; // Establece un valor inicial
-      }
       _hidratacionCargados = true; // Marca los datos como cargados
       print('Hidratación cargada: $hidratacion');
       notifyListeners(); // Notifica a la vista que los datos han cambiado
@@ -57,11 +52,15 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
 
   Future<void> registrarCharola() async {
     try {
+      // Formatear la fecha al formato yyyy-MM-dd
+      final fechaFormateada = DateFormat(
+        'yyyy-MM-dd',
+      ).format(DateTime.parse(fechaController.text));
       // Crear el modelo de charola con los datos del formulario
       final charola = CharolaModel(
         nombre: nombreController.text,
         densidadLarva: densidadLarvaController.text,
-        fechaCreacion: DateTime.parse(fechaController.text),
+        fechaCreacion: DateTime.parse(fechaFormateada),
         comidaCiclo: comidaController.text,
         cantidadComida: double.parse(cantidadComidaController.text),
         pesoCharola: double.parse(pesoController.text),

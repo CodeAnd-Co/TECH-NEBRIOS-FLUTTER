@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './framework/views/components/pop_up.dart';
+import 'framework/views/components/organisms/pop_up.dart';
+import 'framework/views/components/atoms/boton_texto.dart';
 
 void main() {
   runApp(const MainApp());
@@ -24,8 +25,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
+        child: BotonTexto.simple(
+          texto: 'Mostrar Popup',
+          alPresionar: () {
             Popup.show(
               context: context,
               title: '¡Hola!',
@@ -35,7 +37,6 @@ class HomePage extends StatelessWidget {
               },
             );
           },
-          child: const Text('Mostrar Popup'),
         ),
       ),
     );

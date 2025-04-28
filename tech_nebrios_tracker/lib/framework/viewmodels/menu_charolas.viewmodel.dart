@@ -21,6 +21,7 @@ class CharolaVistaModelo extends ChangeNotifier {
     if (cargando) return;
 
     if (refresh) {
+      pagActual = 1; // 👈 (opcional) resetear página si refrescas
       charolas.clear();
       hayMas = true;
     }
@@ -30,30 +31,34 @@ class CharolaVistaModelo extends ChangeNotifier {
 
     print("🔗 ViewModel intenta cargar charolas desde la API (page: $pagActual, limit: $limite)");
 
-    final respuesta = await obtenerCharolasCasoUso.ejecutar(pag: pagActual, limite: limite);
+    try {
+      final respuesta = await obtenerCharolasCasoUso.ejecutar(pag: pagActual, limite: limite);
 
-    if (respuesta != null) {
-      charolas.addAll(respuesta.data);
-      totalPags = respuesta.totalPags; 
-      hayMas = pagActual < totalPags;
+      if (respuesta != null) {
+        charolas.addAll(respuesta.data);
+        totalPags = respuesta.totalPags;
+        hayMas = pagActual < totalPags;
+      }
+    } catch (e) {
+      print('❌ Error al cargar charolas: $e');
+      // Si quieres, podrías guardar este error en una variable para la UI
+    } finally {
+      cargando = false;
+      notifyListeners();
     }
-
-    cargando = false;
-    notifyListeners();
   }
 
   void cargarPaginaAnterior() {
-  if (pagActual > 1) {
-    pagActual--;
-    cargarCharolas(refresh: true); // limpiar antes de cargar
+    if (pagActual > 1) {
+      pagActual--;
+      cargarCharolas(refresh: true); // limpiar antes de cargar
+    }
   }
-}
 
-void cargarPaginaSiguiente() {
-  if (pagActual < totalPags) {
-    pagActual++;
-    cargarCharolas(refresh: true); 
+  void cargarPaginaSiguiente() {
+    if (pagActual < totalPags) {
+      pagActual++;
+      cargarCharolas(refresh: true);
+    }
   }
-}
-
 }

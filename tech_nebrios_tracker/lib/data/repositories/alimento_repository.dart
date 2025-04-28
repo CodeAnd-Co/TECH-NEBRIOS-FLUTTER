@@ -15,4 +15,9 @@ class AlimentoRepository {
   Future<void> eliminarAlimento(int idAlimento) async {
     await _service.eliminarAlimento(idAlimento);
   }
+
+  // Agrega un alimento
+  //Future<void> postRegistrarAlimento(str nombre, str descripción) async {
+    //await _service.eliminarAlimento(idAlimento);
+  //}
 }

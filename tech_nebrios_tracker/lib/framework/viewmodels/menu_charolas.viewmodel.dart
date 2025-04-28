@@ -21,7 +21,7 @@ class CharolaVistaModelo extends ChangeNotifier {
     if (cargando) return;
 
     if (refresh) {
-      pagActual = 1; // 👈 (opcional) resetear página si refrescas
+      pagActual = 1; 
       charolas.clear();
       hayMas = true;
     }
@@ -40,8 +40,17 @@ class CharolaVistaModelo extends ChangeNotifier {
         hayMas = pagActual < totalPags;
       }
     } catch (e) {
-      print('❌ Error al cargar charolas: $e');
-      // Si quieres, podrías guardar este error en una variable para la UI
+      String mensajeError;
+
+      if (e.toString().contains('401')) {
+        mensajeError = '🚫 Error 401: No autorizado. Por favor, inicie sesión.';
+      } else if (e.toString().contains('101')) {
+        mensajeError = '🌐 Error 101: Problemas de red. Verifica tu conexión a internet.';
+      } else {
+        mensajeError = '💥 Error 500: Fallo interno del servidor. Inténtalo más tarde.';
+      }
+
+      print(mensajeError);
     } finally {
       cargando = false;
       notifyListeners();

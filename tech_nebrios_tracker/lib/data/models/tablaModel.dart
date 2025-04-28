@@ -1,14 +1,12 @@
-import 'dart:ffi';
-
 class TablaModel {
   String nombreCharola;
-  Float comidaCiclo;
-  Float hidratacionCiclo;
+  double comidaCiclo;
+  double hidratacionCiclo;
   DateTime fechaActualizacion;
   String estado;
   String densidadLarva;
   DateTime fechaCreacion;
-  Float pesoCharola;
+  double pesoCharola;
 
   TablaModel({
     required this.nombreCharola,

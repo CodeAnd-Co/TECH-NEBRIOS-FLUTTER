@@ -21,7 +21,6 @@ class CharolaVistaModelo extends ChangeNotifier {
     if (cargando) return;
 
     if (refresh) {
-      pagActual = 1; 
       charolas.clear();
       hayMas = true;
     }

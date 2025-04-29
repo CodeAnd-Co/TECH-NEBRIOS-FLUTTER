@@ -68,16 +68,10 @@ class RegistrarCharolaView extends StatelessWidget {
                   _buildDropdownFieldContainer(
                     'Alimentación',
                     viewModel.alimentos,
-                    viewModel.selectedAlimentacion != null &&
-                            viewModel.alimentos.contains(
-                              viewModel.selectedAlimentacion,
-                            )
-                        ? viewModel.selectedAlimentacion
-                        : null, // Asegúrate de que el valor seleccionado sea válido
+                    viewModel.selectedAlimentacion,
                     (value) {
                       viewModel.selectedAlimentacion = value;
-                      viewModel
-                          .notifyListeners(); // Notifica a la vista que el valor ha cambiado
+                      viewModel.notifyListeners();
                     },
                   ),
                   _buildTextFieldContainer(
@@ -92,17 +86,11 @@ class RegistrarCharolaView extends StatelessWidget {
                   _buildDropdownFieldContainer(
                     'Hidratación',
                     viewModel.hidratacion,
-                    viewModel.selectedHidratacion != null &&
-                            viewModel.hidratacion.contains(
-                              viewModel.selectedHidratacion,
-                            )
-                        ? viewModel.selectedHidratacion
-                        : null,
+                    viewModel.selectedHidratacion,
                     (value) {
                       viewModel.selectedHidratacion = value;
-                      viewModel
-                          .notifyListeners(); // Notifica a la vista que el valor ha cambiado
-                    }, // Asegúrate de que el valor seleccionado sea válido
+                      viewModel.notifyListeners();
+                    },
                   ),
                   _buildTextFieldContainer(
                     'Cantidad de hidratación (litros)',

@@ -18,10 +18,8 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
   final nombreController = TextEditingController();
   final densidadLarvaController = TextEditingController();
   final fechaController = TextEditingController();
-  final comidaController = TextEditingController();
   final cantidadComidaController = TextEditingController();
   final pesoController = TextEditingController();
-  final hidratacionController = TextEditingController();
   final cantidadHidratacionController = TextEditingController();
 
   Future<void> cargarAlimentos() async {
@@ -52,19 +50,19 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
 
   Future<void> registrarCharola() async {
     try {
-      // Formatear la fecha al formato yyyy-MM-dd
       final fechaFormateada = DateFormat(
         'yyyy-MM-dd',
-      ).format(DateTime.parse(fechaController.text));
+      ).format(DateFormat('dd/MM/yyyy').parse(fechaController.text));
+
       // Crear el modelo de charola con los datos del formulario
       final charola = CharolaModel(
         nombre: nombreController.text,
-        densidadLarva: densidadLarvaController.text,
-        fechaCreacion: DateTime.parse(fechaFormateada),
-        comidaCiclo: comidaController.text,
+        densidadLarva: double.parse(densidadLarvaController.text),
+        fechaCreacion: fechaFormateada,
+        comidaCiclo: selectedAlimentacion ?? '',
         cantidadComida: double.parse(cantidadComidaController.text),
         pesoCharola: double.parse(pesoController.text),
-        hidratacionCiclo: hidratacionController.text,
+        hidratacionCiclo: selectedHidratacion ?? '',
         cantidadHidratacion: double.parse(cantidadHidratacionController.text),
       );
 
@@ -76,10 +74,10 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
       nombreController.clear();
       densidadLarvaController.clear();
       fechaController.clear();
-      comidaController.clear();
+      selectedAlimentacion = null;
       cantidadComidaController.clear();
       pesoController.clear();
-      hidratacionController.clear();
+      selectedHidratacion = null;
       cantidadHidratacionController.clear();
 
       notifyListeners();
@@ -93,10 +91,8 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
     nombreController.dispose();
     densidadLarvaController.dispose();
     fechaController.dispose();
-    comidaController.dispose();
     cantidadComidaController.dispose();
     pesoController.dispose();
-    hidratacionController.dispose();
     cantidadHidratacionController.dispose();
     super.dispose();
   }

@@ -6,7 +6,7 @@ class CharolaRepository {
   // Metodo para guardar una charola
   Future<void> registrarCharola(CharolaModel charola) async {
     final url = Uri.parse(
-      'http://localhost:3000/charola/registrar',
+      'http://localhost:3000/charola/registrarCharola',
     ); // Cambia por tu endpoint
     print('Enviando datos de la charola a $url');
 
@@ -16,13 +16,18 @@ class CharolaRepository {
       body: json.encode({
         'nombre': charola.nombre,
         'densidadLarva': charola.densidadLarva,
-        'fechaCreacion': charola.fechaCreacion.toIso8601String(),
+        'fechaCreacion': charola.fechaCreacion,
         'comidaCiclo': charola.comidaCiclo,
         'cantidadComida': charola.cantidadComida,
         'pesoCharola': charola.pesoCharola,
         'hidratacionCiclo': charola.hidratacionCiclo,
         'cantidadHidratacion': charola.cantidadHidratacion,
       }),
+    );
+
+    // JSON enviado para verificar
+    print(
+      'JSON enviado: ${json.encode({'nombre': charola.nombre, 'densidadLarva': charola.densidadLarva, 'fechaCreacion': charola.fechaCreacion, 'comidaCiclo': charola.comidaCiclo, 'cantidadComida': charola.cantidadComida, 'pesoCharola': charola.pesoCharola, 'hidratacionCiclo': charola.hidratacionCiclo, 'cantidadHidratacion': charola.cantidadHidratacion})}',
     );
 
     if (response.statusCode == 200) {

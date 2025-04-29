@@ -21,7 +21,7 @@ class PopUpCharola extends StatelessWidget {
     return AlertDialog(
       title: const Texto.titulo1(texto:'Título del Pop-up'),
 
-      content: Row(
+      content: Column(
         mainAxisSize: MainAxisSize.min,
 
         children: [

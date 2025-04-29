@@ -18,9 +18,9 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
   final nombreController = TextEditingController();
   final densidadLarvaController = TextEditingController();
   final fechaController = TextEditingController();
-  final cantidadComidaController = TextEditingController();
+  final comidaCicloController = TextEditingController();
   final pesoController = TextEditingController();
-  final cantidadHidratacionController = TextEditingController();
+  final hidratacionCicloController = TextEditingController();
 
   Future<void> cargarAlimentos() async {
     if (_alimentosCargados) return; // Evita cargar los datos más de una vez
@@ -59,11 +59,11 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
         nombre: nombreController.text,
         densidadLarva: double.parse(densidadLarvaController.text),
         fechaCreacion: fechaFormateada,
-        comidaCiclo: selectedAlimentacion ?? '',
-        cantidadComida: double.parse(cantidadComidaController.text),
+        nombreComida: selectedAlimentacion ?? '',
+        comidaCiclo: double.parse(comidaCicloController.text),
         pesoCharola: double.parse(pesoController.text),
-        hidratacionCiclo: selectedHidratacion ?? '',
-        cantidadHidratacion: double.parse(cantidadHidratacionController.text),
+        nombreHidratacion: selectedHidratacion ?? '',
+        hidratacionCiclo: double.parse(hidratacionCicloController.text),
       );
 
       // Llamar al caso de uso para registrar la charola
@@ -75,10 +75,10 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
       densidadLarvaController.clear();
       fechaController.clear();
       selectedAlimentacion = null;
-      cantidadComidaController.clear();
+      comidaCicloController.clear();
       pesoController.clear();
       selectedHidratacion = null;
-      cantidadHidratacionController.clear();
+      hidratacionCicloController.clear();
 
       notifyListeners();
     } catch (e) {
@@ -91,9 +91,9 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
     nombreController.dispose();
     densidadLarvaController.dispose();
     fechaController.dispose();
-    cantidadComidaController.dispose();
+    comidaCicloController.dispose();
     pesoController.dispose();
-    cantidadHidratacionController.dispose();
+    hidratacionCicloController.dispose();
     super.dispose();
   }
 }

@@ -2,20 +2,20 @@ class CharolaModel {
   String nombre;
   double densidadLarva;
   String fechaCreacion;
-  String? comidaCiclo; // Permite valores nulos
-  double cantidadComida;
+  String? nombreComida; // Permite valores nulos
+  double comidaCiclo;
   double pesoCharola;
-  String? hidratacionCiclo; // Permite valores nulos
-  double cantidadHidratacion;
+  String? nombreHidratacion; // Permite valores nulos
+  double hidratacionCiclo;
 
   CharolaModel({
     required this.nombre,
     required this.densidadLarva,
     required this.fechaCreacion,
-    this.comidaCiclo,
-    required this.cantidadComida,
+    this.nombreComida,
+    required this.comidaCiclo,
     required this.pesoCharola,
-    this.hidratacionCiclo,
-    required this.cantidadHidratacion,
+    this.nombreHidratacion,
+    required this.hidratacionCiclo,
   });
 }

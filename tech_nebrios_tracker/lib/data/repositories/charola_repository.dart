@@ -17,20 +17,20 @@ class CharolaRepository {
         'nombre': charola.nombre,
         'densidadLarva': charola.densidadLarva,
         'fechaCreacion': charola.fechaCreacion,
+        'nombreComida': charola.nombreComida,
         'comidaCiclo': charola.comidaCiclo,
-        'cantidadComida': charola.cantidadComida,
         'pesoCharola': charola.pesoCharola,
+        'nombreHidratacion': charola.nombreHidratacion,
         'hidratacionCiclo': charola.hidratacionCiclo,
-        'cantidadHidratacion': charola.cantidadHidratacion,
       }),
     );
 
     // JSON enviado para verificar
     print(
-      'JSON enviado: ${json.encode({'nombre': charola.nombre, 'densidadLarva': charola.densidadLarva, 'fechaCreacion': charola.fechaCreacion, 'comidaCiclo': charola.comidaCiclo, 'cantidadComida': charola.cantidadComida, 'pesoCharola': charola.pesoCharola, 'hidratacionCiclo': charola.hidratacionCiclo, 'cantidadHidratacion': charola.cantidadHidratacion})}',
+      'JSON enviado: ${json.encode({'nombre': charola.nombre, 'densidadLarva': charola.densidadLarva, 'fechaCreacion': charola.fechaCreacion, 'nombreComida': charola.nombreComida, 'comidaCiclo': charola.comidaCiclo, 'pesoCharola': charola.pesoCharola, 'nombreHidratacion': charola.nombreHidratacion, 'hidratacionCiclo': charola.hidratacionCiclo})}',
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       print('Charola registrada exitosamente: ${response.body}');
     } else {
       print('Error al registrar la charola: ${response.statusCode}');

@@ -76,7 +76,7 @@ class RegistrarCharolaView extends StatelessWidget {
                   ),
                   _buildTextFieldContainer(
                     'Cantidad de alimento (Kg)',
-                    viewModel.cantidadComidaController,
+                    viewModel.comidaCicloController,
                   ),
                   _buildTextFieldContainer(
                     'Peso (kg)',
@@ -94,7 +94,7 @@ class RegistrarCharolaView extends StatelessWidget {
                   ),
                   _buildTextFieldContainer(
                     'Cantidad de hidratación (litros)',
-                    viewModel.cantidadHidratacionController,
+                    viewModel.hidratacionCicloController,
                   ),
                 ],
               ),

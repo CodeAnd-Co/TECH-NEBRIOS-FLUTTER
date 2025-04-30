@@ -21,7 +21,7 @@ class MainApp extends StatelessWidget {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => const PopUpCharola(),
+                  builder: (context) => const PopUpCharola.prueba(),
                 );
               },
             ),

@@ -25,11 +25,11 @@ class BotonTexto extends StatelessWidget {
   const BotonTexto.simple({
     super.key,
     this.borde = 8,
-    this.horizontal = 20,
-    this.vertical = 10,
+    this.horizontal = 36,
+    this.vertical = 18,
     required this.texto,
     required this.alPresionar,
-    this.colorBg = Colors.white,
+    required this.colorBg,
   });
 
   // creación del botón

@@ -34,10 +34,28 @@ class Texto extends StatelessWidget {
     this.tamanio = 12,
     this.color = Colors.black,
     this.fuente = 'San Francisco',
+    this.grosor = FontWeight.w300,
+  });
+
+  const Texto.textoB({ // bold
+    super.key,
+    required this.texto,
+    this.tamanio = 12,
+    this.color = Colors.black,
+    this.fuente = 'San Francisco',
     this.grosor = FontWeight.w400,
   });
 
   const Texto.titulo1({
+    super.key,
+    required this.texto,
+    this.tamanio = 32,
+    this.color = Colors.black,
+    this.fuente = 'San Francisco',
+    this.grosor = FontWeight.w600,
+  });
+
+  const Texto.titulo1B({ // bold
     super.key,
     required this.texto,
     this.tamanio = 32,
@@ -52,10 +70,28 @@ class Texto extends StatelessWidget {
     this.tamanio = 28,
     this.color = Colors.black,
     this.fuente = 'San Francisco',
+    this.grosor = FontWeight.w600,
+  });
+
+  const Texto.titulo2B({ // bold
+    super.key,
+    required this.texto,
+    this.tamanio = 28,
+    this.color = Colors.black,
+    this.fuente = 'San Francisco',
     this.grosor = FontWeight.w700,
   });
 
   const Texto.titulo3({
+    super.key,
+    required this.texto,
+    this.tamanio = 24,
+    this.color = Colors.black,
+    this.fuente = 'San Francisco',
+    this.grosor = FontWeight.w500,
+  });
+
+  const Texto.titulo3B({ // bold
     super.key,
     required this.texto,
     this.tamanio = 24,
@@ -70,6 +106,15 @@ class Texto extends StatelessWidget {
     this.tamanio = 20,
     this.color = Colors.black,
     this.fuente = 'San Francisco',
+    this.grosor = FontWeight.w500,
+  });
+
+  const Texto.titulo4B({ // bold
+    super.key,
+    required this.texto,
+    this.tamanio = 20,
+    this.color = Colors.black,
+    this.fuente = 'San Francisco',
     this.grosor = FontWeight.w600,
   });
 
@@ -79,10 +124,28 @@ class Texto extends StatelessWidget {
     this.tamanio = 17,
     this.color = Colors.black,
     this.fuente = 'San Francisco',
+    this.grosor = FontWeight.w400,
+  });
+
+  const Texto.titulo5B({ // bold
+    super.key,
+    required this.texto,
+    this.tamanio = 17,
+    this.color = Colors.black,
+    this.fuente = 'San Francisco',
     this.grosor = FontWeight.w500,
   });
 
   const Texto.titulo6({
+    super.key,
+    required this.texto,
+    this.tamanio = 14,
+    this.color = Colors.black,
+    this.fuente = 'San Francisco',
+    this.grosor = FontWeight.w400,
+  });
+
+  const Texto.titulo6B({ // bold
     super.key,
     required this.texto,
     this.tamanio = 14,

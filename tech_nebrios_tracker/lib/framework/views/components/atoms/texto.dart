@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class Texto extends StatelessWidget {
   final String texto;
-  final Color color;
   final double tamanio;
-  final FontWeight grosor;  // FontWeight.w100 - FontWeight.w900
-  final String fuente;      // Roboto, San Francisco
+  final Color color;
+  final String fuente;
+  final FontWeight grosor;
 
-  // constructor por defecto
-  const Texto({
+  // Constructor privado
+  const Texto._({
     super.key,
     required this.texto,
     required this.tamanio,
@@ -17,144 +17,144 @@ class Texto extends StatelessWidget {
     required this.grosor,
   });
 
-  /*
-  Markdown:
-    Texto
-    # Título 1
-    ## Título 2
-    ### Título 3
-    #### Título 4
-    ##### Título 5
-    ###### Título 6
-  */
-  
-  const Texto.texto({
-    super.key,
-    required this.texto,
-    this.tamanio = 12,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w300,
-  });
+  /// Constructores factory para diferentes estilos
+  ///
+  /// Los estilos se basaron en MarkDown:
+  /// Texto, Título 1 ... Título 6
+  /// 
+  /// Forma de uso:
+  /// Texto.titulo1(texto: 'Título 1', tamanio: 64)         Para cambiar el tamaño
+  /// Texto.titulo2(texto: 'Título 2', color: Colors.red)   Para cambiar al color
+  /// Texto.titulo3(texto: 'Título 3', bold: true)          Para resaltar el texto
+  /// Texto.titulo4(texto: 'Título 4', fuente: 'Roboto')    Para cambiar la tipografía
+  /// Texto.titulo5(texto: 'Título 5')                      Caso normal
 
-  const Texto.textoB({ // bold
-    super.key,
-    required this.texto,
-    this.tamanio = 12,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w400,
-  });
+  factory Texto.texto({
+    Key? key,
+    required String texto,
+    double tamanio = 12,
+    Color color = Colors.black,
+    String fuente = 'San Francisco',
+    bool bold = false,
+  }) {
+    return Texto._(
+      key: key,
+      texto: texto,
+      tamanio: tamanio,
+      color: color,
+      fuente: fuente,
+      grosor: bold ? FontWeight.w400 : FontWeight.w300,
+    );
+  }
 
-  const Texto.titulo1({
-    super.key,
-    required this.texto,
-    this.tamanio = 32,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w600,
-  });
+  factory Texto.titulo1({
+    Key? key,
+    required String texto,
+    double tamanio = 32,
+    Color color = Colors.black,
+    String fuente = 'San Francisco',
+    bool bold = false,
+  }) {
+    return Texto._(
+      key: key,
+      texto: texto,
+      tamanio: tamanio,
+      color: color,
+      fuente: fuente,
+      grosor: bold ? FontWeight.w700 : FontWeight.w600,
+    );
+  }
 
-  const Texto.titulo1B({ // bold
-    super.key,
-    required this.texto,
-    this.tamanio = 32,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w700,
-  });
+  factory Texto.titulo2({
+    Key? key,
+    required String texto,
+    double tamanio = 28,
+    Color color = Colors.black,
+    String fuente = 'San Francisco',
+    bool bold = false,
+  }) {
+    return Texto._(
+      key: key,
+      texto: texto,
+      tamanio: tamanio,
+      color: color,
+      fuente: fuente,
+      grosor: bold ? FontWeight.w700 : FontWeight.w600,
+    );
+  }
 
-  const Texto.titulo2({
-    super.key,
-    required this.texto,
-    this.tamanio = 28,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w600,
-  });
+  factory Texto.titulo3({
+    Key? key,
+    required String texto,
+    double tamanio = 24,
+    Color color = Colors.black,
+    String fuente = 'San Francisco',
+    bool bold = false,
+  }) {
+    return Texto._(
+      key: key,
+      texto: texto,
+      tamanio: tamanio,
+      color: color,
+      fuente: fuente,
+      grosor: bold ? FontWeight.w600 : FontWeight.w500,
+    );
+  }
 
-  const Texto.titulo2B({ // bold
-    super.key,
-    required this.texto,
-    this.tamanio = 28,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w700,
-  });
+  factory Texto.titulo4({
+    Key? key,
+    required String texto,
+    double tamanio = 20,
+    Color color = Colors.black,
+    String fuente = 'San Francisco',
+    bool bold = false,
+  }) {
+    return Texto._(
+      key: key,
+      texto: texto,
+      tamanio: tamanio,
+      color: color,
+      fuente: fuente,
+      grosor: bold ? FontWeight.w600 : FontWeight.w500,
+    );
+  }
 
-  const Texto.titulo3({
-    super.key,
-    required this.texto,
-    this.tamanio = 24,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w500,
-  });
+  factory Texto.titulo5({
+    Key? key,
+    required String texto,
+    double tamanio = 17,
+    Color color = Colors.black,
+    String fuente = 'San Francisco',
+    bool bold = false,
+  }) {
+    return Texto._(
+      key: key,
+      texto: texto,
+      tamanio: tamanio,
+      color: color,
+      fuente: fuente,
+      grosor: bold ? FontWeight.w500 : FontWeight.w400,
+    );
+  }
 
-  const Texto.titulo3B({ // bold
-    super.key,
-    required this.texto,
-    this.tamanio = 24,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w600,
-  });
+  factory Texto.titulo6({
+    Key? key,
+    required String texto,
+    double tamanio = 14,
+    Color color = Colors.black,
+    String fuente = 'San Francisco',
+    bool bold = false,
+  }) {
+    return Texto._(
+      key: key,
+      texto: texto,
+      tamanio: tamanio,
+      color: color,
+      fuente: fuente,
+      grosor: bold ? FontWeight.w500 : FontWeight.w400,
+    );
+  }
 
-  const Texto.titulo4({
-    super.key,
-    required this.texto,
-    this.tamanio = 20,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w500,
-  });
-
-  const Texto.titulo4B({ // bold
-    super.key,
-    required this.texto,
-    this.tamanio = 20,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w600,
-  });
-
-  const Texto.titulo5({
-    super.key,
-    required this.texto,
-    this.tamanio = 17,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w400,
-  });
-
-  const Texto.titulo5B({ // bold
-    super.key,
-    required this.texto,
-    this.tamanio = 17,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w500,
-  });
-
-  const Texto.titulo6({
-    super.key,
-    required this.texto,
-    this.tamanio = 14,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w400,
-  });
-
-  const Texto.titulo6B({ // bold
-    super.key,
-    required this.texto,
-    this.tamanio = 14,
-    this.color = Colors.black,
-    this.fuente = 'San Francisco',
-    this.grosor = FontWeight.w500,
-  });
-
-  // escritura del texto
   @override
   Widget build(BuildContext context) {
     return Text(

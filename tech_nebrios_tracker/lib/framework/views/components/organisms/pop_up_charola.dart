@@ -4,16 +4,13 @@ import '../atoms/boton_icono.dart';
 import '../molecules/boton_texto.dart';
 
 class PopUpCharola extends StatelessWidget {
+  final String charola;
+  final String fecha;
+  final String peso;
+  final String frass;
+  final String hidratacion;
+  final String alimento;
 
-  // atributos
-  final String charola;          // E-111-22   C-123   T1-111-22
-  final String fecha;            // AAAA-MM-DD
-  final String peso;             // pesoCharola
-  final String frass;            // tabla frass
-  final String hidratacion;      // tabla hidratación
-  final String alimento;         // tabla alimento
-
-  // constructo
   const PopUpCharola({
     super.key,
     required this.charola,
@@ -21,9 +18,10 @@ class PopUpCharola extends StatelessWidget {
     required this.peso,
     required this.frass,
     required this.hidratacion,
-    required this.alimento
+    required this.alimento,
   });
 
+  // Constructor de prueba como constante
   const PopUpCharola.prueba({
     super.key,
     this.charola = 'C-111',
@@ -31,7 +29,7 @@ class PopUpCharola extends StatelessWidget {
     this.peso = '500',
     this.frass = '500',
     this.hidratacion = 'Zanahoria',
-    this.alimento = 'Salvado'
+    this.alimento = 'Salvado',
   });
 
   factory PopUpCharola.fromJson(Map<String, dynamic> json) {
@@ -41,7 +39,30 @@ class PopUpCharola extends StatelessWidget {
       peso: json['peso'],
       frass: json['frass'],
       hidratacion: json['hidratacion'],
-      alimento: json['alimento']
+      alimento: json['alimento'],
+    );
+  }
+
+  // Función Widget para generar la información de las filas del PopUp
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Texto.titulo2(texto: '$label ', bold: true),
+          Texto.titulo2(texto: value),
+        ],
+      ),
+    );
+  }
+
+  // Función Widget para generar los botones del PopUp
+  Widget _buildActionButton(String text, Color color, VoidCallback onPressed) {
+    return BotonTexto.simple(
+      texto: Texto.titulo4(texto: text, bold: true, color: Colors.white,),
+      alPresionar: onPressed,
+      colorBg: color,
     );
   }
 
@@ -49,15 +70,13 @@ class PopUpCharola extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       content: SizedBox(
-        width: 700,
+        width: 890,
         height: 550,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-
               children: [
                 BotonIcono(
                   imagen: 'lib/framework/views/components/atoms/icons/X.png',
@@ -69,99 +88,53 @@ class PopUpCharola extends StatelessWidget {
                 ),
               ],
             ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              Texto.titulo1B(texto: charola, tamanio: 64)
-            ]),
-
-            const SizedBox(height: 40),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              Texto.titulo2B(texto: 'fecha: '),
-              Texto.titulo2(texto: fecha)
-            ]),
-
-            const SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              Texto.titulo2B(texto: 'peso: '),
-              Texto.titulo2(texto: peso)
-            ]),
-
-            const SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              Texto.titulo2B(texto: 'frass: '),
-              Texto.titulo2(texto: frass)
-            ]),
-
-            const SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              Texto.titulo2B(texto: 'hidratacion: '),
-              Texto.titulo2(texto: hidratacion)
-            ]),
-
-            const SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              Texto.titulo2B(texto: 'alimento: '),
-              Texto.titulo2(texto: alimento)
-            ]),
-
-            const SizedBox(height: 50),
-
+            
+            Padding(
+              padding: const EdgeInsets.only(bottom: 40),
+              child: Texto.titulo1(texto: charola, bold: true, tamanio: 50),
+            ),
+            
+            _buildInfoRow('fecha:', fecha),
+            _buildInfoRow('peso:', peso),
+            _buildInfoRow('frass:', frass),
+            _buildInfoRow('hidratacion:', hidratacion),
+            _buildInfoRow('alimento:', alimento),
+            
+            const SizedBox(height: 45),
+            
             Wrap(
-              spacing: 80,
+              spacing: 150,
               alignment: WrapAlignment.center,
-
               children: [
-                BotonTexto.simple(
-                  texto: Texto.titulo5B(texto: 'Eliminar'),
-                  alPresionar: () {
+                _buildActionButton(
+                  'Eliminar',
+                  const Color.fromARGB(255, 201, 45, 34),
+                  () {
                     Navigator.of(context).pop();
                     print('Botón de Eliminar presionado');
                   },
-                  colorBg: const Color.fromARGB(255, 201, 45, 34),
                 ),
-
-                BotonTexto.simple(
-                  texto: Texto.titulo5B(texto: 'Historial'),
-                  alPresionar: () {
+                _buildActionButton(
+                  'Historial',
+                  const Color.fromARGB(255, 255, 57, 123),
+                  () {
                     Navigator.of(context).pop();
                     print('Botón de Historial presionado');
                   },
-                  colorBg: const Color.fromARGB(255, 255, 57, 123),
                 ),
-
-                BotonTexto.simple(
-                  texto: Texto.titulo5B(texto: 'Editar'),
-                  alPresionar: () {
+                _buildActionButton(
+                  'Editar',
+                  const Color.fromARGB(255, 48, 104, 224),
+                  () {
                     Navigator.of(context).pop();
                     print('Botón de Editar presionado');
                   },
-                  colorBg: const Color.fromARGB(255, 48, 104, 224),
                 ),
               ],
             ),
-
-            
-
           ],
         ),
-      )
+      ),
     );
   }
 }

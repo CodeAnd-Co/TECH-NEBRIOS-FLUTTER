@@ -81,17 +81,6 @@ class VistaCharolas extends StatelessWidget {
       body: SafeArea(
         child: Consumer<CharolaVistaModelo>(
           builder: (context, vm, _) {
-            if (vm.cargando && vm.charolas.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (!vm.cargando && vm.charolas.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No hay charolas registradas 🧺',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                ),
-              );
-            }
             return Column(
               children: [
                 const SizedBox(height: 16),
@@ -100,90 +89,100 @@ class VistaCharolas extends StatelessWidget {
                   style: TextStyle(fontSize: 32),
                 ),
                 const SizedBox(height: 8),
-                const Divider(color: Color(0xFF385881), thickness: 3),
+                const Divider(color: Color(0xFF000000), thickness: 3),
                 const SizedBox(height: 8),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: GridView.builder(
-                      itemCount: vm.charolas.length,
-                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 220,
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
-                        childAspectRatio: 1.3,
+
+                // 🔽 CONTENIDO CONDICIONAL 🔽
+                if (vm.cargando && vm.charolas.isEmpty)
+                  const Expanded(child: Center(child: CircularProgressIndicator()))
+                else if (!vm.cargando && vm.charolas.isEmpty)
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        'No hay charolas registradas 🧺',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                       ),
-                      itemBuilder: (context, index) {
-                        final Charola charola = vm.charolas[index];
-                        return CharolaCard(
-                          fecha:
-                              "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
-                          nombreCharola: charola.nombreCharola,
-                          color: obtenerColorPorNombre(charola.nombreCharola),
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text("Charola seleccionada"),
-                                content: Text("Has tocado la charola ${charola.nombreCharola}"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text("Cerrar"),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: GridView.builder(
+                        itemCount: vm.charolas.length,
+                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 220,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 1.3,
+                        ),
+                        itemBuilder: (context, index) {
+                          final Charola charola = vm.charolas[index];
+                          return CharolaCard(
+                            fecha:
+                                "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
+                            nombreCharola: charola.nombreCharola,
+                            color: obtenerColorPorNombre(charola.nombreCharola),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("Charola seleccionada"),
+                                  content: Text("Has tocado la charola ${charola.nombreCharola}"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("Cerrar"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                Text(
-                  "Página ${vm.pagActual - 1} de ${vm.totalPags}",
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 0.5),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Consumer<CharolaVistaModelo>(
-                    builder: (context, vm, _) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE9EEF6),
-                              foregroundColor: const Color(0xFF385881),
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                              textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            onPressed: vm.pagActual > 1
-                              ? () => vm.cargarPaginaAnterior()
-                              : null,
-                            icon: const Icon(Icons.arrow_back, size: 35),
-                            label: const Text("Anterior"),
-                          ),
-                          const SizedBox(width: 16),
-                          ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE9EEF6),
-                              foregroundColor: const Color(0xFF385881),
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                              textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            onPressed: vm.pagActual < vm.totalPags
-                              ? () => vm.cargarPaginaSiguiente()
-                              : null,
-                            icon: const Icon(Icons.arrow_forward, size: 35),
-                            label: const Text("Siguiente"),
-                          ),
-                        ],
-                      );
-                    },
+
+                // 🔽 Siempre mostrar paginación si hay datos
+                if (vm.charolas.isNotEmpty) ...[
+                  Text(
+                    "Página ${vm.pagActual} de ${vm.totalPags}",
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                ),
+                  const SizedBox(height: 0.5),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE9EEF6),
+                            foregroundColor: const Color(0xFF385881),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: vm.pagActual > 1 ? vm.cargarPaginaAnterior : null,
+                          icon: const Icon(Icons.arrow_back, size: 30),
+                          label: const Text("Anterior"),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE9EEF6),
+                            foregroundColor: const Color(0xFF385881),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: vm.pagActual < vm.totalPags ? vm.cargarPaginaSiguiente : null,
+                          icon: const Icon(Icons.arrow_forward, size: 30),
+                          label: const Text("Siguiente"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             );
           },

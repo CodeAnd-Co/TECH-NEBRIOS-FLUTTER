@@ -32,6 +32,10 @@ class CharolaVistaModelo extends ChangeNotifier {
 
     try {
       final respuesta = await obtenerCharolasCasoUso.ejecutar(pag: pagActual, limite: limite);
+/*
+      if (respuesta != null) {
+        charolas = []; 
+      }*/
 
       if (respuesta != null) {
         charolas.addAll(respuesta.data);

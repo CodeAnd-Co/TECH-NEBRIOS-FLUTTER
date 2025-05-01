@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_nebrios_tracker/data/repositories/charola_repository.dart';
 import 'package:tech_nebrios_tracker/domain/registrar_charola.dart';
@@ -27,6 +28,16 @@ class ZustentoApp extends StatelessWidget {
         title: 'Zustento App',
         theme: ThemeData(primarySwatch: Colors.pink),
         home: const RegistrarCharolaView(),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('es', 'ES'), // Español
+          Locale('en', 'US'), // Inglés (opcional)
+        ],
+        locale: const Locale('es', 'ES'),
       ),
     );
   }

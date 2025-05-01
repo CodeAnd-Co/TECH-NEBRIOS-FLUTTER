@@ -93,7 +93,7 @@ class RegistrarCharolaView extends StatelessWidget {
                     },
                   ),
                   _buildTextFieldContainer(
-                    'Cantidad de hidratación (litros)',
+                    'Cantidad de hidratación (Kg)',
                     viewModel.hidratacionCicloController,
                   ),
                 ],
@@ -101,7 +101,24 @@ class RegistrarCharolaView extends StatelessWidget {
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () async {
-                  await viewModel.registrarCharola();
+                  try {
+                    await viewModel.registrarCharola();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Charola registrada exitosamente'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          e.toString().replaceAll('FormatException: ', ''),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.pink,

@@ -50,6 +50,56 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
 
   Future<void> registrarCharola() async {
     try {
+      // Validar campos obligatorios
+      if (nombreController.text.isEmpty) {
+        throw FormatException('El campo "Nombre" es obligatorio.');
+      }
+      if (densidadLarvaController.text.isEmpty) {
+        throw FormatException('El campo "Densidad de Larva" es obligatorio.');
+      }
+      if (fechaController.text.isEmpty) {
+        throw FormatException('El campo "Fecha" es obligatorio.');
+      }
+      if (selectedAlimentacion == null || selectedAlimentacion!.isEmpty) {
+        throw FormatException('El campo "Alimentación" es obligatorio.');
+      }
+      if (comidaCicloController.text.isEmpty) {
+        throw FormatException(
+          'El campo "Cantidad de alimento" es obligatorio.',
+        );
+      }
+      if (pesoController.text.isEmpty) {
+        throw FormatException('El campo "Peso" es obligatorio.');
+      }
+      if (selectedHidratacion == null || selectedHidratacion!.isEmpty) {
+        throw FormatException('El campo "Hidratación" es obligatorio.');
+      }
+      if (hidratacionCicloController.text.isEmpty) {
+        throw FormatException(
+          'El campo "Cantidad de hidratación" es obligatorio.',
+        );
+      }
+
+      // Validar campos numéricos
+      if (double.tryParse(densidadLarvaController.text) == null) {
+        throw FormatException(
+          'La densidad de larva debe ser un número válido.',
+        );
+      }
+      if (double.tryParse(comidaCicloController.text) == null) {
+        throw FormatException(
+          'La cantidad de alimento debe ser un número válido.',
+        );
+      }
+      if (double.tryParse(pesoController.text) == null) {
+        throw FormatException('El peso debe ser un número válido.');
+      }
+      if (double.tryParse(hidratacionCicloController.text) == null) {
+        throw FormatException(
+          'La cantidad de hidratación debe ser un número válido.',
+        );
+      }
+
       final fechaFormateada = DateFormat(
         'yyyy-MM-dd',
       ).format(DateFormat('dd/MM/yyyy').parse(fechaController.text));
@@ -83,6 +133,7 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error al registrar la charola: $e');
+      rethrow;
     }
   }
 

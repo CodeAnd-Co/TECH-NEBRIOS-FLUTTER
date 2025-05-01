@@ -12,7 +12,7 @@ class CharolaVistaModelo extends ChangeNotifier {
 
   List<Charola> charolas = [];
   int pagActual = 1;
-  final int limite = 12;
+  final int limite = 15;
   bool cargando = false;
   bool hayMas = true;
   int totalPags = 1;

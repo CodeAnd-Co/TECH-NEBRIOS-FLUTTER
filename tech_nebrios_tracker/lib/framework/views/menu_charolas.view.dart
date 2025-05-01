@@ -26,45 +26,54 @@ class CharolaCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        child: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          child: SizedBox(
-            width: 160,
-            height: 100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    fecha,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final ancho = constraints.maxWidth;
+            final alto = constraints.maxHeight;
+
+            // Tamaños dinámicos proporcionales
+            final fontSizeFecha = ancho * 0.08;
+            final fontSizeNombre = ancho * 0.10;
+            final paddingVertical = alto * 0.08;
+
+            return Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
+                    padding: EdgeInsets.symmetric(vertical: paddingVertical),
                     child: Text(
-                      nombreCharola,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
+                      fecha,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: fontSizeFecha.clamp(12, 20),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        nombreCharola,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: fontSizeNombre.clamp(14, 28),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -109,38 +118,44 @@ class VistaCharolas extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: GridView.builder(
-                        itemCount: vm.charolas.length,
-                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 220,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 1.3,
-                        ),
-                        itemBuilder: (context, index) {
-                          final Charola charola = vm.charolas[index];
-                          return CharolaCard(
-                            fecha:
-                                "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
-                            nombreCharola: charola.nombreCharola,
-                            color: obtenerColorPorNombre(charola.nombreCharola),
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text("Charola seleccionada"),
-                                  content: Text("Has tocado la charola ${charola.nombreCharola}"),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text("Cerrar"),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        },
+  itemCount: vm.charolas.length,
+  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 5, // Fijas el número de tarjetas por fila
+    crossAxisSpacing: 16,
+    mainAxisSpacing: 16,
+    childAspectRatio: 1.3, // Controla forma horizontal/vertical
+  ),
+  itemBuilder: (context, index) {
+    final Charola charola = vm.charolas[index];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AspectRatio(
+                aspectRatio: 1.3,
+                child: CharolaCard(
+                  fecha: "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
+                  nombreCharola: charola.nombreCharola,
+                  color: obtenerColorPorNombre(charola.nombreCharola),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Charola seleccionada"),
+                        content: Text("Has tocado la charola ${charola.nombreCharola}"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Cerrar"),
+                          ),
+                        ],
                       ),
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
                     ),
                   ),
 

@@ -1,5 +1,6 @@
 abstract class backendApiService {
 
- Future<Map<String, dynamic>?> getTabla(int limit);
+  Future<List?> getTabla();
  
+  Future<String?> postDescargarArchivo();
 }

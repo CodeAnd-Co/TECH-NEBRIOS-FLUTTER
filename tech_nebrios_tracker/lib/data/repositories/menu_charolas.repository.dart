@@ -5,18 +5,17 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/menu_charolas.model.dart';
 import '../services/menu_charolasAPI.service.dart';
+import '../models/constantes.dart';
 
 /// Repositorio que implementa la lógica para consumir la API de charolas.
 /// Encapsula llamadas HTTP y transformación de datos.
 class CharolaRepositorio implements CharolaServicioApi {
-  static const String _baseUrl = 'http://localhost:3000/api';
-
   /// Llama a la API para obtener charolas paginadas.
   ///
   /// Retorna un mapa con la respuesta JSON o lanza excepciones según el error.
   @override
   Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite) async {
-    final uri = Uri.parse('$_baseUrl/charolas?page=$pag&limit=$limite');
+    final uri = Uri.parse('${APIRutas.CHAROLA}?page=$pag&limit=$limite');
 
     try {
       final respuesta = await http.get(uri);

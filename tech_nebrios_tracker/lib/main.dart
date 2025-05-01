@@ -3,19 +3,22 @@ import 'package:provider/provider.dart';
 import 'framework/views/menu_charolas.view.dart';
 import 'framework/viewmodels/menu_charolas.viewmodel.dart';
 
+/// Punto de entrada de la aplicación.
 void main() {
   runApp(
     MultiProvider(
       providers: [
+        /// Proveedor global del ViewModel de charolas.
         ChangeNotifierProvider(create: (_) => CharolaVistaModelo()..cargarCharolas()),
       ],
-      child: const MyApp(),
+      child: const MenuCharolas(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+/// Clase principal que define la estructura básica de la app.
+class MenuCharolas extends StatelessWidget {
+  const MenuCharolas({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFFF5F7FA),
         useMaterial3: true,
       ),
-      home: const VistaCharolas(),
+      home: const VistaCharolas(), // Pantalla inicial
     );
   }
 }

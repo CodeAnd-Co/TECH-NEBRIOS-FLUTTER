@@ -6,9 +6,14 @@ import 'package:http/http.dart' as http;
 import '../models/menu_charolas.model.dart';
 import '../services/menu_charolasAPI.service.dart';
 
+/// Repositorio que implementa la lógica para consumir la API de charolas.
+/// Encapsula llamadas HTTP y transformación de datos.
 class CharolaRepositorio implements CharolaServicioApi {
   static const String _baseUrl = 'http://localhost:3000/api';
 
+  /// Llama a la API para obtener charolas paginadas.
+  ///
+  /// Retorna un mapa con la respuesta JSON o lanza excepciones según el error.
   @override
   Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite) async {
     final uri = Uri.parse('$_baseUrl/charolas?page=$pag&limit=$limite');
@@ -22,12 +27,12 @@ class CharolaRepositorio implements CharolaServicioApi {
         throw Exception('Debe iniciar sesión para continuar');
       } else if (respuesta.statusCode == 500) {
         throw Exception('Error del servidor. Inténtelo más tarde');
-      }else {
+      } else {
         print("Error HTTP: ${respuesta.statusCode}");
       }
     } on SocketException catch (_) {
-      // ❌ Error 101: Red caída, timeout, servidor no responde
-      throw Exception('Error de conexión. Verifique su red.');
+      // Error 101: problema de red o conexión
+      throw Exception('❌ Error de conexión. Verifique su red.');
     } catch (e) {
       print("Error al conectarse al backend: $e");
     }
@@ -35,6 +40,9 @@ class CharolaRepositorio implements CharolaServicioApi {
     return null;
   }
 
+  /// Convierte la respuesta cruda de la API en un modelo [CharolaTarjeta].
+  ///
+  /// Retorna null si la respuesta no es válida.
   Future<CharolaTarjeta?> obtenerCharolaRespuesta(int pag, int limite) async {
     final data = await obtenerCharolasPaginadas(pag, limite);
     if (data != null) {

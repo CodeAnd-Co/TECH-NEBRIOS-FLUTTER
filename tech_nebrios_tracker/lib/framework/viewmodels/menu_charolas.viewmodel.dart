@@ -4,19 +4,35 @@ import 'package:flutter/material.dart';
 import '../../data/models/menu_charolas.model.dart';
 import '../../domain/get_menu_charolas.dart';
 
+/// ViewModel encargado de gestionar el estado de la vista de charolas.
+/// Implementa la lógica de paginación, carga desde el caso de uso y control de errores.
 class CharolaVistaModelo extends ChangeNotifier {
+  /// Caso de uso para obtener las charolas desde el repositorio.
   final ObtenerMenuCharolas obtenerCharolasCasoUso;
 
+  /// Constructor con opción de inyectar una implementación personalizada.
   CharolaVistaModelo({ObtenerMenuCharolas? casoUso})
       : obtenerCharolasCasoUso = casoUso ?? ObtenerCharolasCasoUsoImpl();
 
+  /// Lista de charolas actualmente mostradas en la vista.
   List<Charola> charolas = [];
+
+  /// Página actual en la paginación.
   int pagActual = 1;
+
+  /// Cantidad de elementos por página (valor fijo por ahora).
   final int limite = 15;
+
+  /// Estado de carga actual.
   bool cargando = false;
+
+  /// Indica si hay más páginas por cargar.
   bool hayMas = true;
+
+  /// Total de páginas disponibles según la API.
   int totalPags = 1;
 
+  /// Carga charolas desde la API. Si refresh es true, reinicia paginación.
   Future<void> cargarCharolas({bool refresh = false}) async {
     if (cargando) return;
 
@@ -32,10 +48,6 @@ class CharolaVistaModelo extends ChangeNotifier {
 
     try {
       final respuesta = await obtenerCharolasCasoUso.ejecutar(pag: pagActual, limite: limite);
-/*
-      if (respuesta != null) {
-        charolas = []; 
-      }*/
 
       if (respuesta != null) {
         charolas.addAll(respuesta.data);
@@ -60,13 +72,15 @@ class CharolaVistaModelo extends ChangeNotifier {
     }
   }
 
+  /// Carga la página anterior, si existe.
   void cargarPaginaAnterior() {
     if (pagActual > 1) {
       pagActual--;
-      cargarCharolas(refresh: true); // limpiar antes de cargar
+      cargarCharolas(refresh: true);
     }
   }
 
+  /// Carga la siguiente página, si existe.
   void cargarPaginaSiguiente() {
     if (pagActual < totalPags) {
       pagActual++;
@@ -74,3 +88,4 @@ class CharolaVistaModelo extends ChangeNotifier {
     }
   }
 }
+

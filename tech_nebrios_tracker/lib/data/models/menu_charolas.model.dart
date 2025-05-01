@@ -1,5 +1,9 @@
+/// Modelo que representa una charola individual.
 class Charola {
+  /// Nombre de la charola.
   final String nombreCharola;
+
+  /// Fecha de creación de la charola.
   final DateTime fechaCreacion;
 
   Charola({
@@ -7,6 +11,7 @@ class Charola {
     required this.fechaCreacion,
   });
 
+  /// Construye una instancia de Charola desde un JSON.
   factory Charola.fromJson(Map<String, dynamic> json) {
     return Charola(
       nombreCharola: json['nombreCharola'],
@@ -15,11 +20,21 @@ class Charola {
   }
 }
 
+/// Modelo que representa la respuesta paginada de la API para charolas.
 class CharolaTarjeta {
+  /// Total de elementos disponibles en la base de datos.
   final int total;
+
+  /// Página actual.
   final int pag;
+
+  /// Límite de elementos por página.
   final int limite;
+
+  /// Total de páginas calculadas por la API.
   final int totalPags;
+
+  /// Lista de charolas contenidas en esta página.
   final List<Charola> data;
 
   CharolaTarjeta({
@@ -30,6 +45,7 @@ class CharolaTarjeta {
     required this.data,
   });
 
+  /// Construye una instancia de CharolaTarjeta desde un JSON.
   factory CharolaTarjeta.fromJson(Map<String, dynamic> json) {
     return CharolaTarjeta(
       total: json['total'],
@@ -42,3 +58,4 @@ class CharolaTarjeta {
     );
   }
 }
+

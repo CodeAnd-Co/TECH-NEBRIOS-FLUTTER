@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'framework/views/menu_charolas.view.dart';
 import 'framework/viewmodels/menu_charolas.viewmodel.dart';
+import 'framework/views/menu_charolas.view.dart';
 
 /// Punto de entrada de la aplicación.
 void main() {

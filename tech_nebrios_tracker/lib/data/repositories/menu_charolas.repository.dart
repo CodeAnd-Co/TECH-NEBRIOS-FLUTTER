@@ -3,9 +3,9 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../models/constantes.dart';
 import '../models/menu_charolas.model.dart';
 import '../services/menu_charolasAPI.service.dart';
-import '../models/constantes.dart';
 
 /// Repositorio que implementa la lógica para consumir la API de charolas.
 /// Encapsula llamadas HTTP y transformación de datos.

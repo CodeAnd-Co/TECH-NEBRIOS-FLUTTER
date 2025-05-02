@@ -1,4 +1,6 @@
 import 'package:tech_nebrios_tracker/data/repositories/user_repository.dart';
+import 'package:tech_nebrios_tracker/data/models/loginModel.dart';
+
 
 class UserUseCases {
   final UserRepository _repository;
@@ -16,5 +18,9 @@ class UserUseCases {
   
   Future<void> removeCurrentUser() async {
     await _repository.removeCurrentUser();
+  }
+
+  Future<LoginRespuesta?> iniciarSesion(String usuario, String contrasena) async {
+    return await _repository.iniciarSesion(usuario, contrasena);
   }
 }

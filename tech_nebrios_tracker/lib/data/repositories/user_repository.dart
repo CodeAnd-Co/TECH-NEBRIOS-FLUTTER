@@ -24,21 +24,22 @@ class UserRepository implements LocalStorageService {
     await prefs.remove('currentUser');
   }
 
-  @override
-  Future<LoginRespuesta?> postUsuario(String usuario, String contrasena) async {
-    final url = Uri.parse('http://localhost:3000/iniciarSesion');
+  Future<LoginRespuesta?> iniciarSesion(String usuario, String contrasena) async {
+    final url = Uri.parse('http://localhost:3000/usuario/iniciarSesion');
 
-    final response = await http.post(
+    final respuesta = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'usuario': usuario, 'contrasena': contrasena}),
     );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+    print(respuesta.statusCode);
+
+    if (respuesta.statusCode == 200) {
+      final data = jsonDecode(respuesta.body);
       return LoginRespuesta.fromJson(data);
-    } else if (response.statusCode == 401) {
-      throw Exception('Usuario o contraseña incorrectos');
+    } else if (respuesta.statusCode == 401) {
+      return null;
     } else {
       throw Exception('Error del servidor');
     }

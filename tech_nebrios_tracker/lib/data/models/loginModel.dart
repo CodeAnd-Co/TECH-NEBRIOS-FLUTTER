@@ -1,12 +1,12 @@
 class LoginRespuesta {
-  final int status;
+  final int code;
   final String token;
 
-  LoginRespuesta({required this.status, required this.token});
+  LoginRespuesta({required this.code, required this.token});
 
   factory LoginRespuesta.fromJson(Map<String, dynamic> json) {
     return LoginRespuesta(
-      status: json['status'],
+      code: json['code'],
       token: json['token'],
     );
   }

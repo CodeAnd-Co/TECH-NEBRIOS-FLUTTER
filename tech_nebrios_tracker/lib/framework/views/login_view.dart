@@ -67,7 +67,7 @@ class LoginView extends StatelessWidget {
                   SizedBox(
                     width: 500,
                     child: TextField(
-                      controller: viewModel.usuarioController,
+                      controller: viewModel.contrasenaController,
                       decoration: InputDecoration(
                         hintText: 'Ingresa tu contraseña aqui',
                         prefixIcon: Icon(Icons.lock),
@@ -79,7 +79,7 @@ class LoginView extends StatelessWidget {
                         ),
                       ),
                       textAlign: TextAlign.center,
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType.visiblePassword,
                       autocorrect: false,
                       textCapitalization: TextCapitalization.none,
                     ),
@@ -93,10 +93,20 @@ class LoginView extends StatelessWidget {
                 width: 150,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    viewModel.setCurrentUser();
+                  onPressed: () async {
+                    await viewModel.iniciarSesion();
                     if (!viewModel.hasError) {
                       onLogin();
+                    }
+                    else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(viewModel.errorMessage),
+                          backgroundColor:Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

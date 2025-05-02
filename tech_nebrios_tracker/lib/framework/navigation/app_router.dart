@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../views/login_view.dart';
+import '../views/test_view.dart';
 
 enum AppRoute {
   login,
-  main,
+  test,
 }
 
 class AppRouter extends RouterDelegate<AppRoute>
@@ -26,7 +27,7 @@ class AppRouter extends RouterDelegate<AppRoute>
   }
   
   void navigateToMain() {
-    _currentRoute = AppRoute.main;
+    _currentRoute = AppRoute.test;
     notifyListeners();
   }
   
@@ -48,13 +49,13 @@ class AppRouter extends RouterDelegate<AppRoute>
             ),
           ),
           
-        /*if (_currentRoute == AppRoute.main)
+        if (_currentRoute == AppRoute.test)
           MaterialPage(
-            key: const ValueKey('MainPage'),
-            child: MainTabScreen(
-              onLogout: navigateToLogin,
+            key: const ValueKey('TestPage'),
+            child: TestView(
+              //onLogout: navigateToLogin,
             ),
-          ),*/
+          ),
       ],
       onPopPage: (route, result) {
         if (!route.didPop(result)) {

@@ -16,6 +16,7 @@ dependencies:
   cached_network_image: ^3.2.3 # Cargar imágenes
   provider: ^6.0.5
   shared_preferences: ^2.1.1
+  jwt_decode: ^0.3.1 # Decodificar JWT
 
 dev_dependencies:
   flutter_test:

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tech_nebrios_tracker/domain/user_usecases.dart';
+import 'package:tech_nebrios_tracker/data/models/loginModel.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final usuarioController = TextEditingController();
+  final contrasenaController = TextEditingController();
   final UserUseCases _userUseCases = UserUseCases();
   
   String _errorMessage = '';
@@ -12,7 +15,52 @@ class LoginViewModel extends ChangeNotifier {
   bool get hasError => _hasError;
   
   LoginViewModel() {
-    _checkCurrentUser();
+    //_checkCurrentUser();
+  }
+
+  Future<void> iniciarSesion() async {
+    final usuario = usuarioController.text.trim();
+    final contrasena = contrasenaController.text.trim();
+
+    if (usuario.isEmpty) {
+      _errorMessage = 'Llena el campo de usuario';
+      _hasError = true;
+      notifyListeners();
+          
+      return;
+    }
+
+    if (contrasena.isEmpty) {
+      _errorMessage = 'Llena el campo de contraseña';
+      _hasError = true;
+      notifyListeners();
+      
+      return;
+    }
+
+    try {
+      final sesion = await _userUseCases.iniciarSesion(usuario, contrasena);
+
+      if(sesion == null) {
+        print("si es null");
+        _errorMessage = 'Usuario o contraseña incorrectos';
+        _hasError = true;
+        notifyListeners();
+        return;
+      } 
+      else {
+        setCurrentUser(sesion.token);
+
+        _hasError = false;
+        notifyListeners();
+        return;
+      }
+    }catch (e){
+      print("Error: $e");
+      _errorMessage = 'Error al iniciar sesión. Inténtalo de nuevo.';
+      _hasError = true;
+      notifyListeners();
+    }
   }
   
   void _checkCurrentUser() async {
@@ -22,25 +70,26 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
   
-  void setCurrentUser() {
-    final usuario = usuarioController.text.trim();
-    
-    if (usuario.isEmpty) {
-      _errorMessage = 'Correo inválido';
-      _hasError = true;
-      notifyListeners();
-      
-      return;
-    }
+  void setCurrentUser(String usuario) {
     
     _userUseCases.setCurrentUser(usuario);
     _hasError = false;
     notifyListeners();
   }
+
+  void decodeToken(String token) {
+  Map<String, dynamic> payload = Jwt.parseJwt(token);
+  return payload['nombreDeUsuario'];
+  /*
+  print("User ID: ${payload['id']}");
+  print("Role: ${payload['rol']}");
+  print("Username: ${payload['nombreDeUsuario']}");*/
+  }
   
   @override
   void dispose() {
     usuarioController.dispose();
+    contrasenaController.dispose();
     super.dispose();
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/models/alimento_model.dart';
 import '../../data/repositories/alimento_repository.dart';
 import '../../data/services/alimentacion_service.dart';
+import '../viewmodels/alimentacion_viewmodel.dart';
 
 class AlimentacionScreen extends StatefulWidget {
   const AlimentacionScreen({super.key});
@@ -155,7 +156,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           IconButton(icon: const Icon(Icons.edit),  onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
+            icon: const Icon(Icons.delete, color: Color(0xFFF44336)),
             onPressed: () => _onEliminarAlimento(alimento),
           ),
         ],
@@ -183,9 +184,68 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
-  void _onAgregarAlimento() {
-    // Aquí va la lógica para agregar un alimento
+void _onAgregarAlimento() {
+  final nombreController = TextEditingController();
+  final descripcionController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        backgroundColor: const Color(0xFFF8F1F1),
+        title: const Text('Nuevo Alimento'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nombreController,
+              decoration: const InputDecoration(labelText: 'Nombre:'),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: descripcionController,
+              decoration: const InputDecoration(labelText: 'Descripción:'),
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white, ),
+            onPressed: () async {
+              final nombre = nombreController.text.trim();
+              final descripcion = descripcionController.text.trim();
+
+              final vm = AlimentacionViewModel(); // <- Idealmente debería venir de Provider
+
+              final resultado = await vm.registrarAlimento(nombre, descripcion);
+              if (resultado == null) {
+                Navigator.of(context).pop();
+                await _cargarAlimentos();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(resultado)),
+                );
+              }
+            },
+            child: const Text('Guardar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white, // <-- Texto en blanco
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+
+          ],
+        );
+      },
+    );
   }
+
 
   void _onEliminarAlimento(Alimento alimento) async {
     final confirm = await showDialog<bool>(

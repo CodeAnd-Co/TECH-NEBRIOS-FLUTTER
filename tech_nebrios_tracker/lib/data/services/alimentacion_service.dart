@@ -32,4 +32,29 @@ class AlimentacionService {
       );
     }
   }
+
+  Future<void> postDatosComida(String nombre, String descripcion) async {
+  final uri = Uri.parse('$_baseUrl/alimentacion/agregar');
+  final response = await http.post(
+    uri,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'nombre': nombre,
+      'descripcion': descripcion,
+    }),
+  );
+
+  if (response.statusCode == 400) {
+    throw Exception('❌ Datos no válidos.');
+  } else if (response.statusCode == 101) {
+    throw Exception('❌ Sin conexión a internet.');
+  } else if (response.statusCode == 500) {
+    throw Exception('❌ Error del servidor.');
+  } else if (response.statusCode != 200) {
+    throw Exception('❌ Error desconocido (${response.statusCode}).');
+  }
+}
+
 }

@@ -1,3 +1,4 @@
+
 import '../models/alimento_model.dart';
 import '../services/alimentacion_service.dart';
 
@@ -16,8 +17,7 @@ class AlimentoRepository {
     await _service.eliminarAlimento(idAlimento);
   }
 
-  // Agrega un alimento
-  //Future<void> postRegistrarAlimento(str nombre, str descripción) async {
-    //await _service.eliminarAlimento(idAlimento);
-  //}
+  Future<void> postDatosComida(String nombre, String descripcion) async {
+  await _service.postDatosComida(nombre, descripcion);
+  }
 }

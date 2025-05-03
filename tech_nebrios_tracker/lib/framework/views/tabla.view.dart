@@ -50,7 +50,7 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        viewModel.estado,
+                        viewModel.estadoDescarga,
                         style: const TextStyle(fontFamily: 'Courier'),
                       ),
                       const SizedBox(width: 10),
@@ -70,10 +70,18 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
                   ),
                 ),
 
+                Text(
+                  viewModel.mensajeGet,
+                  style: const TextStyle(fontFamily: 'Courier'),
+                ),
+
                 const SizedBox(height: 20),
+
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Table(
+                  child: 
+                  
+                  Table(
                     border: TableBorder.all(),
                     children: [
                       TableRow(

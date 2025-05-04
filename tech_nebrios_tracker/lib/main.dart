@@ -1,19 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:tech_nebrios_tracker/data/repositories/charola_repository.dart';
+import 'package:tech_nebrios_tracker/domain/registrar_charola.dart';
+import 'package:tech_nebrios_tracker/framework/viewmodels/registrar_charola_viewmodel.dart';
+import 'package:tech_nebrios_tracker/framework/views/registrar_charola_view.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const ZustentoApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class ZustentoApp extends StatelessWidget {
+  const ZustentoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create:
+              (_) => RegistrarCharolaViewModel(
+                RegistrarCharola(CharolaRepository()),
+              ),
         ),
+      ],
+      child: MaterialApp(
+        title: 'Zustento App',
+        theme: ThemeData(primarySwatch: Colors.pink),
+        home: const RegistrarCharolaView(),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('es', 'ES'), // Español
+          Locale('en', 'US'), // Inglés (opcional)
+        ],
+        locale: const Locale('es', 'ES'),
       ),
     );
   }

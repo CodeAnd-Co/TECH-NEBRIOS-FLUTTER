@@ -1,3 +1,4 @@
+//RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
 import '../../data/repositories/alimento_repository.dart';
 
 /// Interfaz del caso de uso para registrar un nuevo alimento.

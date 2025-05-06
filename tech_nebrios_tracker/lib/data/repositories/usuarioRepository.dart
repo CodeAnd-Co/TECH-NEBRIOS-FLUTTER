@@ -11,21 +11,21 @@ import 'package:tech_nebrios_tracker/data/models/constantes.dart';
 class UserRepository implements LocalStorageService {
   ///Obtiene el token del usuario actual del almacenamiento local
   @override
-  Future<String?> getCurrentUser() async {
+  Future<String?> obtenerTokenActual() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('currentUser');
   }
 
   ///Guarda el token del usuario actual en el almacenamiento local
   @override
-  Future<void> setCurrentUser(String usuario) async {
+  Future<void> guardarToken(String usuario) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('currentUser', usuario);
   }
 
   ///Elimina el token del usuario actual del almacenamiento local, cerrando la sesión
   @override
-  Future<void> removeCurrentUser() async {
+  Future<void> eliminarToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('currentUser');
   }

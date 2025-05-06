@@ -6,11 +6,11 @@ abstract class LocalStorageService {
   /// Obtiene el token del usuario actual del almacenamiento local.
   /// 
   /// Retorna null si no hay usuario actual.
-  Future<String?> getCurrentUser();
+  Future<String?> obtenerTokenActual();
   /// Guarda el token del usuario actual en el almacenamiento local.
   /// 
   /// Retorna null si no hay usuario actual.
-  Future<void> setCurrentUser(String token);
+  Future<void> guardarToken(String token);
   /// Elimina el token del usuario actual del almacenamiento local, cerrando la sesión.
-  Future<void> removeCurrentUser();
+  Future<void> eliminarToken();
 }

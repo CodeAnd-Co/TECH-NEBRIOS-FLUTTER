@@ -9,18 +9,18 @@ class UserUseCases {
       : _repository = repository ?? UserRepository();
   
   ///Obtiene el usuario actual del almacenamiento local
-  Future<String?> getCurrentUser() async {
-    return await _repository.getCurrentUser();
+  Future<String?> obtenerTokenActual() async {
+    return await _repository.obtenerTokenActual();
   }
   
   ///Guarda el usuario actual en el almacenamiento local
-  Future<void> setCurrentUser(String usuario) async {
-    await _repository.setCurrentUser(usuario);
+  Future<void> guardarToken(String usuario) async {
+    await _repository.guardarToken(usuario);
   }
   
   ///Elimina el usuario actual del almacenamiento local
-  Future<void> removeCurrentUser() async {
-    await _repository.removeCurrentUser();
+  Future<void> eliminarToken() async {
+    await _repository.eliminarToken();
   }
 
   ///Intenta iniciar sesión con el usuario y contraseña proporcionados

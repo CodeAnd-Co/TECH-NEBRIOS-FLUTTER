@@ -24,7 +24,7 @@ class _TestViewState extends State<TestView> {
   }
 
   Future<void> _loadUser() async {
-    final usuario = await _userUseCases.getCurrentUser();
+    final usuario = await _userUseCases.obtenerTokenActual();
 
     if (usuario != null && usuario.isNotEmpty) {
       final decoded = Jwt.parseJwt(usuario); // o usar decodeToken si modifica más cosas

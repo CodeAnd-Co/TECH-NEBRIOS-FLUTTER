@@ -51,7 +51,7 @@ class LoginViewModel extends ChangeNotifier {
         return;
       } 
       else {
-        setCurrentUser(sesion.token);
+        guardarToken(sesion.token);
 
         _hasError = false;
         notifyListeners();
@@ -65,16 +65,16 @@ class LoginViewModel extends ChangeNotifier {
   }
   
   ///Verifica si hay un usuario actual en el almacenamiento local y lo establece en el controlador de texto
-  void _checkCurrentUser() async {
-    final usuario = await _userUseCases.getCurrentUser();
+  void _obtenerTokenActual() async {
+    final usuario = await _userUseCases.obtenerTokenActual();
     if (usuario != null && usuario.isNotEmpty) {
       usuarioController.text = usuario;
     }
   }
   
   ///Establece el usuario actual en el almacenamiento local
-  void setCurrentUser(String usuario) {
-    _userUseCases.setCurrentUser(usuario);
+  void guardarToken(String usuario) {
+    _userUseCases.guardarToken(usuario);
     notifyListeners();
   }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'framework/viewmodels/menu_charolas.viewmodel.dart';
 import 'framework/views/menu_charolas.view.dart';
+import 'framework/navigation/app_router.dart';
+import 'framework/viewmodels/loginViewmodel.dart';
 
 /// Punto de entrada de la aplicación.
 void main() {
@@ -22,14 +24,21 @@ class MenuCharolas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Charolas App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF5F7FA),
-        useMaterial3: true,
+    return MultiProvider(
+      providers:[
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
+      ],
+      child: MaterialApp(
+        title: "Zuustento Tracker",
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+          useMaterial3: true,
+        ),
+        home: Router(
+          routerDelegate: AppRouter(),
+          backButtonDispatcher: RootBackButtonDispatcher(),
+        ),
       ),
-      home: const VistaCharolas(), // Pantalla inicial
     );
   }
 }

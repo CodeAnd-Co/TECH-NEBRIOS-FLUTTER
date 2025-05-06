@@ -1,6 +1,7 @@
-/// Define las rutas base de la API utilizadas en todo el proyecto.
-class APIRutas {
+class APIRutas{
   static const String BASEURL = "http://localhost:3000";
-  
+
   static const String CHAROLA = "$BASEURL/charola";
+
+  static const String USUARIO = "$BASEURL/usuario";
 }

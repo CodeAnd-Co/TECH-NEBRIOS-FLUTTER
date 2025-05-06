@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewmodel.dart';
-import 'framework/views/loginView.dart';
 
 void main() {
   runApp(const MainApp());

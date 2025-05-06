@@ -1,4 +1,4 @@
-import 'package:tech_nebrios_tracker/data/repositories/user_repository.dart';
+import 'package:tech_nebrios_tracker/data/repositories/usuarioRepository.dart';
 import 'package:tech_nebrios_tracker/data/models/loginModel.dart';
 
 

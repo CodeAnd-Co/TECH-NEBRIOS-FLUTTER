@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tech_nebrios_tracker/domain/user_usecases.dart';
+import 'package:tech_nebrios_tracker/domain/usuarioUseCases.dart';
 import 'package:tech_nebrios_tracker/data/models/loginModel.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
@@ -57,8 +57,7 @@ class LoginViewModel extends ChangeNotifier {
         return;
       }
     }catch (e){
-      print("Error: $e");
-      _errorMessage = 'Error al iniciar sesión. Inténtalo de nuevo.';
+      _errorMessage = 'Error al iniciar sesión. Inténtalo de nuevo más tarde.';
       _hasError = true;
       notifyListeners();
     }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../views/login_view.dart';
+import '../views/loginView.dart';
 import '../views/test_view.dart';
 
 enum AppRoute {

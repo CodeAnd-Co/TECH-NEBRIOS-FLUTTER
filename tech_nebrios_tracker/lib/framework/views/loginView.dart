@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/login_viewmodel.dart';
+import '../viewmodels/loginViewmodel.dart';
 
 class LoginView extends StatelessWidget {
   final VoidCallback onLogin;

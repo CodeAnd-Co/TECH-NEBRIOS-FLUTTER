@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:tech_nebrios_tracker/data/services/local_storage_service.dart';
+import 'package:tech_nebrios_tracker/data/services/localStorageService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tech_nebrios_tracker/data/models/loginModel.dart';
-import 'package:tech_nebrios_tracker/data/services/user_api_service.dart';
+import 'package:tech_nebrios_tracker/data/services/usuarioApiService.dart';
 import 'package:tech_nebrios_tracker/data/models/constantes.dart';
 
 class UserRepository implements LocalStorageService {

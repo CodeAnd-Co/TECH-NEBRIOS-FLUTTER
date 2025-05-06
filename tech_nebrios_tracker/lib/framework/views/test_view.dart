@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tech_nebrios_tracker/domain/user_usecases.dart';
-import 'package:tech_nebrios_tracker/framework/viewmodels/login_viewmodel.dart';
+import 'package:tech_nebrios_tracker/domain/usuarioUseCases.dart';
+import 'package:tech_nebrios_tracker/framework/viewmodels/loginViewmodel.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
 class TestView extends StatefulWidget {

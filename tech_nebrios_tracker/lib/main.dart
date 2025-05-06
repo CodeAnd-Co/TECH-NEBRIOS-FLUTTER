@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'framework/navigation/app_router.dart';
+import 'framework/viewmodels/loginViewmodel.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,10 +12,19 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+    return MultiProvider(
+      providers:[
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
+      ],
+      child: MaterialApp(
+        title: "Zuustento Tracker",
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+          useMaterial3: true,
+        ),
+        home: Router(
+          routerDelegate: AppRouter(),
+          backButtonDispatcher: RootBackButtonDispatcher(),
         ),
       ),
     );

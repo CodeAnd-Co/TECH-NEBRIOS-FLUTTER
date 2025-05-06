@@ -2,5 +2,5 @@
 class APIRutas {
   static const String BASEURL = "http://localhost:3000";
   
-  static const String CHAROLA = "$BASEURL/api/charolas";
+  static const String CHAROLA = "$BASEURL/charola";
 }

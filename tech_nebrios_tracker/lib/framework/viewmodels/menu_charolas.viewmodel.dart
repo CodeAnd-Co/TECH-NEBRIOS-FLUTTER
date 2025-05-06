@@ -9,10 +9,13 @@ import '../../domain/get_menu_charolas.dart';
 class CharolaVistaModelo extends ChangeNotifier {
   /// Caso de uso para obtener las charolas desde el repositorio.
   final ObtenerMenuCharolas obtenerCharolasCasoUso;
+    
 
   /// Constructor con opción de inyectar una implementación personalizada.
   CharolaVistaModelo({ObtenerMenuCharolas? casoUso})
-      : obtenerCharolasCasoUso = casoUso ?? ObtenerCharolasCasoUsoImpl();
+      : obtenerCharolasCasoUso = casoUso ?? ObtenerCharolasCasoUsoImpl(){
+        cargarCharolas();
+      }
 
   /// Lista de charolas actualmente mostradas en la vista.
   List<Charola> charolas = [];

@@ -10,34 +10,29 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        /// Proveedor global del ViewModel de charolas.
-        ChangeNotifierProvider(create: (_) => CharolaVistaModelo()..cargarCharolas()),
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
+        ChangeNotifierProvider(create: (_) => CharolaVistaModelo()),
       ],
-      child: const MenuCharolas(),
+      child: const MyApp(),
     ),
   );
 }
 
 /// Clase principal que define la estructura básica de la app.
-class MenuCharolas extends StatelessWidget {
-  const MenuCharolas({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers:[
-        ChangeNotifierProvider(create: (_) => LoginViewModel()),
-      ],
-      child: MaterialApp(
-        title: "Zuustento Tracker",
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
-          useMaterial3: true,
-        ),
-        home: Router(
-          routerDelegate: AppRouter(),
-          backButtonDispatcher: RootBackButtonDispatcher(),
-        ),
+    return MaterialApp(
+      title: 'Zuustento Tracker',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+        useMaterial3: true,
+      ),
+      home: Router(
+        routerDelegate: AppRouter(),
+        backButtonDispatcher: RootBackButtonDispatcher(),
       ),
     );
   }

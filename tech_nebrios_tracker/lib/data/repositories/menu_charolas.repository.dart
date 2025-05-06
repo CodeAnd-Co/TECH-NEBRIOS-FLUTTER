@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/constantes.dart';
 import '../models/menu_charolas.model.dart';
 import '../services/menu_charolasAPI.service.dart';
+import '../../domain/usuarioUseCases.dart';
 
 /// Repositorio que implementa la lógica para consumir la API de charolas.
 /// Encapsula llamadas HTTP y transformación de datos.
@@ -16,9 +17,17 @@ class CharolaRepositorio implements CharolaServicioApi {
   @override
   Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite) async {
     final uri = Uri.parse('${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite');
+    final UserUseCases _userUseCases = UserUseCases();
+    final token = await _userUseCases.obtenerTokenActual();
 
     try {
-      final respuesta = await http.get(uri);
+      final respuesta = await http.get(
+        uri,
+        headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+        );
 
       if (respuesta.statusCode == 200) {
         return jsonDecode(respuesta.body);

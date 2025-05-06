@@ -18,7 +18,8 @@ class LoginViewModel extends ChangeNotifier {
     //_checkCurrentUser();
   }
 
-  ///Envía los datos de los campos de texto de la vista y trata de iniciar sesión con los mismos
+  ///Envía los datos de los campos de texto de la vista y trata de iniciar sesión con los mismos.
+  ///
   ///Si el inicio de sesión es correcto, se guarda en el almacenamiento local y se establece como el usuario actual
   Future<void> iniciarSesion() async {
     final usuario = usuarioController.text.trim();

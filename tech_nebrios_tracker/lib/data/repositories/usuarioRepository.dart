@@ -6,25 +6,34 @@ import 'package:tech_nebrios_tracker/data/models/loginModel.dart';
 import 'package:tech_nebrios_tracker/data/services/usuarioApiService.dart';
 import 'package:tech_nebrios_tracker/data/models/constantes.dart';
 
+///Clase que implementa el repositorio de usuario y conecta con el servicio de APIs
+/// y el servicio de almacenamiento local
 class UserRepository implements LocalStorageService {
+  ///Obtiene el token del usuario actual del almacenamiento local
   @override
   Future<String?> getCurrentUser() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('currentUser');
   }
 
+  ///Guarda el token del usuario actual en el almacenamiento local
   @override
   Future<void> setCurrentUser(String usuario) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('currentUser', usuario);
   }
 
+  ///Elimina el token del usuario actual del almacenamiento local, cerrando la sesión
   @override
   Future<void> removeCurrentUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('currentUser');
   }
 
+  ///Intenta iniciar sesión con el usuario y contraseña proporcionados
+  ///
+  ///Si el inicio de sesión es exitoso, guarda el token en el almacenamiento local
+  ///Envía un error si el inicio de sesión falla
   Future<LoginRespuesta?> iniciarSesion(String usuario, String contrasena) async {
     final url = Uri.parse('${APIRutas.USUARIO}/iniciarSesion');
 

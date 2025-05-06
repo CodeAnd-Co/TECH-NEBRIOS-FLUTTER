@@ -4,6 +4,7 @@ import 'package:tech_nebrios_tracker/data/services/local_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tech_nebrios_tracker/data/models/loginModel.dart';
 import 'package:tech_nebrios_tracker/data/services/user_api_service.dart';
+import 'package:tech_nebrios_tracker/data/models/constantes.dart';
 
 class UserRepository implements LocalStorageService {
   @override
@@ -25,7 +26,7 @@ class UserRepository implements LocalStorageService {
   }
 
   Future<LoginRespuesta?> iniciarSesion(String usuario, String contrasena) async {
-    final url = Uri.parse('http://localhost:3000/usuario/iniciarSesion');
+    final url = Uri.parse('${APIRutas.USUARIO}/iniciarSesion');
 
     final respuesta = await http.post(
       url,

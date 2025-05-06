@@ -18,6 +18,8 @@ class LoginViewModel extends ChangeNotifier {
     //_checkCurrentUser();
   }
 
+  ///Envía los datos de los campos de texto de la vista y trata de iniciar sesión con los mismos
+  ///Si el inicio de sesión es correcto, se guarda en el almacenamiento local y se establece como el usuario actual
   Future<void> iniciarSesion() async {
     final usuario = usuarioController.text.trim();
     final contrasena = contrasenaController.text.trim();
@@ -42,7 +44,6 @@ class LoginViewModel extends ChangeNotifier {
       final sesion = await _userUseCases.iniciarSesion(usuario, contrasena);
 
       if(sesion == null) {
-        print("si es null");
         _errorMessage = 'Usuario o contraseña incorrectos';
         _hasError = true;
         notifyListeners();
@@ -63,6 +64,7 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
   
+  ///Verifica si hay un usuario actual en el almacenamiento local y lo establece en el controlador de texto
   void _checkCurrentUser() async {
     final usuario = await _userUseCases.getCurrentUser();
     if (usuario != null && usuario.isNotEmpty) {
@@ -70,20 +72,17 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
   
+  ///Establece el usuario actual en el almacenamiento local
   void setCurrentUser(String usuario) {
-    
     _userUseCases.setCurrentUser(usuario);
-    _hasError = false;
     notifyListeners();
   }
 
-  void decodeToken(String token) {
+  ///Decodifica un token JWT y obtiene el nombre de usuario
+  String decodeToken(String token) {
   Map<String, dynamic> payload = Jwt.parseJwt(token);
   return payload['nombreDeUsuario'];
-  /*
-  print("User ID: ${payload['id']}");
-  print("Role: ${payload['rol']}");
-  print("Username: ${payload['nombreDeUsuario']}");*/
+ 
   }
   
   @override

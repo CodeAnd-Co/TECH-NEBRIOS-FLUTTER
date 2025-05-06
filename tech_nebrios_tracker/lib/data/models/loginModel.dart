@@ -1,3 +1,4 @@
+/// Esta clase mapea el JSON de la respuesta del login
 class LoginRespuesta {
   final int code;
   final String token;

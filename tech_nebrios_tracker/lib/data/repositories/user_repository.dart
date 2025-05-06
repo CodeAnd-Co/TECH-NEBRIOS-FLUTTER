@@ -33,8 +33,6 @@ class UserRepository implements LocalStorageService {
       body: jsonEncode({'usuario': usuario, 'contrasena': contrasena}),
     );
 
-    print(respuesta.statusCode);
-
     if (respuesta.statusCode == 200) {
       final data = jsonDecode(respuesta.body);
       return LoginRespuesta.fromJson(data);

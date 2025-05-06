@@ -8,11 +8,11 @@ import '../../domain/alimentacion_domain.dart';
 
 class AlimentacionViewModel extends ChangeNotifier {
   final AlimentoRepository _repo;
-  final RegistrarAlimentoCasoUso _registrarCasoUso;
+  final EditarAlimentoCasoUso _editarCasoUso;
 
   AlimentacionViewModel()
       : _repo = AlimentoRepository(AlimentacionService()),
-        _registrarCasoUso = PostRegistrarAlimento(
+        _editarCasoUso = EditarAlimento(
           repositorio: AlimentoRepository(AlimentacionService()),
         );
 
@@ -36,21 +36,21 @@ class AlimentacionViewModel extends ChangeNotifier {
     _setLoading(false);
   }
 
-  /// Validar y registrar nuevo alimento
-  Future<String?> registrarAlimento(String nombre, String descripcion) async {
+  /// Editar alimento existente
+  Future<String?> editarAlimento(Alimento alimento) async {
     // Validación local
-    if (nombre.trim().isEmpty || descripcion.trim().isEmpty) {
+    if (alimento.nombreAlimento.trim().isEmpty || alimento.descripcionAlimento.trim().isEmpty) {
       return 'Nombre y descripción no pueden estar vacíos.';
     }
 
-    final tieneNumeros = RegExp(r'[0-9]').hasMatch(nombre);
+    final tieneNumeros = RegExp(r'[0-9]').hasMatch(alimento.nombreAlimento);
     if (tieneNumeros) {
       return 'El nombre no debe contener números.';
     }
 
     _setLoading(true);
     try {
-      await _registrarCasoUso.ejecutar(nombre: nombre, descripcion: descripcion);
+      await _editarCasoUso.editar(alimento: alimento);
       await cargarAlimentos(); // Recargar lista
       return null; // éxito
     } on Exception catch (e) {
@@ -63,7 +63,6 @@ class AlimentacionViewModel extends ChangeNotifier {
       _setLoading(false);
     }
   }
-
   /// Cambiar estado de carga y notificar listeners
   void _setLoading(bool value) {
     _isLoading = value;

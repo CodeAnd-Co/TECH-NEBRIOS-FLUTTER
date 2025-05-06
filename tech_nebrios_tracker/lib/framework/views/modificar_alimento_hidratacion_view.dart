@@ -98,7 +98,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.add),
-                onPressed: _onAgregarAlimento,
+                onPressed: () async {}, // aqui va _onAgregarAlimento
               ),
             ],
           ),
@@ -154,11 +154,13 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       child: Row(
         children: [
           Expanded(child: Text(alimento.nombreAlimento)),
-          IconButton(icon: const Icon(Icons.edit),  onPressed: () {},
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => _onEditarAlimento(alimento, index),
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Color(0xFFF44336)),
-            onPressed: () => _onEliminarAlimento(alimento),
+            onPressed: () async {}, // aqui va _onEliminarAlimento
           ),
         ],
       ),
@@ -185,99 +187,77 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
-void _onAgregarAlimento() {
-  final nombreController = TextEditingController();
-  final descripcionController = TextEditingController();
+  void _onEditarAlimento(Alimento alimento, int index) {
+    final nombreController = TextEditingController(
+      text: alimento.nombreAlimento,
+    );
+    final descripcionController = TextEditingController(
+      text: alimento.descripcionAlimento,
+    );
 
-  showDialog(
-    context: context,
-    builder: (_) {
-      return AlertDialog(
-        backgroundColor: const Color(0xFFF8F1F1),
-        title: const Text('Nuevo Alimento'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nombreController,
-              decoration: const InputDecoration(labelText: 'Nombre:'),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: descripcionController,
-              decoration: const InputDecoration(labelText: 'Descripción:'),
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white, ),
-            onPressed: () async {
-              final nombre = nombreController.text.trim();
-              final descripcion = descripcionController.text.trim();
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFFF8F1F1),
+          title: const Text('Modificar Alimento'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nombreController,
+                decoration: const InputDecoration(labelText: 'Nombre:'),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: descripcionController,
+                decoration: const InputDecoration(labelText: 'Descripción:'),
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                final nombre = nombreController.text.trim();
+                final descripcion = descripcionController.text.trim();
 
-              final vm = AlimentacionViewModel(); // <- Idealmente debería venir de Provider
+                final vm = AlimentacionViewModel();
 
-              final resultado = await vm.registrarAlimento(nombre, descripcion);
-              if (resultado == null) {
-                Navigator.of(context).pop();
-                await _cargarAlimentos();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(resultado)),
+                final resultado = await vm.editarAlimento(
+                  Alimento(
+                    idAlimento: alimento.idAlimento,
+                    nombreAlimento: nombre,
+                    descripcionAlimento: descripcion,
+                  ),
                 );
-              }
-            },
-            child: const Text('Guardar'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white, // <-- Texto en blanco
+                if (resultado == null) {
+                  Navigator.of(context).pop();
+                  await _cargarAlimentos();
+                } else {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(resultado)));
+                }
+              },
+              child: const Text('Guardar'),
             ),
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
-          ),
-
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
           ],
         );
       },
     );
-  }
-
-
-  void _onEliminarAlimento(Alimento alimento) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder:
-          (_) => AlertDialog(
-            title: const Text('Eliminar alimento'),
-            content: const Text('¿Estás seguro de eliminar este alimento?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Eliminar'),
-              ),
-            ],
-          ),
-    );
-    if (confirm == true) {
-      try {
-        await _repo.eliminarAlimento(alimento.idAlimento);
-        setState(() {
-          alimentos.removeWhere((c) => c.idAlimento == alimento.idAlimento);
-        });
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al eliminar alimento: $e')),
-        );
-      }
-    }
   }
 }

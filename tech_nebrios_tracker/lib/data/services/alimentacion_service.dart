@@ -21,41 +21,28 @@ class AlimentacionService {
     return data.map((item) => Alimento.fromJson(item)).toList();
   }
 
- /// Envía la petición de eliminar
-  Future<void> eliminarAlimento(int idAlimento) async {
-    final uri = Uri.parse('$_baseUrl/alimentacion/eliminar/$idAlimento');
+  // Edita un alimento existente
+  Future<void> editarAlimento(Alimento alimento) async {
+    final uri = Uri.parse('$_baseUrl/alimentacion/editar/${alimento.idAlimento}');
+    final response = await http.put(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'nombreAlimento': alimento.nombreAlimento,
+        'descripcionAlimento': alimento.descripcionAlimento,
+      }),
+    );
 
-    final response = await http.delete(uri);
-
-    if (response.statusCode != 200) {
-      throw Exception(
-        'Error al eliminar alimento (${response.statusCode}): ${response.body}',
-      );
+    if (response.statusCode == 400) {
+      throw Exception('❌ Datos no válidos.');
+    } else if (response.statusCode == 101) {
+      throw Exception('❌ Sin conexión a internet.');
+    } else if (response.statusCode == 500) {
+      throw Exception('❌ Error del servidor.');
+    } else if (response.statusCode != 200) {
+      throw Exception('❌ Error desconocido (${response.statusCode}).');
     }
   }
-
-  Future<void> postDatosComida(String nombre, String descripcion) async {
-  final uri = Uri.parse('$_baseUrl/alimentacion/agregar');
-  final response = await http.post(
-    uri,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      'nombre': nombre,
-      'descripcion': descripcion,
-    }),
-  );
-
-  if (response.statusCode == 400) {
-    throw Exception('❌ Datos no válidos.');
-  } else if (response.statusCode == 101) {
-    throw Exception('❌ Sin conexión a internet.');
-  } else if (response.statusCode == 500) {
-    throw Exception('❌ Error del servidor.');
-  } else if (response.statusCode != 200) {
-    throw Exception('❌ Error desconocido (${response.statusCode}).');
-  }
-}
-
 }

@@ -12,12 +12,8 @@ class AlimentoRepository {
     return await _service.obtenerAlimentos();
   }
 
-  // Elimina un alimento por su ID
-  Future<void> eliminarAlimento(int idAlimento) async {
-    await _service.eliminarAlimento(idAlimento);
-  }
-
-  Future<void> postDatosComida(String nombre, String descripcion) async {
-  await _service.postDatosComida(nombre, descripcion);
+   /// Edita un alimento existente
+  Future<void> editarAlimento(Alimento alimento) async {
+    await _service.editarAlimento(alimento);
   }
 }

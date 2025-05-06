@@ -10,11 +10,14 @@ class AlimentacionViewModel extends ChangeNotifier {
   final AlimentoRepository _repo;
   final EditarAlimentoCasoUso _editarCasoUso;
 
-  AlimentacionViewModel()
-      : _repo = AlimentoRepository(AlimentacionService()),
-        _editarCasoUso = EditarAlimento(
-          repositorio: AlimentoRepository(AlimentacionService()),
-        );
+ AlimentacionViewModel({
+    AlimentoRepository? repo,
+    EditarAlimentoCasoUso? editarCasoUso,
+  })  : _repo = repo ?? AlimentoRepository(AlimentacionService()),
+        _editarCasoUso = editarCasoUso ??
+            EditarAlimento(
+              repositorio: AlimentoRepository(AlimentacionService()),
+            );
 
   bool _isLoading = false;
   String? _error;

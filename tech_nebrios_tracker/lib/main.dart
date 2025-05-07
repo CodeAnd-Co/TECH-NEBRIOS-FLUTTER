@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './framework/views/components/organisms/pop_up_charola.dart';
+import 'framework/views/pages/consultar_charola_page.dart'; // Asegúrate de que el path es correcto
 
 void main() {
   runApp(const MainApp());
@@ -10,24 +10,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Builder(
-            builder: (context) => IconButton(
-              icon: Image.asset('lib/framework/views/components/atoms/icons/X.png'),
-              iconSize: 40,
-              color: Colors.red,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => const PopUpCharola.prueba(),
-                );
-              },
-            ),
-          ),
-        ),
-      ),
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: PantallaCharola(charolaId: 1011,), // ← Se muestra directamente como pantalla principal
     );
   }
 }

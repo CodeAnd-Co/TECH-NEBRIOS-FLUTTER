@@ -1,3 +1,5 @@
+// RF10 https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
+
 import 'package:flutter/material.dart';
 import '../../../domain/consular_charola.dart';
 import '../../../data/models/charola_model.dart';
@@ -58,6 +60,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     return AnimatedBuilder(
       animation: viewModel,
       builder: (context, _) {
+        // animación de carga
         if (viewModel.cargando) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -66,6 +69,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
 
         final Charola? charola = viewModel.charola;
 
+        // si es que la charola no existe mostrar un mensaje de error
         if (charola == null) {
           return const Scaffold(
             body: Center(child: Text('Charola no encontrada')),
@@ -79,57 +83,66 @@ class _PantallaCharolaState extends State<PantallaCharola> {
               width: 900,
               height: 900,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Texto.titulo1(
-                    texto: charola.nombreCharola,
-                    bold: true,
-                    tamanio: 64,
-                    color: const Color.fromARGB(250, 34, 166, 58),
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _crearInfoFila('fecha:', charola.fechaCreacion),
-                        _crearInfoFila('peso:', '${charola.pesoCharola} g'),
-                        _crearInfoFila('frass:', '${charola.densidadLarva} g'),
-                        _crearInfoFila('hidratacion:', charola.hidratacionNombre),
-                        _crearInfoFila('alimento:', charola.comidaNombre),
-                      ],
+                  Card(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [ 
+                            Texto.titulo1(
+                              texto: charola.nombreCharola,
+                              bold: true,
+                              tamanio: 64,
+                              color: const Color.fromARGB(250, 34, 166, 58),
+                            ),
+                            _crearInfoFila('fecha:', charola.fechaCreacion),
+                            _crearInfoFila('peso:', '${charola.pesoCharola} g'),
+                            _crearInfoFila('frass:', '${charola.densidadLarva} g'),
+                            _crearInfoFila('hidratacion:', charola.hidratacionNombre),
+                            _crearInfoFila('alimento:', charola.comidaNombre),
+                            Wrap(
+                              spacing: 150,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                _crearBotonTexto(
+                                  'Eliminar',
+                                  const Color.fromARGB(255, 228, 61, 61),
+                                  () {
+                                    Navigator.of(context).pop();
+                                    print('Botón de Eliminar presionado');
+                                  },
+                                ),
+                                _crearBotonTexto(
+                                  'Historial',
+                                  const Color.fromARGB(255, 226, 56, 125),
+                                  () {
+                                    Navigator.of(context).pop();
+                                    print('Botón de Historial presionado');
+                                  },
+                                ),
+                                _crearBotonTexto(
+                                  'Editar',
+                                  const Color.fromARGB(255, 36, 66, 204),
+                                  () {
+                                    Navigator.of(context).pop();
+                                    print('Botón de Editar presionado');
+                                  },
+                                ),
+                              ],
+                            )
+                          ],
+                        ), 
+                      ),
                     ),
                   ),
-                  Wrap(
-                    spacing: 150,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      _crearBotonTexto(
-                        'Eliminar',
-                        const Color.fromARGB(255, 228, 61, 61),
-                        () {
-                          Navigator.of(context).pop();
-                          print('Botón de Eliminar presionado');
-                        },
-                      ),
-                      _crearBotonTexto(
-                        'Historial',
-                        const Color.fromARGB(255, 226, 56, 125),
-                        () {
-                          Navigator.of(context).pop();
-                          print('Botón de Historial presionado');
-                        },
-                      ),
-                      _crearBotonTexto(
-                        'Editar',
-                        const Color.fromARGB(255, 36, 66, 204),
-                        () {
-                          Navigator.of(context).pop();
-                          print('Botón de Editar presionado');
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 40),
                 ],
               ),
             ),

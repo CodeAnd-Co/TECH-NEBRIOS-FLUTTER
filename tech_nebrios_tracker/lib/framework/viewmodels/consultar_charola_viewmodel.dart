@@ -1,3 +1,5 @@
+// RF10 https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
+
 import 'package:flutter/material.dart';
 import '../../domain/consular_charola.dart';
 import '../../data/models/charola_model.dart';

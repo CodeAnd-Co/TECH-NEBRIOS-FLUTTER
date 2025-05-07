@@ -101,7 +101,7 @@ class VistaCharolas extends StatelessWidget {
             return Column(
               children: [
                 const SizedBox(height: 16),
-                const Text('Charolas', style: TextStyle(fontSize: 32)),
+                const Text('Charolas', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 const Divider(color: Color(0xFF000000), thickness: 3),
                 const SizedBox(height: 8),

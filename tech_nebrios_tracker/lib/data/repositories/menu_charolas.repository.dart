@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import '../models/constantes.dart';
 import '../models/menu_charolas.model.dart';
 import '../services/menu_charolasAPI.service.dart';
@@ -11,6 +12,7 @@ import '../../domain/usuarioUseCases.dart';
 /// Repositorio que implementa la lógica para consumir la API de charolas.
 /// Encapsula llamadas HTTP y transformación de datos.
 class CharolaRepositorio implements CharolaServicioApi {
+  final Logger _logger = Logger();
   /// Llama a la API para obtener charolas paginadas.
   ///
   /// Retorna un mapa con la respuesta JSON o lanza excepciones según el error.
@@ -36,13 +38,13 @@ class CharolaRepositorio implements CharolaServicioApi {
       } else if (respuesta.statusCode == 500) {
         throw Exception('Error del servidor. Inténtelo más tarde');
       } else {
-        print("Error HTTP: ${respuesta.statusCode}");
+        _logger.e("Error HTTP: ${respuesta.statusCode}");
       }
     } on SocketException catch (_) {
       // Error 101: problema de red o conexión
       throw Exception('❌ Error de conexión. Verifique su red.');
     } catch (e) {
-      print("Error al conectarse al backend: $e");
+      _logger.e("Error al conectarse al backend: $e");
     }
 
     return null;

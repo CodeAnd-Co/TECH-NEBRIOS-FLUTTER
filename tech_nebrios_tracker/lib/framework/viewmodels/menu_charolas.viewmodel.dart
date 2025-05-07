@@ -1,12 +1,14 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
 
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import '../../data/models/menu_charolas.model.dart';
 import '../../domain/get_menu_charolas.dart';
 
 /// ViewModel encargado de gestionar el estado de la vista de charolas.
 /// Implementa la lógica de paginación, carga desde el caso de uso y control de errores.
 class CharolaVistaModelo extends ChangeNotifier {
+  final Logger _logger = Logger();
   /// Caso de uso para obtener las charolas desde el repositorio.
   final ObtenerMenuCharolas obtenerCharolasCasoUso;
     
@@ -65,8 +67,7 @@ class CharolaVistaModelo extends ChangeNotifier {
       } else {
         mensajeError = '💥 Error 500: Fallo interno del servidor. Inténtalo más tarde.';
       }
-
-      print(mensajeError);
+      _logger.e(mensajeError);
     } finally {
       cargando = false;
       notifyListeners();

@@ -47,8 +47,6 @@ class CharolaVistaModelo extends ChangeNotifier {
     cargando = true;
     notifyListeners();
 
-    print("🔗 ViewModel intenta cargar charolas desde la API (page: $pagActual, limit: $limite)");
-
     try {
       final respuesta = await obtenerCharolasCasoUso.ejecutar(pag: pagActual, limite: limite);
 

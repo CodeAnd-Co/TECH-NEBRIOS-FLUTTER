@@ -32,6 +32,10 @@ class CharolaRepository {
 
     if (response.statusCode == 201) {
       print('Charola registrada exitosamente: ${response.body}');
+    } else if (response.statusCode == 409) {
+      // Manejar el caso en que el nombre ya existe
+      final errorResponse = json.decode(response.body);
+      throw Exception(errorResponse['message']);
     } else {
       print('Error al registrar la charola: ${response.statusCode}');
       throw Exception('Error al registrar la charola: ${response.statusCode}');

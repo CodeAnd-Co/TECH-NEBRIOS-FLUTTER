@@ -33,6 +33,8 @@ void main() {
 
     await viewModel.cargarCharola(1011);
 
+    print('Charola obtenida: ${viewModel.charola?.nombreCharola}');
+
     expect(viewModel.charola, isNotNull);
     expect(viewModel.charola!.nombreCharola, 'EQUIDDE');
     expect(viewModel.charola!.comidaNombre, 'Cereza');
@@ -48,5 +50,7 @@ void main() {
 
     expect(viewModel.charola, isNull);
     expect(viewModel.cargando, false);
+
+    print('Charola obtenida: ${viewModel.charola?.nombreCharola}');
   });
 }

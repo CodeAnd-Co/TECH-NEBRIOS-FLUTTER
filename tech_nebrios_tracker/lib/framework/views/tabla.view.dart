@@ -10,11 +10,29 @@ class VistaTablaCharolas extends StatefulWidget {
 }
 
 class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
+  final int _itemsPerPage = 20;
+  int _currentMaxItems = 20;
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     final vistaModelo = Provider.of<TablaViewModel>(context, listen: false);
     vistaModelo.getTabla();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _currentMaxItems += _itemsPerPage;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -36,116 +54,125 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
       body: RefreshIndicator(
         onRefresh: () async {
           await vistaModelo.getTabla();
+          setState(() {
+            _currentMaxItems = _itemsPerPage;
+          });
         },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(), 
-          child: Center(
-            child: Column(
-              children: [
-                const Divider(color: Colors.black, thickness: 2),
-                const Text("Datos de todas las charolas", style: TextStyle(fontSize: 24)),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+        child: ListView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            const Divider(color: Colors.black, thickness: 2),
+            const Text("Datos de todas las charolas", style: TextStyle(fontSize: 24), textAlign: TextAlign.center,),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await vistaModelo.postDescargarArchivo();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: vistaModelo.errorGet ? Colors.red : Colors.green,
+                          content: Text(vistaModelo.estadoDescarga),
+                          duration: const Duration(seconds: 5),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                    child: const Text("Descargar Excel", style: TextStyle(fontSize: 20)),
+                  ),
+                ],
+              ),
+            ),
+
+            Text(
+              vistaModelo.mensajeGet,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontFamily: 'Courier', fontSize: 20),
+            ),
+
+            const SizedBox(height: 20),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: Table(
+                border: TableBorder.all(),
+                children: [
+                  TableRow(
                     children: [
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () async {
-                        await vistaModelo.postDescargarArchivo();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: vistaModelo.errorGet ? Colors.red : Colors.green,
-                            content: Text(vistaModelo.estadoDescarga),
-                            duration: const Duration(seconds: 5),
-                          ),
+                      _buildHeader('Charola'),
+                      _buildHeader('Fecha de creación'),
+                      _buildHeader('Ultima actualización'),
+                      _buildHeader('Peso (gr)'),
+                      _buildHeader('Comida x Ciclo (gr)'),
+                      _buildHeader('Hidratación x Ciclo(gr)'),
+                      _buildHeader('Estado'),
+                      _buildHeader('Densidad de larva'),
+                    ],
+                  ),
+                  if (vistaModelo.valoresTabla != null)
+                    ...List.generate(
+                      (vistaModelo.valoresTabla!.length < _currentMaxItems
+                          ? vistaModelo.valoresTabla!.length
+                          : _currentMaxItems),
+                      (i) {
+                        final item = vistaModelo.valoresTabla![i];
+                        return TableRow(
+                          children: [
+                            _buildCell('${item['nombreCharola'] ?? ''}'),
+                            _buildCell('${item['fechaCreacion'] ?? ''}'),
+                            _buildCell('${item['fechaActualizacion'] ?? ''}'),
+                            _buildCell('${item['pesoCharola'] ?? ''}'),
+                            _buildCell('${item['comidaCiclo'] ?? ''}'),
+                            _buildCell('${item['hidratacionCiclo'] ?? ''}'),
+                            _buildCell('${item['estado'] ?? ''}'),
+                            _buildCell('${item['densidadLarva'] ?? ''}'),
+                          ],
                         );
                       },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        ),
-                        child: const Text("Descargar Excel", style: TextStyle(fontSize: 20)),
-                        
-                      ),
-                    ],
-                  ),
-                ),
-
-                Text(
-                  vistaModelo.mensajeGet,
-                  style: const TextStyle(fontFamily: 'Courier', fontSize: 20),
-                ),
-
-                const SizedBox(height: 20),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: 
-                  
-                  Table(
-                    border: TableBorder.all(),
-                    children: [
-                      TableRow(
-                        children: [
-                          _buildHeader('Charola'),
-                          _buildHeader('Fecha de creación'),
-                          _buildHeader('Ultima actualización'),
-                          _buildHeader('Peso (gr)'),
-                          _buildHeader('Comida x Ciclo (gr)'),
-                          _buildHeader('Hidratación x Ciclo(gr)'),
-                          _buildHeader('Estado'),
-                          _buildHeader('Densidad de larva'),
-                        ],
-                      ),
-                      if (vistaModelo.valoresTabla != null)
-                        ...List.generate(vistaModelo.valoresTabla!.length, (i) {
-                          final item = vistaModelo.valoresTabla![i];
-                          return TableRow(
-                            children: [
-                              _buildCell('${item['nombreCharola'] ?? ''}'),
-                              _buildCell('${item['fechaCreacion'] ?? ''}'),
-                              _buildCell('${item['fechaActualizacion'] ?? ''}'),
-                              _buildCell('${item['pesoCharola'] ?? ''}'),
-                              _buildCell('${item['comidaCiclo'] ?? ''}'),
-                              _buildCell('${item['hidratacionCiclo'] ?? ''}'),
-                              _buildCell('${item['estado'] ?? ''}'),
-                              _buildCell('${item['densidadLarva'] ?? ''}'),
-                            ],
-                          );
-                        }),
-                    ],
-                  ),
-                )
-              ],
+                    ),
+                ],
+              ),
             ),
-          ),
+
+            if (vistaModelo.valoresTabla != null &&
+                _currentMaxItems < vistaModelo.valoresTabla!.length)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
         ),
       ),
     );
   }
 
- Widget _buildHeader(String texto) {
-  return TableCell(
-    verticalAlignment: TableCellVerticalAlignment.middle,
-    child: Container(
-      color: const Color(0xFF95E446),
-      padding: const EdgeInsets.all(8.0),
-      height: 90,
-      alignment: Alignment.center,
-      child: Text(
-        texto,
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 18),
+  Widget _buildHeader(String texto) {
+    return TableCell(
+      verticalAlignment: TableCellVerticalAlignment.middle,
+      child: Container(
+        color: const Color(0xFF95E446),
+        padding: const EdgeInsets.all(8.0),
+        height: 90,
+        alignment: Alignment.center,
+        child: Text(
+          texto,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 18),
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildCell(String texto) {
     return Container(

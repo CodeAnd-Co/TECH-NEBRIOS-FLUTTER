@@ -17,6 +17,8 @@ void main() {
     final fakeCharola = Charola(
       charolaId: 1011,
       nombreCharola: 'EQUIDDE',
+      comidaOtorgada: 15,
+      hidratacionOtorgada: 1,
       comidaCiclo: 15,
       hidratacionCiclo: 1,
       fechaActualizacion: 'desconocido',
@@ -25,7 +27,9 @@ void main() {
       fechaCreacion: '2025-04-30T06:00:00.000Z',
       pesoCharola: 15,
       comidaNombre: 'Cereza',
+      comidaDesc: 'Fruta roja dulce',
       hidratacionNombre: 'Zanahoria',
+      hidratacionDesc: 'Vegetal'
     );
 
     when(mockUseCase.obtenerCharola(1011))

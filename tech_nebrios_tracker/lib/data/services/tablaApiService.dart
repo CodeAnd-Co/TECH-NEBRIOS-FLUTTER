@@ -1,4 +1,4 @@
-abstract class backendApiService {
+abstract class TablaApiService {
 
   Future<Map<dynamic, dynamic>> getTabla();
  

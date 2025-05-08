@@ -6,7 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:tech_nebrios_tracker/data/models/constantes.dart';
 import '../services/tablaApiService.dart';
 
-class TablaRepository extends backendApiService {
+class TablaRepository extends TablaApiService {
   @override
   Future<Map<dynamic, dynamic>> getTabla() async{
 
@@ -57,7 +57,7 @@ class TablaRepository extends backendApiService {
         // Crear nombre único con fecha y hora
         final String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
         final String fileName = 'charola_$timestamp.xlsx';
-        final Directory homeDir = Directory('/Users/${Platform.environment['USER']}');
+        final Directory homeDir = getHomeDirectory();
         final String downloadsPath = path.join(homeDir.path, 'Downloads');
         final savePath = path.join(downloadsPath, fileName);
         final file = File(savePath);
@@ -75,6 +75,16 @@ class TablaRepository extends backendApiService {
       }
     }catch (error){
       return {'codigo': 500, 'path': null};
+    }
+  }
+
+  Directory getHomeDirectory() {
+    if (Platform.isMacOS || Platform.isLinux) {
+      return Directory(Platform.environment['HOME'] ?? '');
+    } else if (Platform.isWindows) {
+      return Directory(Platform.environment['USERPROFILE'] ?? '');
+    } else {
+      throw UnsupportedError('Unsupported platform');
     }
   }
 

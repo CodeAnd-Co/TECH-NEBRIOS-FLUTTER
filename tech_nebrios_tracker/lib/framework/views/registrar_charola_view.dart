@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/registrar_charola_viewmodel.dart';
 
@@ -55,6 +56,7 @@ class RegistrarCharolaView extends StatelessWidget {
                   _buildTextFieldContainer(
                     'Nombre',
                     viewModel.nombreController,
+                    maxLength: 20, // Limitar a 20 caracteres
                   ),
                   _buildTextFieldContainer(
                     'Densidad de Larva',
@@ -161,8 +163,8 @@ class RegistrarCharolaView extends StatelessWidget {
             DateTime? pickedDate = await showDatePicker(
               context: context,
               initialDate: DateTime.now(), // Fecha inicial
-              firstDate: DateTime(2000), // Fecha mínima
-              lastDate: DateTime(2100), // Fecha máxima
+              firstDate: DateTime(2015), // Fecha mínima
+              lastDate: DateTime(2050), // Fecha máxima
             );
 
             if (pickedDate != null) {
@@ -181,6 +183,7 @@ class RegistrarCharolaView extends StatelessWidget {
     String label,
     TextEditingController controller, {
     TextInputType keyboardType = TextInputType.text,
+    int? maxLength, // Nuevo parámetro para el límite de caracteres
   }) {
     return Container(
       margin: const EdgeInsets.all(5), // Margen alrededor del TextField
@@ -189,6 +192,10 @@ class RegistrarCharolaView extends StatelessWidget {
         child: TextField(
           controller: controller,
           keyboardType: keyboardType,
+          inputFormatters:
+              maxLength != null
+                  ? [LengthLimitingTextInputFormatter(maxLength)]
+                  : null, // Limitar caracteres si se especifica maxLength
           decoration: InputDecoration(
             labelText: label,
             border: const OutlineInputBorder(),

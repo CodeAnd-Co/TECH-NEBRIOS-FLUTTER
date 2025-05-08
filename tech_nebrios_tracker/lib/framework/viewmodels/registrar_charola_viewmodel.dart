@@ -54,6 +54,13 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
       if (nombreController.text.isEmpty) {
         throw FormatException('El campo "Nombre" es obligatorio.');
       }
+
+      if (nombreController.text.length > 20) {
+        throw FormatException(
+          'El campo "Nombre" no puede tener más de 20 caracteres.',
+        );
+      }
+
       if (densidadLarvaController.text.isEmpty) {
         throw FormatException('El campo "Densidad de Larva" es obligatorio.');
       }

@@ -55,6 +55,22 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     );
   }
 
+  String formatearFecha(String fecha) {
+  try {
+    final dateTime = DateTime.parse(fecha);
+    if (fecha.contains('T')) {
+      final dia = dateTime.day.toString().padLeft(2, '0');
+      final mes = dateTime.month.toString().padLeft(2, '0');
+      final anio = dateTime.year.toString();
+      return '$dia/$mes/$anio';
+    } else {
+      return fecha;
+    }
+  } catch (e) {
+    return fecha;
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -75,6 +91,8 @@ class _PantallaCharolaState extends State<PantallaCharola> {
             body: Center(child: Text('Charola no encontrada')),
           );
         }
+
+        var fechaFormateada = formatearFecha(charola.fechaCreacion);
 
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 247, 250),
@@ -102,11 +120,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                             tamanio: 64,
                             color: const Color.fromARGB(250, 34, 166, 58),
                           ),
-                          _crearInfoFila('Fecha:', charola.fechaCreacion),
-                          _crearInfoFila('Peso:', '${charola.pesoCharola} g'),
-                          _crearInfoFila('frass:', '${charola.densidadLarva} g'),
-                          _crearInfoFila('hidratacion:', charola.hidratacionNombre),
-                          _crearInfoFila('alimento:', charola.comidaNombre),
+                          _crearInfoFila('Estado:', charola.estado),
+                          _crearInfoFila('Fecha:', fechaFormateada),
+                          _crearInfoFila('Peso:', '${charola.pesoCharola}g'),
+                          _crearInfoFila('Hidratacion:', '${charola.hidratacionNombre}  ${charola.hidratacionOtorgada}g'),
+                          _crearInfoFila('Alimento:', '${charola.comidaNombre}  ${charola.comidaOtorgada}g'),
                           Wrap(
                             spacing: 150,
                             alignment: WrapAlignment.center,

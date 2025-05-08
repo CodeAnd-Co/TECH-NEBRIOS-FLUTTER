@@ -13,13 +13,13 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<TablaViewModel>(context, listen: false);
-    viewModel.getTabla();
+    final vistaModelo = Provider.of<TablaViewModel>(context, listen: false);
+    vistaModelo.getTabla();
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<TablaViewModel>(context);
+    final vistaModelo = Provider.of<TablaViewModel>(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -35,7 +35,7 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await viewModel.getTabla();
+          await vistaModelo.getTabla();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(), 
@@ -49,13 +49,18 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        viewModel.estadoDescarga,
-                        style: const TextStyle(fontFamily: 'Courier'),
-                      ),
                       const SizedBox(width: 10),
                       ElevatedButton(
-                        onPressed: viewModel.postDescargarArchivo,
+                        onPressed: () async {
+                        await vistaModelo.postDescargarArchivo();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: vistaModelo.errorGet ? Colors.red : Colors.green,
+                            content: Text(vistaModelo.estadoDescarga),
+                            duration: const Duration(seconds: 5),
+                          ),
+                        );
+                      },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
@@ -64,15 +69,16 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         ),
-                        child: const Text("Descargar Excel"),
+                        child: const Text("Descargar Excel", style: TextStyle(fontSize: 20)),
+                        
                       ),
                     ],
                   ),
                 ),
 
                 Text(
-                  viewModel.mensajeGet,
-                  style: const TextStyle(fontFamily: 'Courier'),
+                  vistaModelo.mensajeGet,
+                  style: const TextStyle(fontFamily: 'Courier', fontSize: 20),
                 ),
 
                 const SizedBox(height: 20),
@@ -96,9 +102,9 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
                           _buildHeader('Densidad de larva'),
                         ],
                       ),
-                      if (viewModel.valoresTabla != null)
-                        ...List.generate(viewModel.valoresTabla!.length, (i) {
-                          final item = viewModel.valoresTabla![i];
+                      if (vistaModelo.valoresTabla != null)
+                        ...List.generate(vistaModelo.valoresTabla!.length, (i) {
+                          final item = vistaModelo.valoresTabla![i];
                           return TableRow(
                             children: [
                               _buildCell('${item['nombreCharola'] ?? ''}'),
@@ -123,13 +129,23 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
     );
   }
 
-  Widget _buildHeader(String texto) {
-    return Container(
+ Widget _buildHeader(String texto) {
+  return TableCell(
+    verticalAlignment: TableCellVerticalAlignment.middle,
+    child: Container(
       color: const Color(0xFF95E446),
       padding: const EdgeInsets.all(8.0),
-      child: Text(texto),
-    );
-  }
+      height: 90,
+      alignment: Alignment.center,
+      child: Text(
+        texto,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 18),
+      ),
+    ),
+  );
+}
+
 
   Widget _buildCell(String texto) {
     return Container(

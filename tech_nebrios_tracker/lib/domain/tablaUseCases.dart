@@ -3,7 +3,7 @@ import '../data/repositories/tablaRepository.dart';
 abstract class TablaUseCases{
   Future<Map<dynamic, dynamic>> execute();
 
-  Future<String?> postExecute();
+  Future<Map<dynamic, dynamic>> postExecute();
 }
 
 class TablaUseCasesImp extends TablaUseCases{
@@ -17,7 +17,7 @@ class TablaUseCasesImp extends TablaUseCases{
   }
 
   @override
-  Future<String?> postExecute() async {
+  Future<Map<dynamic, dynamic>> postExecute() async {
     return await repositorio.postDescargarArchivo();
   }
 }

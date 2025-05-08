@@ -11,45 +11,62 @@ class TablaViewModel extends ChangeNotifier{
   List? valoresTabla = [];
   String _estadoDescarga = '';
   String _mensajeGet = '';
+  bool _error = false;
 
+  bool get errorGet => _error;
   String get estadoDescarga => _estadoDescarga;
   String get mensajeGet => _mensajeGet;
 
   Future<void> getTabla() async {
     try{
-      print("Iniciando request: ");
       _estadoDescarga = '';
       _mensajeGet = '';
       notifyListeners();
 
       var respuesta = await tabla.repositorio.getTabla();
       valoresTabla = respuesta['mensaje'];
+      var codigo = respuesta['codigo'];
 
-      if (respuesta['codigo'] == 200 && respuesta['mensaje'].isEmpty){
+      if (codigo == 201) {
         _mensajeGet = '❌ No hay datos de charolas registradas ❌';
-      } else if (respuesta['codigo'] == 401){
+      } else if (codigo == 401) {
         _mensajeGet = '❌ Por favor, vuelva a iniciar sesión. ❌';
-      } else if (respuesta['codigo'] == 403){
+      } else if (codigo == 403) {
         _mensajeGet = '❌ No tiene permisos para acceder a esta información. ❌';
+      } else if (codigo == 500) {
+        _mensajeGet = '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌';
       }
       notifyListeners();
     }catch (error) {
-      print('Error al cargar los datos de la tabla: $error');
+      _mensajeGet = '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌';
+      notifyListeners();
     }
   }
 
   Future<void> postDescargarArchivo() async {
     try {
-      _estadoDescarga = 'Descargando Excel...';
+      _error = false;
+
       notifyListeners();
 
-      final path = await tabla.repositorio.postDescargarArchivo();
+      final respuesta = await tabla.repositorio.postDescargarArchivo();
+      var codigo = respuesta['codigo'];
 
-      _estadoDescarga ='✅ Excel guardado en:\n$path';
+      if (codigo == 200) {
+        var ruta = respuesta['path'];
+        _estadoDescarga ='✅ Excel guardado en:\n$ruta.';
+        
+        await OpenFile.open(ruta);
+      } else if (codigo == 201) {
+        _estadoDescarga ='Aún no existen datos de charolas que descargar.';
+        _error = true;
+      } else if (codigo == 500) {
+        _estadoDescarga ='❌ Ha ocurrido un error al descargar el archivo.';
+        _error = true;
+      }
       notifyListeners();
-      await OpenFile.open(path);
     } catch (e) {
-      _estadoDescarga = '❌ Error: $e';
+      _estadoDescarga = '❌ Ha ocurrido un error al descargar el archivo.';
       notifyListeners();
     }
   }

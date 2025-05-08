@@ -6,6 +6,10 @@ import '../../data/repositories/alimento_repository.dart';
 import '../../data/services/alimentacion_service.dart';
 import '../../domain/alimentacion_domain.dart';
 
+
+/// ViewModel que gestiona la lógica y estado de alimentos para la vista.
+///
+/// Se comunica con los casos de uso y repositorios.
 class AlimentacionViewModel extends ChangeNotifier {
   final AlimentoRepository _repo;
   final RegistrarAlimentoCasoUso _registrarCasoUso;
@@ -20,11 +24,18 @@ class AlimentacionViewModel extends ChangeNotifier {
   String? _error;
   List<Alimento> _alimentos = [];
 
+  /// Estado de carga de operaciones asíncronas.
   bool get isLoading => _isLoading;
+
+  /// Último error capturado.
   String? get error => _error;
+
+  /// Lista de alimentos obtenida desde el repositorio.
   List<Alimento> get alimentos => List.unmodifiable(_alimentos);
 
-  /// Cargar lista de alimentos desde el repositorio
+  /// Carga la lista de alimentos desde la fuente de datos.
+  ///
+  /// Notifica listeners al cambiar el estado de carga o error.
   Future<void> cargarAlimentos() async {
     _setLoading(true);
     try {
@@ -36,11 +47,21 @@ class AlimentacionViewModel extends ChangeNotifier {
     _setLoading(false);
   }
 
-  /// Validar y registrar nuevo alimento
+  
+  /// Valida y registra un nuevo alimento.
+  ///
+  /// Retorna `null` si fue exitoso o un mensaje de error si falla.
   Future<String?> registrarAlimento(String nombre, String descripcion) async {
-    // Validación local
     if (nombre.trim().isEmpty || descripcion.trim().isEmpty) {
       return 'Nombre y descripción no pueden estar vacíos.';
+    }
+
+    if (nombre.length > 25) {
+    return 'El nombre no puede tener más de 25 caracteres.';
+    }
+
+    if (descripcion.length > 200) {
+      return 'La descripción no puede tener más de 200 caracteres.';
     }
 
     final tieneNumeros = RegExp(r'[0-9]').hasMatch(nombre);
@@ -51,8 +72,8 @@ class AlimentacionViewModel extends ChangeNotifier {
     _setLoading(true);
     try {
       await _registrarCasoUso.ejecutar(nombre: nombre, descripcion: descripcion);
-      await cargarAlimentos(); // Recargar lista
-      return null; // éxito
+      await cargarAlimentos(); 
+      return null; 
     } on Exception catch (e) {
       final msg = e.toString();
       if (msg.contains('400')) return '❌ Datos no válidos.';
@@ -64,7 +85,7 @@ class AlimentacionViewModel extends ChangeNotifier {
     }
   }
 
-  /// Cambiar estado de carga y notificar listeners
+  /// Actualiza la variable [_isLoading] y notifica a los listeners.
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

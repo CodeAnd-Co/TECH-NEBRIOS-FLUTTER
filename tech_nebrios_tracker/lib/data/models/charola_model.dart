@@ -30,25 +30,30 @@ class Charola {
   });
 
   factory Charola.fromJson(Map<String, dynamic> json) {
+  final charolaData = json['charola'];
+  final comidaData = json['comida'] ?? {};            // se instancia vacio si es que es nulo
+  final hidratacionData = json['hidratacion'] ?? {};  // se instancia vacio si es que es nulo
 
-    // se accede a cada apartado del json
-    final charolaData = json['charola'];
-    final comidaData = json['comida'];
-    final hidratacionData = json['hidratacion'];
+  // función para transformar un valor a int y si es nulo lo retorna como 0
+  int parseToInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    return int.tryParse(value.toString()) ?? 0;
+  }
 
-    // se crea una instancia de charola, y si algun valor es nulo lo crear
-    return Charola(
-      charolaId: charolaData['charolaId'] as int,
-      nombreCharola: charolaData['nombreCharola'] as String,
-      comidaCiclo: (charolaData['comidaCiclo'] as int?) ?? 0,
-      hidratacionCiclo: (charolaData['hidratacionCiclo'] as int?) ?? 0,
-      fechaActualizacion: (charolaData['fechaActualizacion'] as String?) ?? 'desconocido',
-      estado: (charolaData['estado'] as String?) ?? 'desconocido',
-      densidadLarva: (charolaData['densidadLarva'] as int?) ?? 0,
-      fechaCreacion: (charolaData['fechaCreacion'] as String?) ?? 'desconocido',
-      pesoCharola: (charolaData['pesoCharola'] as int?) ?? 0,
-      comidaNombre: (comidaData['nombre'] as String?) ?? 'desconocido',
-      hidratacionNombre: (hidratacionData['nombre'] as String?) ?? 'desconocido',
+  return Charola(
+    charolaId: charolaData['charolaId'] as int,
+    nombreCharola: charolaData['nombreCharola'] as String,
+    comidaCiclo: parseToInt(charolaData['comidaCiclo']),
+    hidratacionCiclo: parseToInt(charolaData['hidratacionCiclo']),
+    fechaActualizacion: (charolaData['fechaActualizacion'] as String?) ?? 'desconocido',
+    estado: (charolaData['estado'] as String?) ?? 'desconocido',
+    densidadLarva: parseToInt(charolaData['densidadLarva']),
+    fechaCreacion: (charolaData['fechaCreacion'] as String?) ?? 'desconocido',
+    pesoCharola: parseToInt(charolaData['pesoCharola']),
+    comidaNombre: (comidaData['nombre'] as String?) ?? 'desconocido',
+    hidratacionNombre: (hidratacionData['nombre'] as String?) ?? 'desconocido',
     );
   }
 }

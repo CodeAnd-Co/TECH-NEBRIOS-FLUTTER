@@ -93,53 +93,51 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                     color: Colors.white,
                     child: Padding(
                       padding: const EdgeInsets.all(30),
-                      child: Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [ 
-                            Texto.titulo1(
-                              texto: charola.nombreCharola,
-                              bold: true,
-                              tamanio: 64,
-                              color: const Color.fromARGB(250, 34, 166, 58),
-                            ),
-                            _crearInfoFila('fecha:', charola.fechaCreacion),
-                            _crearInfoFila('peso:', '${charola.pesoCharola} g'),
-                            _crearInfoFila('frass:', '${charola.densidadLarva} g'),
-                            _crearInfoFila('hidratacion:', charola.hidratacionNombre),
-                            _crearInfoFila('alimento:', charola.comidaNombre),
-                            Wrap(
-                              spacing: 150,
-                              alignment: WrapAlignment.center,
-                              children: [
-                                _crearBotonTexto(
-                                  'Eliminar',
-                                  const Color.fromARGB(255, 228, 61, 61),
-                                  () {
-                                    Navigator.of(context).pop();
-                                    print('Botón de Eliminar presionado');
-                                  },
-                                ),
-                                _crearBotonTexto(
-                                  'Historial',
-                                  const Color.fromARGB(255, 226, 56, 125),
-                                  () {
-                                    Navigator.of(context).pop();
-                                    print('Botón de Historial presionado');
-                                  },
-                                ),
-                                _crearBotonTexto(
-                                  'Editar',
-                                  const Color.fromARGB(255, 36, 66, 204),
-                                  () {
-                                    Navigator.of(context).pop();
-                                    print('Botón de Editar presionado');
-                                  },
-                                ),
-                              ],
-                            )
-                          ],
-                        ), 
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [ 
+                          Texto.titulo1(
+                            texto: charola.nombreCharola,
+                            bold: true,
+                            tamanio: 64,
+                            color: const Color.fromARGB(250, 34, 166, 58),
+                          ),
+                          _crearInfoFila('Fecha:', charola.fechaCreacion),
+                          _crearInfoFila('Peso:', '${charola.pesoCharola} g'),
+                          _crearInfoFila('frass:', '${charola.densidadLarva} g'),
+                          _crearInfoFila('hidratacion:', charola.hidratacionNombre),
+                          _crearInfoFila('alimento:', charola.comidaNombre),
+                          Wrap(
+                            spacing: 150,
+                            alignment: WrapAlignment.center,
+                            children: [
+                              _crearBotonTexto(
+                                'Eliminar',
+                                const Color.fromARGB(255, 228, 61, 61),
+                                () {
+                                  Navigator.of(context).pop();
+                                  print('Botón de Eliminar presionado');
+                                },
+                              ),
+                              _crearBotonTexto(
+                                'Historial',
+                                const Color.fromARGB(255, 226, 56, 125),
+                                () {
+                                  Navigator.of(context).pop();
+                                  print('Botón de Historial presionado');
+                                },
+                              ),
+                              _crearBotonTexto(
+                                'Editar',
+                                const Color.fromARGB(255, 36, 66, 204),
+                                () {
+                                  Navigator.of(context).pop();
+                                  print('Botón de Editar presionado');
+                                },
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                     ),
                   ),

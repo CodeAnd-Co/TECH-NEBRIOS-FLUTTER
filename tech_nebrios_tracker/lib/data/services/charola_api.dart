@@ -13,7 +13,6 @@ class CharolaApiService {
 
     if (response.statusCode == 200) {
       final decodedJson = json.decode(response.body);
-      print('[DEBUG JSON]: $decodedJson');
       return decodedJson['data'];
     } else {
       throw Exception('Error al obtener la charola');

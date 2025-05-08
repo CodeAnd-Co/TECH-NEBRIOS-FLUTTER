@@ -16,12 +16,16 @@ class CharolaViewModel extends ChangeNotifier {
   bool get cargando => _cargando;
 
   Future<void> cargarCharola(int id) async {
-    _cargando = true;
-    notifyListeners();
+  _cargando = true;
+  notifyListeners();
 
+  try {
     _charola = await _useCase.obtenerCharola(id);
-
-    _cargando = false;
-    notifyListeners();
+  } catch (e) {
+    _charola = null;
   }
+
+  _cargando = false;
+  notifyListeners();
+}
 }

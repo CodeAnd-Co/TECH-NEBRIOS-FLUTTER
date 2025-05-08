@@ -5,6 +5,10 @@ import '../../data/repositories/alimento_repository.dart';
 import '../../data/services/alimentacion_service.dart';
 import '../viewmodels/alimentacion_viewmodel.dart';
 
+/// Pantalla que permite modificar alimentos e hidratación en el sistema.
+///
+/// Incluye funcionalidades para visualizar, agregar y eliminar alimentos,
+/// así como gestionar elementos de hidratación (simulados).
 class AlimentacionScreen extends StatefulWidget {
   const AlimentacionScreen({super.key});
 
@@ -13,8 +17,13 @@ class AlimentacionScreen extends StatefulWidget {
 }
 
 class _AlimentacionScreenState extends State<AlimentacionScreen> {
+  /// Repositorio de alimentos para acceder a datos desde el backend.
   late final AlimentoRepository _repo;
+
+  /// Lista local de alimentos obtenidos.
   List<Alimento> alimentos = [];
+
+  /// Lista fija de ejemplos de hidratación.
   final List<String> hidrataciones = [
     'ejemplo',
     'ejemplo',
@@ -29,12 +38,12 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     _cargarAlimentos();
   }
 
+  /// Carga la lista de alimentos desde el repositorio.
   Future<void> _cargarAlimentos() async {
     try {
       final lista = await _repo.obtenerAlimentos();
       setState(() => alimentos = lista);
     } catch (e) {
-      // manejar error
     }
   }
 
@@ -79,6 +88,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Construye la columna visual para mostrar los alimentos existentes.
   Widget _buildColumnSectionAlimentos() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -103,15 +113,22 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
             ],
           ),
         ),
-        ...alimentos.asMap().entries.map((entry) {
-          final idx = entry.key;
-          final comida = entry.value;
-          return _buildRowAlimento(comida, idx);
-        }).toList(),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: alimentos.asMap().entries.map((entry) {
+                final idx = entry.key;
+                final comida = entry.value;
+                return _buildRowAlimento(comida, idx);
+              }).toList(),
+            ),
+          ),
+        ),
       ],
     );
   }
 
+  /// Construye la columna visual para mostrar las entradas de hidratación.
   Widget _buildColumnSectionHydratacion() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -131,7 +148,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.add),
-                onPressed: () {}, // aqui va _onAgregarHidratacion
+                onPressed: () {},
               ),
             ],
           ),
@@ -144,6 +161,8 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+
+  /// Construye una fila visual de alimento con opciones para editar o eliminar.
   Widget _buildRowAlimento(Alimento alimento, int index) {
     final isEven = index.isEven;
     final bg = isEven ? Colors.white : Colors.grey.shade200;
@@ -165,6 +184,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Construye una fila visual de hidratación.
   Widget _buildRowHydratacion(String text, int index) {
     final isEven = index.isEven;
     final bg = isEven ? Colors.white : Colors.grey.shade200;
@@ -185,6 +205,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+/// Muestra un formulario emergente para registrar un nuevo alimento. 
 void _onAgregarAlimento() {
   final nombreController = TextEditingController();
   final descripcionController = TextEditingController();
@@ -193,61 +214,89 @@ void _onAgregarAlimento() {
     context: context,
     builder: (_) {
       return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero, 
+        ),
         backgroundColor: const Color(0xFFF8F1F1),
-        title: const Text('Nuevo Alimento'),
+        title: const Center( 
+          child: Text(
+            'Nuevo Alimento',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.normal),
+          ),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nombreController,
+              maxLength: 25,
               decoration: const InputDecoration(labelText: 'Nombre:'),
             ),
             const SizedBox(height: 10),
             TextField(
               controller: descripcionController,
               decoration: const InputDecoration(labelText: 'Descripción:'),
+              maxLength: 200,
               maxLines: null,
               keyboardType: TextInputType.multiline,
             ),
           ],
         ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white, ),
-            onPressed: () async {
-              final nombre = nombreController.text.trim();
-              final descripcion = descripcionController.text.trim();
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
 
-              final vm = AlimentacionViewModel(); // <- Idealmente debería venir de Provider
+                    ),
+                  ),
+                  onPressed: () async {
+                    final nombre = nombreController.text.trim();
+                    final descripcion = descripcionController.text.trim();
+                    final vm = AlimentacionViewModel();
 
-              final resultado = await vm.registrarAlimento(nombre, descripcion);
-              if (resultado == null) {
-                Navigator.of(context).pop();
-                await _cargarAlimentos();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(resultado)),
-                );
-              }
-            },
-            child: const Text('Guardar'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white, // <-- Texto en blanco
+                    final resultado = await vm.registrarAlimento(nombre, descripcion);
+                    if (resultado == null) {
+                      Navigator.of(context).pop();
+                      await _cargarAlimentos();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(resultado)),
+                      );
+                    }
+                  },
+                  child: const Text('Guardar'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancelar'),
+                ),
+              ],
             ),
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
           ),
-
           ],
         );
       },
     );
   }
 
-
+  /// Elimina un alimento después de confirmación por parte del usuario.
   void _onEliminarAlimento(Alimento alimento) async {
     final confirm = await showDialog<bool>(
       context: context,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/registrar_charola_viewmodel.dart';
+import '../../utils/positive_number_formatter.dart';
 
 class RegistrarCharolaView extends StatelessWidget {
   const RegistrarCharolaView({super.key});
@@ -61,6 +62,11 @@ class RegistrarCharolaView extends StatelessWidget {
                   _buildTextFieldContainer(
                     'Densidad de Larva',
                     viewModel.densidadLarvaController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      PositiveNumberFormatter(), // Formato para números positivos
+                    ],
                   ),
                   _buildDateFieldContainer(
                     'Fecha (dd/mm/yyyy)',
@@ -79,11 +85,20 @@ class RegistrarCharolaView extends StatelessWidget {
                   _buildTextFieldContainer(
                     'Cantidad de alimento (Kg)',
                     viewModel.comidaCicloController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      PositiveNumberFormatter(), // Formato para números positivos
+                    ],
                   ),
                   _buildTextFieldContainer(
                     'Peso (kg)',
                     viewModel.pesoController,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      PositiveNumberFormatter(), // Formato para números positivos
+                    ],
                   ),
                   _buildDropdownFieldContainer(
                     'Hidratación',
@@ -97,6 +112,11 @@ class RegistrarCharolaView extends StatelessWidget {
                   _buildTextFieldContainer(
                     'Cantidad de hidratación (Kg)',
                     viewModel.hidratacionCicloController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      PositiveNumberFormatter(), // Formato para números positivos
+                    ],
                   ),
                 ],
               ),
@@ -164,7 +184,7 @@ class RegistrarCharolaView extends StatelessWidget {
               context: context,
               initialDate: DateTime.now(), // Fecha inicial
               firstDate: DateTime(2015), // Fecha mínima
-              lastDate: DateTime(2050), // Fecha máxima
+              lastDate: DateTime.now(), // Fecha máxima
             );
 
             if (pickedDate != null) {
@@ -184,6 +204,7 @@ class RegistrarCharolaView extends StatelessWidget {
     TextEditingController controller, {
     TextInputType keyboardType = TextInputType.text,
     int? maxLength, // Nuevo parámetro para el límite de caracteres
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       margin: const EdgeInsets.all(5), // Margen alrededor del TextField

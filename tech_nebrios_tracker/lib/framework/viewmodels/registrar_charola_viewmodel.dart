@@ -55,6 +55,30 @@ class RegistrarCharolaViewModel extends ChangeNotifier {
         throw FormatException('El campo "Nombre" es obligatorio.');
       }
 
+      // Validar que los valores sean positivos
+      if (double.tryParse(comidaCicloController.text) == null ||
+          double.parse(comidaCicloController.text) <= 0) {
+        throw FormatException(
+          'La cantidad de alimento debe ser un número positivo.',
+        );
+      }
+      if (double.tryParse(pesoController.text) == null ||
+          double.parse(pesoController.text) <= 0) {
+        throw FormatException('El peso debe ser un número positivo.');
+      }
+      if (double.tryParse(hidratacionCicloController.text) == null ||
+          double.parse(hidratacionCicloController.text) <= 0) {
+        throw FormatException(
+          'La cantidad de hidratación debe ser un número positivo.',
+        );
+      }
+      if (double.tryParse(densidadLarvaController.text) == null ||
+          double.parse(densidadLarvaController.text) <= 0) {
+        throw FormatException(
+          'La densidad de larva debe ser un número positivo.',
+        );
+      }
+
       if (nombreController.text.length > 20) {
         throw FormatException(
           'El campo "Nombre" no puede tener más de 20 caracteres.',

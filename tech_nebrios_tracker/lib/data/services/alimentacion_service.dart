@@ -3,12 +3,18 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/alimento_model.dart';
 
+
+/// Servicio que realiza peticiones HTTP para manejar alimentos.
+///
+/// Se conecta con el backend mediante rutas como `/comida`, `/comida/agregar` y `/comida/eliminar`.
 class AlimentacionService {
   static const _baseUrl = 'http://localhost:3000';
 
-  // Obtiene la lista de alimentos
+    /// Obtiene la lista de alimentos desde el backend.
+  ///
+  /// Lanza una excepción si la respuesta no es 200.
   Future<List<Alimento>> obtenerAlimentos() async {
-    final uri = Uri.parse('$_baseUrl/alimentacion');
+    final uri = Uri.parse('$_baseUrl/comida');
     final response = await http.get(uri);
 
     if (response.statusCode != 200) {
@@ -21,9 +27,11 @@ class AlimentacionService {
     return data.map((item) => Alimento.fromJson(item)).toList();
   }
 
- /// Envía la petición de eliminar
+  /// Elimina un alimento por su [idAlimento].
+  ///
+  /// Lanza una excepción si la eliminación falla.
   Future<void> eliminarAlimento(int idAlimento) async {
-    final uri = Uri.parse('$_baseUrl/alimentacion/eliminar/$idAlimento');
+    final uri = Uri.parse('$_baseUrl/comida/eliminar/$idAlimento');
 
     final response = await http.delete(uri);
 
@@ -34,8 +42,11 @@ class AlimentacionService {
     }
   }
 
+  /// Envía los datos de un nuevo alimento para su registro.
+  ///
+  /// Lanza excepciones específicas según el código de respuesta del backend.
   Future<void> postDatosComida(String nombre, String descripcion) async {
-  final uri = Uri.parse('$_baseUrl/alimentacion/agregar');
+  final uri = Uri.parse('$_baseUrl/comida/agregar');
   final response = await http.post(
     uri,
     headers: {

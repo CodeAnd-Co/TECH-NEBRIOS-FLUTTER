@@ -76,6 +76,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     return AnimatedBuilder(
       animation: viewModel,
       builder: (context, _) {
+
         // animación de carga
         if (viewModel.cargando) {
           return const Scaffold(
@@ -92,6 +93,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
           );
         }
 
+        // se formatea la fecha
         var fechaFormateada = formatearFecha(charola.fechaCreacion);
 
         return Scaffold(
@@ -133,8 +135,37 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                 'Eliminar',
                                 const Color.fromARGB(255, 228, 61, 61),
                                 () {
-                                  Navigator.of(context).pop();
-                                  print('Botón de Eliminar presionado');
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Texto.titulo2(texto: 'Eliminar', bold: true),
+                                        content: Texto.titulo6(texto: '¿Estas seguro que quieres eliminar la charola?'),
+                                        actions: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              BotonTexto.simple(
+                                                texto: Texto.texto(texto: 'Aceptar', color: Colors.white),
+                                                alPresionar: (){
+                                                  Navigator.of(context).pop();
+                                                },
+                                                colorBg: Color.fromARGB(250, 34, 166, 58),
+                                              ),
+                                              const SizedBox(width: 30),
+                                              BotonTexto.simple(
+                                                texto: Texto.texto(texto: 'Eliminar', color: Colors.white),
+                                                alPresionar: (){
+                                                  Navigator.of(context).pop();
+                                                },
+                                              colorBg: Color.fromARGB(255, 228, 61, 61),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                               ),
                               _crearBotonTexto(
@@ -150,7 +181,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                 const Color.fromARGB(255, 36, 66, 204),
                                 () {
                                   Navigator.of(context).pop();
-                                  print('Botón de Editar presionado');
+                                  print('Botón de Historial presionado');
                                 },
                               ),
                             ],

@@ -29,5 +29,5 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/images/zuustento_logo.png
+    - assets/images/
   uses-material-design: true

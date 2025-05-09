@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart'; // Agrega otras vistas aquí si las tienes
 
-class MainSidebarScreen extends StatefulWidget {
+class SidebarView extends StatefulWidget {
   final VoidCallback onLogout;
 
-  const MainSidebarScreen({Key? key, required this.onLogout}) : super(key: key);
+  const SidebarView({Key? key, required this.onLogout}) : super(key: key);
 
   @override
-  State<MainSidebarScreen> createState() => _MainSidebarScreenState();
+  State<SidebarView> createState() => _SidebarViewState();
 }
 
-class _MainSidebarScreenState extends State<MainSidebarScreen> {
+class _SidebarViewState extends State<SidebarView> {
   int _currentIndex = 0;
 
   final List<Widget> _views = [
@@ -33,14 +33,14 @@ class _MainSidebarScreenState extends State<MainSidebarScreen> {
               children: [
                 const SizedBox(height: 20),
                 Image.asset(
-                  'assets/images/zuustento_logo.png',
-                  width: 50,
-                  height: 50,
+                  'assets/images/zuustento.png',
+                  width: 60,
+                  height: 60,
                 ),
                 const SizedBox(height: 30),
                 _buildNavItem(icon: Icons.inventory_2, label: 'Charolas', index: 0),
-                _buildNavItem(icon: Icons.sensors, label: 'Tamizar', index: 1),
-                _buildNavItem(icon: Icons.bug_report, label: 'Frass', index: 2),
+                _buildNavItem(icon: Icons.storage, label: 'Tamizar', index: 1),
+                _buildNavItem(icon: Icons.archive, label: 'Frass', index: 2),
                 _buildNavItem(icon: Icons.edit_note, label: 'Alimentación', index: 3),
                 _buildNavItem(icon: Icons.download, label: 'Excel', index: 4),
                 const Spacer(),

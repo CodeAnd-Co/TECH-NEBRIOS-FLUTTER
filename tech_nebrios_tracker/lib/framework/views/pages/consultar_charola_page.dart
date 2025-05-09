@@ -139,14 +139,14 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: Texto.titulo2(texto: 'Eliminar', bold: true),
-                                        content: Texto.titulo6(texto: '¿Estas seguro que quieres eliminar la charola?'),
+                                        title: Texto.titulo1(texto: 'Eliminar', bold: true),
+                                        content: Texto.titulo5(texto: '¿Estas seguro que quieres eliminar la charola?'),
                                         actions: [
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               BotonTexto.simple(
-                                                texto: Texto.texto(texto: 'Aceptar', color: Colors.white),
+                                                texto: Texto.titulo5(texto: 'Aceptar', color: Colors.white),
                                                 alPresionar: (){
                                                   Navigator.of(context).pop();
                                                 },
@@ -154,7 +154,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                               ),
                                               const SizedBox(width: 30),
                                               BotonTexto.simple(
-                                                texto: Texto.texto(texto: 'Eliminar', color: Colors.white),
+                                                texto: Texto.titulo5(texto: 'Eliminar', color: Colors.white),
                                                 alPresionar: (){
                                                   Navigator.of(context).pop();
                                                 },

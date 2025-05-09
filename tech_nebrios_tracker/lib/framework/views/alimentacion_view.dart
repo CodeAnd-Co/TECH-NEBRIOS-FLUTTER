@@ -1,7 +1,7 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
 import 'package:flutter/material.dart';
-import '../../data/models/alimento_model.dart';
-import '../../data/repositories/alimento_repository.dart';
+import '../../data/models/alimentacion_model.dart';
+import '../../data/repositories/alimentacion_repository.dart';
 import '../../data/services/alimentacion_service.dart';
 import '../viewmodels/alimentacion_viewmodel.dart';
 

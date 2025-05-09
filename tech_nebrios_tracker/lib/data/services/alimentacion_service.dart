@@ -1,7 +1,7 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/alimento_model.dart';
+import '../models/alimentacion_model.dart';
 
 
 /// Servicio que realiza peticiones HTTP para manejar alimentos.

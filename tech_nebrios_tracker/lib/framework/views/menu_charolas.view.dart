@@ -170,29 +170,52 @@ class VistaCharolas extends StatelessWidget {
 
                 /// Paginación
                 if (vm.charolas.isNotEmpty) ...[
-                  Text("Página ${vm.pagActual} de ${vm.totalPags}",
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 0.5),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: vm.pagActual > 1 ? vm.cargarPaginaAnterior : null,
-                          icon: const Icon(Icons.arrow_back, size: 30),
-                          label: const Text("Anterior"),
-                        ),
-                        const SizedBox(width: 16),
-                        ElevatedButton.icon(
-                          onPressed: vm.pagActual < vm.totalPags ? vm.cargarPaginaSiguiente : null,
-                          icon: const Icon(Icons.arrow_forward, size: 30),
-                          label: const Text("Siguiente"),
-                        ),
-                      ],
-                    ),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final double screenWidth = constraints.maxWidth;
+                      final double buttonWidth = screenWidth * 0.16; // Ancho para cada botón
+                      final double fontSize = screenWidth * 0.018;   // Escalar texto
+                      final double iconSize = screenWidth * 0.035;   // Escalar iconos
+
+                      return Column(
+                        children: [
+                          Text(
+                            "Página ${vm.pagActual} de ${vm.totalPags}",
+                            style: TextStyle(fontSize: fontSize + 2, fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed: vm.pagActual > 1 ? vm.cargarPaginaAnterior : null,
+                                  icon: Icon(Icons.arrow_back, size: iconSize),
+                                  label: Text("Anterior", style: TextStyle(fontSize: fontSize)),
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: Size(buttonWidth, 50),
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                ElevatedButton.icon(
+                                  onPressed: vm.pagActual < vm.totalPags ? vm.cargarPaginaSiguiente : null,
+                                  icon: Icon(Icons.arrow_forward, size: iconSize),
+                                  label: Text("Siguiente", style: TextStyle(fontSize: fontSize)),
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: Size(buttonWidth, 50),
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                ],
+                ]
               ],
             );
           },

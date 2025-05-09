@@ -139,27 +139,36 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: Texto.titulo1(texto: 'Eliminar', bold: true),
-                                        content: Texto.titulo5(texto: '¿Estas seguro que quieres eliminar la charola?'),
+                                        titlePadding: const EdgeInsets.only(top: 20, left: 60, right: 5),
+                                        title: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Center(
+                                                child: Texto.titulo1(texto: 'Eliminar', bold: true),
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () => Navigator.of(context).pop(),
+                                              iconSize: 35,
+                                              icon: Icon(
+                                                Icons.close,
+                                                color: Colors.black, // Asegura que sea negra
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        content: Texto.titulo5(texto: '¿Estas seguro de eliminar la charola?'),
                                         actions: [
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               BotonTexto.simple(
-                                                texto: Texto.titulo5(texto: 'Aceptar', color: Colors.white),
-                                                alPresionar: (){
-                                                  Navigator.of(context).pop();
-                                                },
-                                                colorBg: Color.fromARGB(250, 34, 166, 58),
-                                              ),
-                                              const SizedBox(width: 30),
-                                              BotonTexto.simple(
                                                 texto: Texto.titulo5(texto: 'Eliminar', color: Colors.white),
                                                 alPresionar: (){
                                                   Navigator.of(context).pop();
                                                 },
-                                              colorBg: Color.fromARGB(255, 228, 61, 61),
-                                              )
+                                                colorBg: Color.fromARGB(255, 228, 61, 61),
+                                              ),
                                             ],
                                           )
                                         ],

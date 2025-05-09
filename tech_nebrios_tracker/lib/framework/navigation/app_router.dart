@@ -1,41 +1,43 @@
 import 'package:flutter/material.dart';
 import '../views/loginView.dart';
 import '../views/menu_charolas.view.dart';
+import '../views/pages/consultar_charola_page.dart';
 
-enum AppRoute {
-  login,
-  menucharolas,
-}
+enum AppRoute { login, menucharolas, consultarCharola }
 
 class AppRouter extends RouterDelegate<AppRoute>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<AppRoute> {
-  
   @override
   final GlobalKey<NavigatorState> navigatorKey;
-  
+
   AppRoute _currentRoute = AppRoute.login;
-  
+
   AppRouter() : navigatorKey = GlobalKey<NavigatorState>() {
     _checkInitialRoute();
   }
-  
+
   AppRoute get currentRoute => _currentRoute;
-  
+
   Future<void> _checkInitialRoute() async {
     // Aquí podríamos verificar si el usuario ya tiene sesión
     // y establecer la ruta inicial adecuada
   }
-  
+
   void navigateToMain() {
     _currentRoute = AppRoute.menucharolas;
     notifyListeners();
   }
-  
+
   void navigateToLogin() {
     _currentRoute = AppRoute.login;
     notifyListeners();
   }
-  
+
+  void navigateToCharolas() {
+    _currentRoute = AppRoute.consultarCharola;
+    notifyListeners();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Navigator(
@@ -44,15 +46,21 @@ class AppRouter extends RouterDelegate<AppRoute>
         if (_currentRoute == AppRoute.login)
           MaterialPage(
             key: const ValueKey('LoginPage'),
-            child: LoginView(
-              onLogin: navigateToMain,
-            ),
+            child: LoginView(onLogin: navigateToMain),
           ),
-          
+
         if (_currentRoute == AppRoute.menucharolas)
           MaterialPage(
             key: const ValueKey('MenuCharolas'),
             child: const VistaCharolas(),
+          ),
+
+        if (_currentRoute == AppRoute.consultarCharola)
+          MaterialPage(
+            key: const ValueKey('ConsultarCharola'),
+            child: const PantallaCharola(
+              charolaId: 1,
+            ), // Aquí puedes pasar el ID de la charola
           ),
       ],
       onPopPage: (route, result) {
@@ -63,7 +71,7 @@ class AppRouter extends RouterDelegate<AppRoute>
       },
     );
   }
-  
+
   @override
   Future<void> setNewRoutePath(AppRoute configuration) async {
     _currentRoute = configuration;

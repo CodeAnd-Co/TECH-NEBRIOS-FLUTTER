@@ -4,7 +4,7 @@ import 'framework/viewmodels/menu_charolas.viewmodel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewmodel.dart';
 
-/// Punto de entrada de la aplicación.
+
 void main() {
   runApp(
     MultiProvider(

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart'; // Agrega otras vistas aquí si las tienes
+import 'package:flutter/material.dart';
+import 'package:tech_nebrios_tracker/framework/views/menu_charolas.view.dart'; // Agrega otras vistas aquí si las tienes
 
 class SidebarView extends StatefulWidget {
   final VoidCallback onLogout;
@@ -13,7 +14,7 @@ class _SidebarViewState extends State<SidebarView> {
   int _currentIndex = 0;
 
   final List<Widget> _views = [
-    Placeholder(), // Charolas
+    VistaCharolas(), // Charolas
     Placeholder(), // Tamizar
     Placeholder(), // Frass
     Placeholder(), // Alimentación

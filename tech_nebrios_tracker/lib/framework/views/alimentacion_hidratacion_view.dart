@@ -1,4 +1,4 @@
-//RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
+//RF25: Eliminar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF25
 import 'package:flutter/material.dart';
 import '../../data/models/alimentacion_model.dart';
 import '../viewmodels/alimentacion_viewmodel.dart';
@@ -200,69 +200,44 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           Expanded(child: Text(alimento.nombreAlimento)),
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () => _onEditarAlimento(alimento),
+            onPressed: () => {},
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Color(0xFFF44336)),
-            onPressed: () async {}, // TODO: implementar _onEliminarAlimento
+           onPressed: () => _onEliminarAlimento(alimento.idAlimento),
           ),
         ],
       ),
     );
   }
 
-  /// Muestra un diálogo para editar [alimento] y guarda cambios.
-  void _onEditarAlimento(Alimento alimento) {
-    final nombreController = TextEditingController(text: alimento.nombreAlimento);
-    final descripcionController = TextEditingController(text: alimento.descripcionAlimento);
-
+  /// Muestra un diálogo de confirmación para eliminar [alimento].
+  /// Si se confirma, llama a [vm.eliminarAlimento].
+  void _onEliminarAlimento(int idAlimento) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFFF8F1F1),
-        title: const Text('Modificar Alimento'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nombreController,
-              decoration: const InputDecoration(labelText: 'Nombre:'),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: descripcionController,
-              decoration: const InputDecoration(labelText: 'Descripción:'),
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-            ),
-          ],
-        ),
+        title: const Text('Eliminar Alimento'),
+        content: const Text('¿Estás seguro de eliminar este alimento?'),
         actions: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
             onPressed: () async {
-              final resultado = await vm.editarAlimento(
-                Alimento(
-                  idAlimento: alimento.idAlimento,
-                  nombreAlimento: nombreController.text.trim(),
-                  descripcionAlimento: descripcionController.text.trim(),
-                ),
+              await vm.eliminarAlimento(idAlimento);
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Alimento eliminado exitosamente')),
               );
-              if (resultado == null) {
-                Navigator.of(context).pop();
-              } else {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(resultado)));
-              }
             },
-            child: const Text('Guardar'),
+            child: const Text('Eliminar'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.green,
               foregroundColor: Colors.white,
             ),
             onPressed: () => Navigator.of(context).pop(),

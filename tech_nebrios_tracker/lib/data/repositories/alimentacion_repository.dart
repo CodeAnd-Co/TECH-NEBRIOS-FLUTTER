@@ -1,5 +1,5 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
-//RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
+//RF25: Eliminar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF25
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/alimentacion_model.dart';
@@ -14,6 +14,11 @@ import '../services/alimentacion_service.dart';
 ///  - Gestionar respuestas y errores HTTP.
 ///  - Convertir JSON a modelos [Alimento].
 class AlimentacionRepository extends AlimentacionService {
+  
+  /// Obtiene la lista completa de alimentos desde la API.
+  ///
+  /// Lanza una excepción si ocurre algún problema de red o parsing.
+  /// El resultado es una lista de objetos [Alimento].
   @override
   Future<List<Alimento>> obtenerAlimentos() async {
     final uri = Uri.parse(APIRutas.ALIMENTACION);
@@ -31,28 +36,19 @@ class AlimentacionRepository extends AlimentacionService {
     return data.map((item) => Alimento.fromJson(item)).toList();
   }
 
+  /// Elimina un alimento existente en el sistema.
+  ///
+  /// [idAlimento] es el identificador del alimento a eliminar.
   @override
-  Future<void> editarAlimento(Alimento alimento) async {
-    final uri = Uri.parse(
-      '${APIRutas.ALIMENTACION}/editar/${alimento.idAlimento}',
-    );
-    final response = await http.put(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'nombreAlimento': alimento.nombreAlimento,
-        'descripcionAlimento': alimento.descripcionAlimento,
-      }),
-    );
+  Future<void> eliminarAlimento(int idAlimento) async {
+    final uri = Uri.parse('${APIRutas.ALIMENTACION}/eliminar/$idAlimento');
+    final response = await http.delete(uri);
 
     // Manejo de códigos de error específicos
-    if (response.statusCode == 400) {
-      throw Exception('❌ Datos no válidos.');
-    } else if (response.statusCode == 500) {
+    if (response.statusCode == 500) {
       throw Exception('❌ Error del servidor.');
     } else if (response.statusCode != 200) {
       throw Exception('❌ Error desconocido (${response.statusCode}).');
     }
-    // Si es 200 OK, simplemente retorna
   }
 }

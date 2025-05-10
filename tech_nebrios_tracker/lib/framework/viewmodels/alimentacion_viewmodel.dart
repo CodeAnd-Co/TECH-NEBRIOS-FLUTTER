@@ -1,4 +1,4 @@
-//RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
+//RF25: Eliminar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF25
 
 import 'package:flutter/foundation.dart';
 import '../../data/models/alimentacion_model.dart';
@@ -11,7 +11,7 @@ import '../../domain/alimentacion_domain.dart';
 /// Extiende [ChangeNotifier] para notificar a la UI de cambios.
 class AlimentacionViewModel extends ChangeNotifier {
   final AlimentacionRepository _repo;
-  final EditarAlimentoCasoUso _editarCasoUso;
+  final EliminarAlimentoCasoUso _eliminarCasoUso;
 
   /// Tamaño de cada “chunk” que se mostrará por scroll.
   static const int _chunkSize = 20;
@@ -30,10 +30,10 @@ class AlimentacionViewModel extends ChangeNotifier {
 
   AlimentacionViewModel({
     AlimentacionRepository? repo,
-    EditarAlimentoCasoUso? editarCasoUso,
+    EliminarAlimentoCasoUso? editarCasoUso,
   })  : _repo = repo ?? AlimentacionRepository(),
-        _editarCasoUso = editarCasoUso ??
-            EditarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository());
+        _eliminarCasoUso = editarCasoUso ??
+            EliminarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository());
 
   /// Indica si actualmente se está cargando más datos.
   bool get isLoading => _isLoading;
@@ -74,28 +74,18 @@ class AlimentacionViewModel extends ChangeNotifier {
     });
   }
 
-  /// Edita un [alimento] y vuelve a recargar datos.
+  /// Elimina un alimento de la lista y vuelve a cargar datos.
   ///
-  /// Valida nombre y descripción antes de enviar.
-  Future<String?> editarAlimento(Alimento alimento) async {
-    if (alimento.nombreAlimento.trim().isEmpty ||
-        alimento.descripcionAlimento.trim().isEmpty) {
-      return 'Nombre y descripción no pueden estar vacíos.';
-    }
-    if (RegExp(r'[0-9]').hasMatch(alimento.nombreAlimento)) {
-      return 'El nombre no debe contener números.';
-    }
-
+  /// Lanza excepción si no se puede eliminar.
+  Future<void> eliminarAlimento(int idAlimento) async {
     _setLoading(true);
     try {
-      await _editarCasoUso.editar(alimento: alimento);
+      await _eliminarCasoUso.eliminar(idAlimento: idAlimento);
       await cargarAlimentos();
-      return null;
     } on Exception catch (e) {
       final msg = e.toString();
-      if (msg.contains('400')) return '❌ Datos no válidos.';
-      if (msg.contains('500')) return '❌ Error del servidor.';
-      return '❌ Error desconocido.';
+      if (msg.contains('500')) throw Exception('❌ Error del servidor.');
+      throw Exception('❌ Error desconocido.');
     } finally {
       _setLoading(false);
     }

@@ -1,5 +1,5 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
-//RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
+//RF25: Eliminar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF25
 
 import '../models/alimentacion_model.dart';
 
@@ -13,9 +13,9 @@ abstract class AlimentacionService {
   /// Lanza una excepción si ocurre algún problema de red o parsing.
   Future<List<Alimento>> obtenerAlimentos();
 
-  /// Edita un alimento existente.
+  /// Elimina un alimento existente.
   ///
-  /// [alimento] instancia con los datos actualizados.
+  /// [idAlimento] es el identificador del alimento a eliminar.
   /// Lanza excepción en caso de error (400, 500, etc.).
-  Future<void> editarAlimento(Alimento alimento);
+  Future<void> eliminarAlimento(int idAlimento);
 }

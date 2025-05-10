@@ -1,17 +1,28 @@
-import 'package:flutter/foundation.dart';
+//RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
 
+import 'package:flutter/foundation.dart';
 import '../../data/models/alimentacion_model.dart';
 import '../../data/repositories/alimentacion_repository.dart';
 import '../../domain/alimentacion_domain.dart';
 
+/// ViewModel que controla el estado y la lógica de la pantalla
+/// de alimentación (lista, edición y scroll infinito).
+///
+/// Extiende [ChangeNotifier] para notificar a la UI de cambios.
 class AlimentacionViewModel extends ChangeNotifier {
   final AlimentacionRepository _repo;
   final EditarAlimentoCasoUso _editarCasoUso;
 
-  // —— Estado de scroll infinito —— 
+  /// Tamaño de cada “chunk” que se mostrará por scroll.
   static const int _chunkSize = 20;
+
+  /// Lista completa descargada desde la API.
   List<Alimento> _allAlimentos = [];
+
+  /// Subconjunto actual que se muestra en pantalla.
   final List<Alimento> _pagedAlimentos = [];
+
+  /// Índice hasta donde ya se ha cargado.
   int _currentIndex = 0;
 
   bool _isLoading = false;
@@ -22,17 +33,21 @@ class AlimentacionViewModel extends ChangeNotifier {
     EditarAlimentoCasoUso? editarCasoUso,
   })  : _repo = repo ?? AlimentacionRepository(),
         _editarCasoUso = editarCasoUso ??
-            EditarAlimentoCasoUsoImpl(
-              repositorio: repo ?? AlimentacionRepository(),
-            );
+            EditarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository());
 
-  // —— Getters expuestos —— 
+  /// Indica si actualmente se está cargando más datos.
   bool get isLoading => _isLoading;
+
+  /// Mensaje de error si algo falla.
   String? get error => _error;
+
+  /// Lista inmutable que la UI puede leer.
   List<Alimento> get alimentos => List.unmodifiable(_pagedAlimentos);
+
+  /// True si quedan más ítems en [_allAlimentos] que no se han mostrado.
   bool get hasMore => _currentIndex < _allAlimentos.length;
 
-  /// Carga toda la lista desde la API y llena el primer chunk
+  /// Descarga toda la lista y carga el primer chunk.
   Future<void> cargarAlimentos() async {
     _setLoading(true);
     try {
@@ -48,18 +63,20 @@ class AlimentacionViewModel extends ChangeNotifier {
     }
   }
 
-  /// Agrega el siguiente chunk de ítems a la lista visible
+  /// Agrega un nuevo chunk simulado al final de la lista actual.
   void cargarMas() {
     if (_isLoading || !hasMore) return;
-
     _setLoading(true);
+    // Simula retardo para mejor UX
     Future.delayed(const Duration(milliseconds: 300), () {
       _agregarSiguienteChunk();
       _setLoading(false);
     });
   }
 
-  /// Caso de uso: editar un alimento y refrescar la lista
+  /// Edita un [alimento] y vuelve a recargar datos.
+  ///
+  /// Valida nombre y descripción antes de enviar.
   Future<String?> editarAlimento(Alimento alimento) async {
     if (alimento.nombreAlimento.trim().isEmpty ||
         alimento.descripcionAlimento.trim().isEmpty) {
@@ -77,7 +94,6 @@ class AlimentacionViewModel extends ChangeNotifier {
     } on Exception catch (e) {
       final msg = e.toString();
       if (msg.contains('400')) return '❌ Datos no válidos.';
-      if (msg.contains('101')) return '❌ Sin conexión a internet.';
       if (msg.contains('500')) return '❌ Error del servidor.';
       return '❌ Error desconocido.';
     } finally {
@@ -85,7 +101,7 @@ class AlimentacionViewModel extends ChangeNotifier {
     }
   }
 
-  /// Toma el siguiente rango de [_chunkSize] ítems de [_allAlimentos]
+  /// Toma el siguiente rango de [_chunkSize] ítems y los añade.
   void _agregarSiguienteChunk() {
     final nextIndex = (_currentIndex + _chunkSize).clamp(0, _allAlimentos.length);
     _pagedAlimentos.addAll(
@@ -95,6 +111,7 @@ class AlimentacionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Cambia [_isLoading] y notifica a la UI.
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

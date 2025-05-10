@@ -106,6 +106,63 @@ class VistaCharolas extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Divider(color: Color(0xFF000000), thickness: 3),
                 const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final screenWidth = constraints.maxWidth;
+
+                      // Escalado responsivo
+                      final fontSize = screenWidth * 0.012;
+                      final iconSize = screenWidth * 0.015;
+
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Campo de búsqueda expandido
+                          Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Buscar',
+                                prefixIcon: const Icon(Icons.search),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+
+                          // Botón responsivo
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              // TODO: Define esta navegación o acción para registrar una nueva charola
+                              // Navigator.push(context, MaterialPageRoute(builder: (_) => PantallaRegistroCharola()));
+                            },
+                            icon: Icon(Icons.add, size: iconSize.clamp(20, 30)),
+                            label: Text(
+                              'Registrar charola',
+                              style: TextStyle(
+                                fontSize: fontSize.clamp(15, 22),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                              backgroundColor: const Color(0xFF0066FF),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 10),
 
                 /// Carga inicial
                 if (vm.cargando && vm.charolas.isEmpty)
@@ -165,26 +222,62 @@ class VistaCharolas extends StatelessWidget {
 
                 /// Paginación
                 if (vm.charolas.isNotEmpty) ...[
-                  Text("Página ${vm.pagActual} de ${vm.totalPags}",
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 0.5),
+                  Text(
+                    "Página ${vm.pagActual} de ${vm.totalPags}",
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: vm.pagActual > 1 ? vm.cargarPaginaAnterior : null,
-                          icon: const Icon(Icons.arrow_back, size: 30),
-                          label: const Text("Anterior"),
-                        ),
-                        const SizedBox(width: 16),
-                        ElevatedButton.icon(
-                          onPressed: vm.pagActual < vm.totalPags ? vm.cargarPaginaSiguiente : null,
-                          icon: const Icon(Icons.arrow_forward, size: 30),
-                          label: const Text("Siguiente"),
-                        ),
-                      ],
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final width = constraints.maxWidth;
+
+                        final buttonWidth = width * 0.25;
+                        final fontSize = width * 0.012;
+                        final iconSize = width * 0.015;
+
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: vm.pagActual > 1 ? vm.cargarPaginaAnterior : null,
+                              icon: Icon(Icons.arrow_back, size: iconSize.clamp(18, 32)),
+                              label: Text(
+                                "Anterior",
+                                style: TextStyle(fontSize: fontSize.clamp(17, 22)),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(horizontal: 22, vertical: 20,
+                                ),
+                                minimumSize: Size(buttonWidth.clamp(80, 200), 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            ElevatedButton.icon(
+                              onPressed: vm.pagActual < vm.totalPags ? vm.cargarPaginaSiguiente : null,
+                              icon: Icon(Icons.arrow_forward, size: iconSize.clamp(18, 32)),
+                              label: Text(
+                                "Siguiente",
+                                style: TextStyle(fontSize: fontSize.clamp(17, 22)),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 20, 
+                                  vertical: 20,
+                                ),
+                                minimumSize: Size(buttonWidth.clamp(120, 200), 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ],

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tech_nebrios_tracker/data/models/charola_model.dart';
-import 'package:tech_nebrios_tracker/framework/viewmodels/consultar_charola_viewmodel.dart';
+import 'package:tech_nebrios_tracker/framework/viewmodels/charola_viewmodel.dart';
 import '../mocks/mocks.mocks.dart';
 
 void main() {

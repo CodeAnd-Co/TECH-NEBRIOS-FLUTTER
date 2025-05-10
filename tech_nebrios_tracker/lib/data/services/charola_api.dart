@@ -18,4 +18,12 @@ class CharolaApiService {
       throw Exception('Error al obtener la charola');
     }
   }
+
+  Future<void> eliminarCharola(int id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/charola/eliminarCharola/$id'));
+  
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar la charola');
+    }
+  }
 }

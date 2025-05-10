@@ -1,11 +1,13 @@
 // RF10 https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 
 import 'package:flutter/material.dart';
+import 'package:tech_nebrios_tracker/data/repositories/eliminar_charola_repository.dart';
+import 'package:tech_nebrios_tracker/domain/eliminar_charola.dart';
 import '../../../domain/consular_charola.dart';
 import '../../../data/models/charola_model.dart';
 import '../../../data/services/charola_api.dart';
 import '../../../data/repositories/consultar_charola_repository.dart';
-import '../../viewmodels/consultar_charola_viewmodel.dart';
+import '../../viewmodels/charola_viewmodel.dart';
 import '../components/atoms/texto.dart';
 import '../components/molecules/boton_texto.dart';
 
@@ -30,6 +32,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
           CharolaApiService(baseUrl: 'http://localhost:3000'),
         ),
       ),
+      EliminarCharolaUseCase(
+        EliminarCharolaRepositoryImpl(
+          CharolaApiService(baseUrl: 'http://localhost:3000')
+        )
+      )
     );
     viewModel.cargarCharola(widget.charolaId);
   }
@@ -139,14 +146,9 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        titlePadding: const EdgeInsets.only(top: 20, left: 60, right: 5),
+                                        titlePadding: const EdgeInsets.only(top: 20, left: 5, right: 60),
                                         title: Row(
                                           children: [
-                                            Expanded(
-                                              child: Center(
-                                                child: Texto.titulo1(texto: 'Eliminar', bold: true),
-                                              ),
-                                            ),
                                             IconButton(
                                               onPressed: () => Navigator.of(context).pop(),
                                               iconSize: 35,
@@ -154,7 +156,12 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                                 Icons.close,
                                                 color: Colors.black, // Asegura que sea negra
                                               ),
-                                            )
+                                            ),
+                                            Expanded(
+                                              child: Center(
+                                                child: Texto.titulo1(texto: 'Eliminar', bold: true),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                         content: Texto.titulo5(texto: '¿Estas seguro de eliminar la charola?'),
@@ -164,8 +171,12 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                             children: [
                                               BotonTexto.simple(
                                                 texto: Texto.titulo5(texto: 'Eliminar', color: Colors.white),
-                                                alPresionar: (){
-                                                  Navigator.of(context).pop();
+                                                alPresionar: () async {
+                                                  await viewModel.eliminarCharola(viewModel.charola!.charolaId);
+                                                  Navigator.of(context).pop(); // Cierra el diálogo
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(content: Text('Charola eliminada con éxito')),
+                                                  );
                                                 },
                                                 colorBg: Color.fromARGB(255, 228, 61, 61),
                                               ),

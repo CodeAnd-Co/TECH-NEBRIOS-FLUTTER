@@ -6,8 +6,8 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:tech_nebrios_tracker/data/models/alimento_model.dart' as _i4;
-import 'package:tech_nebrios_tracker/data/repositories/alimento_repository.dart'
+import 'package:tech_nebrios_tracker/data/models/alimentacion_model.dart' as _i4;
+import 'package:tech_nebrios_tracker/data/repositories/alimentacion_repository.dart'
     as _i5;
 import 'package:tech_nebrios_tracker/domain/alimentacion_domain.dart' as _i2;
 
@@ -48,7 +48,7 @@ class MockEditarAlimentoCasoUso extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAlimentoRepository extends _i1.Mock
-    implements _i5.AlimentoRepository {
+    implements _i5.AlimentacionRepository {
   MockAlimentoRepository() {
     _i1.throwOnMissingStub(this);
   }

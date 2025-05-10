@@ -1,61 +1,79 @@
-//RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
 import 'package:flutter/foundation.dart';
 
-import '../../data/models/alimento_model.dart';
-import '../../data/repositories/alimento_repository.dart';
-import '../../data/services/alimentacion_service.dart';
+import '../../data/models/alimentacion_model.dart';
+import '../../data/repositories/alimentacion_repository.dart';
 import '../../domain/alimentacion_domain.dart';
 
 class AlimentacionViewModel extends ChangeNotifier {
-  final AlimentoRepository _repo;
+  final AlimentacionRepository _repo;
   final EditarAlimentoCasoUso _editarCasoUso;
 
- AlimentacionViewModel({
-    AlimentoRepository? repo,
-    EditarAlimentoCasoUso? editarCasoUso,
-  })  : _repo = repo ?? AlimentoRepository(AlimentacionService()),
-        _editarCasoUso = editarCasoUso ??
-            EditarAlimento(
-              repositorio: AlimentoRepository(AlimentacionService()),
-            );
+  // —— Estado de scroll infinito —— 
+  static const int _chunkSize = 20;
+  List<Alimento> _allAlimentos = [];
+  final List<Alimento> _pagedAlimentos = [];
+  int _currentIndex = 0;
 
   bool _isLoading = false;
   String? _error;
-  List<Alimento> _alimentos = [];
 
+  AlimentacionViewModel({
+    AlimentacionRepository? repo,
+    EditarAlimentoCasoUso? editarCasoUso,
+  })  : _repo = repo ?? AlimentacionRepository(),
+        _editarCasoUso = editarCasoUso ??
+            EditarAlimentoCasoUsoImpl(
+              repositorio: repo ?? AlimentacionRepository(),
+            );
+
+  // —— Getters expuestos —— 
   bool get isLoading => _isLoading;
   String? get error => _error;
-  List<Alimento> get alimentos => List.unmodifiable(_alimentos);
+  List<Alimento> get alimentos => List.unmodifiable(_pagedAlimentos);
+  bool get hasMore => _currentIndex < _allAlimentos.length;
 
-  /// Cargar lista de alimentos desde el repositorio
+  /// Carga toda la lista desde la API y llena el primer chunk
   Future<void> cargarAlimentos() async {
     _setLoading(true);
     try {
-      _alimentos = await _repo.obtenerAlimentos();
+      _allAlimentos = await _repo.obtenerAlimentos();
+      _pagedAlimentos.clear();
+      _currentIndex = 0;
+      _agregarSiguienteChunk();
       _error = null;
     } catch (e) {
       _error = 'Error al cargar alimentos: $e';
+    } finally {
+      _setLoading(false);
     }
-    _setLoading(false);
   }
 
-  /// Editar alimento existente
+  /// Agrega el siguiente chunk de ítems a la lista visible
+  void cargarMas() {
+    if (_isLoading || !hasMore) return;
+
+    _setLoading(true);
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _agregarSiguienteChunk();
+      _setLoading(false);
+    });
+  }
+
+  /// Caso de uso: editar un alimento y refrescar la lista
   Future<String?> editarAlimento(Alimento alimento) async {
-    // Validación local
-    if (alimento.nombreAlimento.trim().isEmpty || alimento.descripcionAlimento.trim().isEmpty) {
+    if (alimento.nombreAlimento.trim().isEmpty ||
+        alimento.descripcionAlimento.trim().isEmpty) {
       return 'Nombre y descripción no pueden estar vacíos.';
     }
-
-    final tieneNumeros = RegExp(r'[0-9]').hasMatch(alimento.nombreAlimento);
-    if (tieneNumeros) {
+    if (RegExp(r'[0-9]').hasMatch(alimento.nombreAlimento)) {
       return 'El nombre no debe contener números.';
     }
 
     _setLoading(true);
     try {
       await _editarCasoUso.editar(alimento: alimento);
-      await cargarAlimentos(); // Recargar lista
-      return null; // éxito
+      await cargarAlimentos();
+      return null;
     } on Exception catch (e) {
       final msg = e.toString();
       if (msg.contains('400')) return '❌ Datos no válidos.';
@@ -66,7 +84,17 @@ class AlimentacionViewModel extends ChangeNotifier {
       _setLoading(false);
     }
   }
-  /// Cambiar estado de carga y notificar listeners
+
+  /// Toma el siguiente rango de [_chunkSize] ítems de [_allAlimentos]
+  void _agregarSiguienteChunk() {
+    final nextIndex = (_currentIndex + _chunkSize).clamp(0, _allAlimentos.length);
+    _pagedAlimentos.addAll(
+      _allAlimentos.getRange(_currentIndex, nextIndex),
+    );
+    _currentIndex = nextIndex;
+    notifyListeners();
+  }
+
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

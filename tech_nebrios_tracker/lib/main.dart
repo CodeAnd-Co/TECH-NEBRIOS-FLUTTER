@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tech_nebrios_tracker/framework/views/editar_charola.view.dart';
 import 'framework/viewmodels/menu_charolas.viewmodel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewmodel.dart';
-
 
 void main() {
   runApp(
@@ -29,10 +29,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
         useMaterial3: true,
       ),
-      home: Router(
-        routerDelegate: AppRouter(),
-        backButtonDispatcher: RootBackButtonDispatcher(),
-      ),
+      home: const EditarCharola(charolaId: 1),
     );
   }
 }

@@ -18,7 +18,7 @@ class CharolaRepositorio implements CharolaServicioApi {
   /// Retorna un mapa con la respuesta JSON o lanza excepciones según el error.
   @override
   Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite) async {
-    final uri = Uri.parse('${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite');
+    final uri = Uri.parse('${APIRutas.CHAROLAS}/charolas?page=$pag&limit=$limite');
     final UserUseCases _userUseCases = UserUseCases();
     final token = await _userUseCases.obtenerTokenActual();
 

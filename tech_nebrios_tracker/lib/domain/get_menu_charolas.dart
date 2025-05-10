@@ -21,7 +21,7 @@ class ObtenerCharolasCasoUsoImpl implements ObtenerMenuCharolas {
       : repositorio = repositorio ?? CharolaRepositorio();
 
   @override
-  Future<CharolaTarjeta?> ejecutar({int pag = 1, int limite = 12}) {
+  Future<CharolaTarjeta?> ejecutar({int pag = 1, int limite = 15}) {
     return repositorio.obtenerCharolaRespuesta(pag, limite);
   }
 }

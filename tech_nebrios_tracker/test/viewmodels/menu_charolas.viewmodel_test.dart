@@ -1,9 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import '../mocks/mocks.mocks.dart';
 import 'package:tech_nebrios_tracker/data/models/menu_charolas.model.dart';
 import 'package:tech_nebrios_tracker/framework/viewmodels/menu_charolas.viewmodel.dart';
-
-import '../mocks/mocks.mocks.dart'; // Mock generado con mockito
 
 void main() {
   // Declaración de mocks y ViewModel
@@ -25,7 +24,7 @@ void main() {
               pag: 1,
               limite: 12,
               totalPags: 1,
-              data: [Charola(nombreCharola: 'E-001', fechaCreacion: DateTime.parse('2025-04-01'))],
+              data: [Charola(charolaId: 1,nombreCharola:  'E-001', fechaCreacion: DateTime.parse('2025-04-01'))],
             ));
 
     await viewModel.cargarCharolas();

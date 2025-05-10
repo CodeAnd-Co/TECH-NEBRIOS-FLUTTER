@@ -3,12 +3,16 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:tech_nebrios_tracker/data/models/charola_model.dart' as _i3;
 import 'package:tech_nebrios_tracker/data/models/menu_charolas.model.dart'
-    as _i4;
-import 'package:tech_nebrios_tracker/domain/get_menu_charolas.dart' as _i2;
+    as _i7;
+import 'package:tech_nebrios_tracker/data/repositories/consultar_charola_repository.dart'
+    as _i2;
+import 'package:tech_nebrios_tracker/domain/consular_charola.dart' as _i4;
+import 'package:tech_nebrios_tracker/domain/get_menu_charolas.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -24,20 +28,62 @@ import 'package:tech_nebrios_tracker/domain/get_menu_charolas.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeCharolaRepository_0 extends _i1.SmartFake
+    implements _i2.CharolaRepository {
+  _FakeCharolaRepository_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeCharola_1 extends _i1.SmartFake implements _i3.Charola {
+  _FakeCharola_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+/// A class which mocks [ObtenerCharolaUseCase].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockObtenerCharolaUseCase extends _i1.Mock
+    implements _i4.ObtenerCharolaUseCase {
+  MockObtenerCharolaUseCase() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.CharolaRepository get repository =>
+      (super.noSuchMethod(
+            Invocation.getter(#repository),
+            returnValue: _FakeCharolaRepository_0(
+              this,
+              Invocation.getter(#repository),
+            ),
+          )
+          as _i2.CharolaRepository);
+
+  @override
+  _i5.Future<_i3.Charola> obtenerCharola(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#obtenerCharola, [id]),
+            returnValue: _i5.Future<_i3.Charola>.value(
+              _FakeCharola_1(this, Invocation.method(#obtenerCharola, [id])),
+            ),
+          )
+          as _i5.Future<_i3.Charola>);
+}
+
 /// A class which mocks [ObtenerMenuCharolas].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockObtenerMenuCharolas extends _i1.Mock
-    implements _i2.ObtenerMenuCharolas {
+    implements _i6.ObtenerMenuCharolas {
   MockObtenerMenuCharolas() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<_i4.CharolaTarjeta?> ejecutar({int? pag, int? limite}) =>
+  _i5.Future<_i7.CharolaTarjeta?> ejecutar({int? pag, int? limite}) =>
       (super.noSuchMethod(
             Invocation.method(#ejecutar, [], {#pag: pag, #limite: limite}),
-            returnValue: _i3.Future<_i4.CharolaTarjeta?>.value(),
+            returnValue: _i5.Future<_i7.CharolaTarjeta?>.value(),
           )
-          as _i3.Future<_i4.CharolaTarjeta?>);
+          as _i5.Future<_i7.CharolaTarjeta?>);
 }

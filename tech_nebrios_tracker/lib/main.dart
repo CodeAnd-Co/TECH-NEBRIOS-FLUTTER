@@ -1,18 +1,38 @@
-
 import 'package:flutter/material.dart';
-import 'framework/views/pages/consultar_charola_page.dart';
+import 'package:provider/provider.dart';
+import 'framework/viewmodels/menu_charolas.viewmodel.dart';
+import 'framework/navigation/app_router.dart';
+import 'framework/viewmodels/loginViewmodel.dart';
 
+/// Punto de entrada de la aplicación.
 void main() {
-  runApp(const MainApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
+        ChangeNotifierProvider(create: (_) => CharolaVistaModelo()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+/// Clase principal que define la estructura básica de la app.
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: PantallaCharola(charolaId: 1011,),
+    return MaterialApp(
+      title: 'Zuustento Tracker',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey),
+        useMaterial3: true,
+      ),
+      home: Router(
+        routerDelegate: AppRouter(),
+        backButtonDispatcher: RootBackButtonDispatcher(),
+      ),
     );
   }
 }

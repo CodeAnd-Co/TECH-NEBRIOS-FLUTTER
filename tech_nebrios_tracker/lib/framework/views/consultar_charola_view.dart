@@ -1,13 +1,13 @@
 // RF10 https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 
 import 'package:flutter/material.dart';
-import '../../../domain/consular_charola.dart';
-import '../../../data/models/charola_model.dart';
-import '../../../data/services/charola_api.dart';
-import '../../../data/repositories/consultar_charola_repository.dart';
-import '../../viewmodels/consultar_charola_viewmodel.dart';
-import '../components/atoms/texto.dart';
-import '../components/molecules/boton_texto.dart';
+import '../../domain/consular_charola.dart';
+import '../../data/models/charola_model.dart';
+import '../../data/services/charola_api.dart';
+import '../../data/repositories/consultar_charola_repository.dart';
+import '../viewmodels/consultar_charola_viewmodel.dart';
+import 'components/atoms/texto.dart';
+import 'components/molecules/boton_texto.dart';
 
 class PantallaCharola extends StatefulWidget {
   final int charolaId;

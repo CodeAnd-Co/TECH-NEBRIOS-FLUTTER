@@ -6,11 +6,13 @@ import '../mocks/mocks.mocks.dart';
 
 void main() {
   late MockObtenerCharolaUseCase mockUseCase;
+  late MockEliminarCharolaUseCase mockEliminarUseCase;
   late CharolaViewModel viewModel;
 
   setUp(() {
     mockUseCase = MockObtenerCharolaUseCase();
-    viewModel = CharolaViewModel(mockUseCase);
+    mockEliminarUseCase = MockEliminarCharolaUseCase();
+    viewModel = CharolaViewModel(mockUseCase, mockEliminarUseCase);
   });
 
   test('carga exitosa de charola', () async {

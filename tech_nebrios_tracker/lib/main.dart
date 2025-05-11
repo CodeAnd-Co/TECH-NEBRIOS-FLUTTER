@@ -4,6 +4,7 @@ import 'package:tech_nebrios_tracker/framework/views/editar_charola.view.dart';
 import 'framework/viewmodels/menu_charolas.viewmodel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewmodel.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(
@@ -30,6 +31,16 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const EditarCharola(charolaId: 1),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es', 'ES'), // Español
+        Locale('en', 'US'), // Inglés (opcional)
+      ],
+      locale: const Locale('es', 'ES'),
     );
   }
 }

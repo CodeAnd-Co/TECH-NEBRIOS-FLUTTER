@@ -37,6 +37,9 @@ class CharolaVistaModelo extends ChangeNotifier {
   /// Total de páginas disponibles según la API.
   int totalPags = 1;
 
+  /// Estado de las charola al inicio "activa" o "pasada".
+  String estadoActual = 'activa';
+
   /// Carga charolas desde la API. Si refresh es true, reinicia paginación.
   Future<void> cargarCharolas({bool refresh = false}) async {
     if (cargando) return;
@@ -50,7 +53,7 @@ class CharolaVistaModelo extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final respuesta = await obtenerCharolasCasoUso.ejecutar(pag: pagActual, limite: limite);
+      final respuesta = await obtenerCharolasCasoUso.ejecutar(pag: pagActual, limite: limite, estado: estadoActual);
 
       if (respuesta != null) {
         charolas.addAll(respuesta.data);
@@ -89,5 +92,13 @@ class CharolaVistaModelo extends ChangeNotifier {
       cargarCharolas(refresh: true);
     }
   }
+
+  /// Carga a la primera página con el ToggleButton.
+  void cambiarEstado(String nuevoEstado) {
+  estadoActual = nuevoEstado;
+  pagActual = 1;
+  cargarCharolas(refresh: true);
+}
+
 }
 

@@ -7,8 +7,7 @@ import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:tech_nebrios_tracker/data/models/charola_model.dart' as _i3;
-import 'package:tech_nebrios_tracker/data/models/menuCharolasModel.dart'
-    as _i7;
+import 'package:tech_nebrios_tracker/data/models/menuCharolasModel.dart' as _i7;
 import 'package:tech_nebrios_tracker/data/repositories/consultar_charola_repository.dart'
     as _i2;
 import 'package:tech_nebrios_tracker/domain/consular_charola.dart' as _i4;
@@ -80,9 +79,17 @@ class MockObtenerMenuCharolas extends _i1.Mock
   }
 
   @override
-  _i5.Future<_i7.CharolaTarjeta?> ejecutar({int? pag, int? limite}) =>
+  _i5.Future<_i7.CharolaTarjeta?> ejecutar({
+    int? pag,
+    int? limite,
+    String? estado,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#ejecutar, [], {#pag: pag, #limite: limite}),
+            Invocation.method(#ejecutar, [], {
+              #pag: pag,
+              #limite: limite,
+              #estado: estado,
+            }),
             returnValue: _i5.Future<_i7.CharolaTarjeta?>.value(),
           )
           as _i5.Future<_i7.CharolaTarjeta?>);

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import '../models/constantes.dart';
 import '../models/menuCharolasModel.dart';
-import '../services/menuCharolasAPI.service.dart';
+import '../services/menuCharolasApiService.dart';
 import '../../domain/usuarioUseCases.dart';
 
 /// Repositorio que implementa la lógica para consumir la API de charolas.
@@ -17,8 +17,8 @@ class CharolaRepositorio implements CharolaAPIService {
   ///
   /// Retorna un mapa con la respuesta JSON o lanza excepciones según el error.
   @override
-  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite) async {
-    final uri = Uri.parse('${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite');
+  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {String estado = 'activa'}) async {
+    final uri = Uri.parse('${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite&estado=$estado');
     final UserUseCases _userUseCases = UserUseCases();
     final token = await _userUseCases.obtenerTokenActual();
 
@@ -53,8 +53,8 @@ class CharolaRepositorio implements CharolaAPIService {
   /// Convierte la respuesta cruda de la API en un modelo [CharolaTarjeta].
   ///
   /// Retorna null si la respuesta no es válida.
-  Future<CharolaTarjeta?> obtenerCharolaRespuesta(int pag, int limite) async {
-    final data = await obtenerCharolasPaginadas(pag, limite);
+  Future<CharolaTarjeta?> obtenerCharolaRespuesta(int pag, int limite, {String estado = 'activa'}) async {
+    final data = await obtenerCharolasPaginadas(pag, limite, estado: estado);
     if (data != null) {
       return CharolaTarjeta.fromJson(data);
     }

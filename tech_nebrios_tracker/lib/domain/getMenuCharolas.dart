@@ -7,7 +7,7 @@ import '../data/repositories/menuCharolasRepository.dart';
 /// Permite recuperar datos paginados desde el repositorio.
 abstract class ObtenerMenuCharolas {
   /// Ejecuta el caso de uso solicitando la página [pag] con [limite] de elementos.
-  Future<CharolaTarjeta?> ejecutar({int pag, int limite});
+  Future<CharolaTarjeta?> ejecutar({int pag, int limite, String estado});
 }
 
 /// Implementación del caso de uso para obtener charolas.
@@ -21,8 +21,8 @@ class ObtenerCharolasCasoUsoImpl implements ObtenerMenuCharolas {
       : repositorio = repositorio ?? CharolaRepositorio();
 
   @override
-  Future<CharolaTarjeta?> ejecutar({int pag = 1, int limite = 15}) {
-    return repositorio.obtenerCharolaRespuesta(pag, limite);
+  Future<CharolaTarjeta?> ejecutar({int pag = 1, int limite = 15, String estado = 'activa'}) {
+    return repositorio.obtenerCharolaRespuesta(pag, limite, estado: estado);
   }
 }
 

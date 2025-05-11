@@ -96,16 +96,26 @@ class VistaCharolas extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        title: const Text(
+          'Charolas',
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: const Color(0xFFF5F7FA),
+      ),
       body: SafeArea(
         child: Consumer<CharolaVistaModelo>(
           builder: (context, vm, _) {
             return Column(
               children: [
-                const SizedBox(height: 16),
-                const Text('Charolas', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
                 const Divider(color: Color(0xFF000000), thickness: 3),
-                const SizedBox(height: 8),
+                // const SizedBox(height: 4),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: LayoutBuilder(
@@ -149,7 +159,7 @@ class VistaCharolas extends StatelessWidget {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
                               backgroundColor: const Color(0xFF0066FF),
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
@@ -161,6 +171,26 @@ class VistaCharolas extends StatelessWidget {
                       );
                     },
                   ),
+                ),
+                const SizedBox(height: 10),
+
+                /// Toggle Activas / Pasadas
+                ToggleButtons(
+                  isSelected: [vm.estadoActual == 'activa', vm.estadoActual == 'pasada'],
+                  onPressed: (index) {
+                    final estado = index == 0 ? 'activa' : 'pasada';
+                    vm.cambiarEstado(estado);
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  selectedColor: Colors.white,
+                  fillColor: const Color(0xFF0066FF),
+                  color: Colors.black87,
+                  textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  constraints: const BoxConstraints(minHeight: 40, minWidth: 150),
+                  children: const [
+                    Text('Activas'),
+                    Text('Pasadas'),
+                  ],
                 ),
                 const SizedBox(height: 10),
 
@@ -188,8 +218,8 @@ class VistaCharolas extends StatelessWidget {
                         itemCount: vm.charolas.length,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 5,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 4,
+                          // mainAxisSpacing: 16,
                           childAspectRatio: 1.3,
                         ),
                         itemBuilder: (context, index) {
@@ -226,9 +256,8 @@ class VistaCharolas extends StatelessWidget {
                     "Página ${vm.pagActual} de ${vm.totalPags}",
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                  const SizedBox(height: 8),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final width = constraints.maxWidth;
@@ -242,14 +271,14 @@ class VistaCharolas extends StatelessWidget {
                           children: [
                             ElevatedButton.icon(
                               onPressed: vm.pagActual > 1 ? vm.cargarPaginaAnterior : null,
-                              icon: Icon(Icons.arrow_back, size: iconSize.clamp(18, 32)),
+                              icon: Icon(Icons.arrow_back, size: iconSize.clamp(26, 32)),
                               label: Text(
                                 "Anterior",
-                                style: TextStyle(fontSize: fontSize.clamp(17, 22)),
+                                style: TextStyle(fontSize: fontSize.clamp(19, 22)),
                               ),
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(horizontal: 22, vertical: 20,
-                                ),
+                                backgroundColor: const Color(0xFFE9EEF6),
+                                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 20),
                                 minimumSize: Size(buttonWidth.clamp(80, 200), 48),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
@@ -257,22 +286,26 @@ class VistaCharolas extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            ElevatedButton.icon(
+                            ElevatedButton(
                               onPressed: vm.pagActual < vm.totalPags ? vm.cargarPaginaSiguiente : null,
-                              icon: Icon(Icons.arrow_forward, size: iconSize.clamp(18, 32)),
-                              label: Text(
-                                "Siguiente",
-                                style: TextStyle(fontSize: fontSize.clamp(17, 22)),
-                              ),
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 20, 
-                                  vertical: 20,
-                                ),
+                                backgroundColor: const Color(0xFFE9EEF6),
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                                 minimumSize: Size(buttonWidth.clamp(120, 200), 48),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Siguiente",
+                                    style: TextStyle(fontSize: fontSize.clamp(19, 22)),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(Icons.arrow_forward, size: iconSize.clamp(26, 32)),
+                                ],
                               ),
                             ),
                           ],

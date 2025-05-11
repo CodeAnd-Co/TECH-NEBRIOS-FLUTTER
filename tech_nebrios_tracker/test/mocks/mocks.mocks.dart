@@ -6,9 +6,10 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:tech_nebrios_tracker/data/models/alimentacion_model.dart' as _i4;
-import 'package:tech_nebrios_tracker/data/repositories/alimentacion_repository.dart'
+import 'package:tech_nebrios_tracker/data/models/alimentacion_model.dart'
     as _i5;
+import 'package:tech_nebrios_tracker/data/repositories/alimentacion_repository.dart'
+    as _i4;
 import 'package:tech_nebrios_tracker/domain/alimentacion_domain.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -25,46 +26,46 @@ import 'package:tech_nebrios_tracker/domain/alimentacion_domain.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [EditarAlimentoCasoUso].
+/// A class which mocks [EliminarAlimentoCasoUso].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEditarAlimentoCasoUso extends _i1.Mock
-    implements _i2.EditarAlimentoCasoUso {
-  MockEditarAlimentoCasoUso() {
+class MockEliminarAlimentoCasoUso extends _i1.Mock
+    implements _i2.EliminarAlimentoCasoUso {
+  MockEliminarAlimentoCasoUso() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<void> editar({required _i4.Alimento? alimento}) =>
+  _i3.Future<void> eliminar({required int? idAlimento}) =>
       (super.noSuchMethod(
-            Invocation.method(#editar, [], {#alimento: alimento}),
+            Invocation.method(#eliminar, [], {#idAlimento: idAlimento}),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
 }
 
-/// A class which mocks [AlimentoRepository].
+/// A class which mocks [AlimentacionRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAlimentoRepository extends _i1.Mock
-    implements _i5.AlimentacionRepository {
-  MockAlimentoRepository() {
+class MockAlimentacionRepository extends _i1.Mock
+    implements _i4.AlimentacionRepository {
+  MockAlimentacionRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<List<_i4.Alimento>> obtenerAlimentos() =>
+  _i3.Future<List<_i5.Alimento>> obtenerAlimentos() =>
       (super.noSuchMethod(
             Invocation.method(#obtenerAlimentos, []),
-            returnValue: _i3.Future<List<_i4.Alimento>>.value(<_i4.Alimento>[]),
+            returnValue: _i3.Future<List<_i5.Alimento>>.value(<_i5.Alimento>[]),
           )
-          as _i3.Future<List<_i4.Alimento>>);
+          as _i3.Future<List<_i5.Alimento>>);
 
   @override
-  _i3.Future<void> editarAlimento(_i4.Alimento? alimento) =>
+  _i3.Future<void> eliminarAlimento(int? idAlimento) =>
       (super.noSuchMethod(
-            Invocation.method(#editarAlimento, [alimento]),
+            Invocation.method(#eliminarAlimento, [idAlimento]),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )

@@ -30,9 +30,9 @@ class AlimentacionViewModel extends ChangeNotifier {
 
   AlimentacionViewModel({
     AlimentacionRepository? repo,
-    EliminarAlimentoCasoUso? editarCasoUso,
+    EliminarAlimentoCasoUso? eliminarCasoUso,
   })  : _repo = repo ?? AlimentacionRepository(),
-        _eliminarCasoUso = editarCasoUso ??
+        _eliminarCasoUso = eliminarCasoUso ??
             EliminarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository());
 
   /// Indica si actualmente se está cargando más datos.

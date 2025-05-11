@@ -11,7 +11,7 @@ import '../../domain/usuarioUseCases.dart';
 
 /// Repositorio que implementa la lógica para consumir la API de charolas.
 /// Encapsula llamadas HTTP y transformación de datos.
-class CharolaRepositorio implements CharolaServicioApi {
+class CharolaRepositorio implements CharolaAPIService {
   final Logger _logger = Logger();
   /// Llama a la API para obtener charolas paginadas.
   ///

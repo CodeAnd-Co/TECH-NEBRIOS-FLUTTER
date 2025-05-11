@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../views/loginView.dart';
-import '../views/menu_charolas.view.dart';
+import '../views/menuCharolasView.dart';
 
 enum AppRoute {
   login,

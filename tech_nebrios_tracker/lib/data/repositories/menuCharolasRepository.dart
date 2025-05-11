@@ -5,8 +5,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import '../models/constantes.dart';
-import '../models/menu_charolas.model.dart';
-import '../services/menu_charolasAPI.service.dart';
+import '../models/menuCharolasModel.dart';
+import '../services/menuCharolasAPI.service.dart';
 import '../../domain/usuarioUseCases.dart';
 
 /// Repositorio que implementa la lógica para consumir la API de charolas.

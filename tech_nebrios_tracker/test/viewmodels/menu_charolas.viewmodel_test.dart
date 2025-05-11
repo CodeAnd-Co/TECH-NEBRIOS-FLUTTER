@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import '../mocks/mocks.mocks.dart';
-import 'package:tech_nebrios_tracker/data/models/menu_charolas.model.dart';
-import 'package:tech_nebrios_tracker/framework/viewmodels/menu_charolas.viewmodel.dart';
+import 'package:tech_nebrios_tracker/data/models/menuCharolasModel.dart';
+import 'package:tech_nebrios_tracker/framework/viewmodels/menuCharolasViewmodel.dart';
 
 void main() {
   // Declaración de mocks y ViewModel

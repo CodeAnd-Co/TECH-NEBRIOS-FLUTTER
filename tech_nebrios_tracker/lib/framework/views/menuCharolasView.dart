@@ -3,8 +3,8 @@
 import './consultar_charola_view.dart'; // Ajusta el path si es necesario
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/menu_charolas.viewmodel.dart';
-import '../../data/models/menu_charolas.model.dart';
+import '../viewmodels/menuCharolasViewmodel.dart';
+import '../../data/models/menuCharolasModel.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {

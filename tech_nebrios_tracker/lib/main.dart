@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'framework/viewmodels/menu_charolas.viewmodel.dart';
+import 'framework/viewmodels/menuCharolasViewmodel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewmodel.dart';
 

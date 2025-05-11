@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import '../../data/models/menu_charolas.model.dart';
-import '../../domain/get_menu_charolas.dart';
+import '../../data/models/menuCharolasModel.dart';
+import '../../domain/getMenuCharolas.dart';
 
 /// ViewModel encargado de gestionar el estado de la vista de charolas.
 /// Implementa la lógica de paginación, carga desde el caso de uso y control de errores.

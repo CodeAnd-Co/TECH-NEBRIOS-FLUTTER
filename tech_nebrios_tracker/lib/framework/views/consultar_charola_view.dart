@@ -7,9 +7,9 @@ import '../../../domain/consular_charola.dart';
 import '../../../data/models/charola_model.dart';
 import '../../../data/services/charola_api.dart';
 import '../../../data/repositories/consultar_charola_repository.dart';
-import '../../viewmodels/charola_viewmodel.dart';
-import '../components/atoms/texto.dart';
-import '../components/molecules/boton_texto.dart';
+import '../viewmodels/charola_viewmodel.dart';
+import 'components/atoms/texto.dart';
+import 'components/molecules/boton_texto.dart';
 
 class PantallaCharola extends StatefulWidget {
   final int charolaId;

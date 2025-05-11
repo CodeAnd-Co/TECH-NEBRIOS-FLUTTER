@@ -7,9 +7,12 @@ import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:tech_nebrios_tracker/data/models/charola_model.dart' as _i3;
+import 'package:tech_nebrios_tracker/data/models/menuCharolasModel.dart'
+    as _i7;
 import 'package:tech_nebrios_tracker/data/repositories/consultar_charola_repository.dart'
     as _i2;
 import 'package:tech_nebrios_tracker/domain/consular_charola.dart' as _i4;
+import 'package:tech_nebrios_tracker/domain/getMenuCharolas.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -65,4 +68,22 @@ class MockObtenerCharolaUseCase extends _i1.Mock
             ),
           )
           as _i5.Future<_i3.Charola>);
+}
+
+/// A class which mocks [ObtenerMenuCharolas].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockObtenerMenuCharolas extends _i1.Mock
+    implements _i6.ObtenerMenuCharolas {
+  MockObtenerMenuCharolas() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Future<_i7.CharolaTarjeta?> ejecutar({int? pag, int? limite}) =>
+      (super.noSuchMethod(
+            Invocation.method(#ejecutar, [], {#pag: pag, #limite: limite}),
+            returnValue: _i5.Future<_i7.CharolaTarjeta?>.value(),
+          )
+          as _i5.Future<_i7.CharolaTarjeta?>);
 }

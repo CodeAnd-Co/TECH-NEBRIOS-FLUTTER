@@ -6,7 +6,7 @@ import '../models/alimentacion_model.dart';
 
 /// Servicio que realiza peticiones HTTP para manejar alimentos.
 ///
-/// Se conecta con el backend mediante rutas como `/comida`, `/comida/agregar` y `/comida/eliminar`.
+/// Se conecta con el backend mediante rutas como `/alimentacion`, `/alimentacion/agregar` y `/alimentacion/eliminar`.
 class AlimentacionService {
   static const _baseUrl = 'http://localhost:3000';
 
@@ -14,7 +14,7 @@ class AlimentacionService {
   ///
   /// Lanza una excepción si la respuesta no es 200.
   Future<List<Alimento>> obtenerAlimentos() async {
-    final uri = Uri.parse('$_baseUrl/comida');
+    final uri = Uri.parse('$_baseUrl/');
     final response = await http.get(uri);
 
     if (response.statusCode != 200) {
@@ -31,7 +31,7 @@ class AlimentacionService {
   ///
   /// Lanza una excepción si la eliminación falla.
   Future<void> eliminarAlimento(int idAlimento) async {
-    final uri = Uri.parse('$_baseUrl/comida/eliminar/$idAlimento');
+    final uri = Uri.parse('$_baseUrl/alimentacion/eliminar/$idAlimento');
 
     final response = await http.delete(uri);
 
@@ -46,7 +46,7 @@ class AlimentacionService {
   ///
   /// Lanza excepciones específicas según el código de respuesta del backend.
   Future<void> postDatosComida(String nombre, String descripcion) async {
-  final uri = Uri.parse('$_baseUrl/comida/agregar');
+  final uri = Uri.parse('$_baseUrl/alimentacion/agregar');
   final response = await http.post(
     uri,
     headers: {

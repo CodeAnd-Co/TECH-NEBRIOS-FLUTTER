@@ -1,11 +1,13 @@
 // RF10 https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 
 import 'package:flutter/material.dart';
-import '../../domain/consular_charola.dart';
-import '../../data/models/charola_model.dart';
-import '../../data/services/charola_api.dart';
-import '../../data/repositories/consultar_charola_repository.dart';
-import '../viewmodels/consultar_charola_viewmodel.dart';
+import 'package:tech_nebrios_tracker/data/repositories/eliminar_charola_repository.dart';
+import 'package:tech_nebrios_tracker/domain/eliminar_charola.dart';
+import '../../../domain/consular_charola.dart';
+import '../../../data/models/charola_model.dart';
+import '../../../data/services/charola_api.dart';
+import '../../../data/repositories/consultar_charola_repository.dart';
+import '../viewmodels/charola_viewmodel.dart';
 import 'components/atoms/texto.dart';
 import 'components/molecules/boton_texto.dart';
 
@@ -30,6 +32,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
           CharolaApiService(baseUrl: 'http://localhost:3000'),
         ),
       ),
+      EliminarCharolaUseCase(
+        EliminarCharolaRepositoryImpl(
+          CharolaApiService(baseUrl: 'http://localhost:3000')
+        )
+      )
     );
     viewModel.cargarCharola(widget.charolaId);
   }
@@ -76,6 +83,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     return AnimatedBuilder(
       animation: viewModel,
       builder: (context, _) {
+
         // animación de carga
         if (viewModel.cargando) {
           return const Scaffold(
@@ -92,6 +100,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
           );
         }
 
+        // se formatea la fecha
         var fechaFormateada = formatearFecha(charola.fechaCreacion);
 
         return Scaffold(
@@ -133,8 +142,50 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                 'Eliminar',
                                 const Color.fromARGB(255, 228, 61, 61),
                                 () {
-                                  Navigator.of(context).pop();
-                                  print('Botón de Eliminar presionado');
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        titlePadding: const EdgeInsets.only(top: 20, left: 5, right: 60),
+                                        title: Row(
+                                          children: [
+                                            IconButton(
+                                              onPressed: () => Navigator.of(context).pop(),
+                                              iconSize: 35,
+                                              icon: Icon(
+                                                Icons.close,
+                                                color: Colors.black, // Asegura que sea negra
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Center(
+                                                child: Texto.titulo1(texto: 'Eliminar', bold: true),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        content: Texto.titulo5(texto: '¿Estas seguro de eliminar la charola?'),
+                                        actions: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              BotonTexto.simple(
+                                                texto: Texto.titulo5(texto: 'Eliminar', color: Colors.white),
+                                                alPresionar: () async {
+                                                  await viewModel.eliminarCharola(viewModel.charola!.charolaId);
+                                                  Navigator.of(context).pop(); // Cierra el diálogo
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(content: Text('Charola eliminada con éxito')),
+                                                  );
+                                                },
+                                                colorBg: Color.fromARGB(255, 228, 61, 61),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                               ),
                               _crearBotonTexto(
@@ -150,7 +201,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                 const Color.fromARGB(255, 36, 66, 204),
                                 () {
                                   Navigator.of(context).pop();
-                                  print('Botón de Editar presionado');
+                                  print('Botón de Historial presionado');
                                 },
                               ),
                             ],

@@ -5,6 +5,6 @@ class APIRutas{
 
   static const String USUARIO = "$BASEURL/usuario";
 
-    static const String CHAROLA = "$BASEURL/charola";
+  static const String CHAROLA = "$BASEURL/charola";
 
 }

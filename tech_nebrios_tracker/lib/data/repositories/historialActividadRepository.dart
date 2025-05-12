@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as path;
 import 'package:tech_nebrios_tracker/data/models/constantes.dart';
 import '../models/historialActividadModel.dart';
 import '../services/historialActividadAPIService.dart';
 
 class HistorialActividadRepository extends HistorialActividadAPIService {
   @override
-  Future<HistorialactividadRespuesta?> historialActividad(charolaId) async {
-    final url = Uri.parse('${APIRutas.CHAROLA}/historialActividad?charolaId=1');
+  Future<HistorialactividadRespuesta> historialActividad(charolaId) async {
+    final url = Uri.parse('${APIRutas.CHAROLA}/historialActividad?charolaId=$charolaId');
+
     try {
       final respuesta = await http.get(url);
 
@@ -17,12 +16,20 @@ class HistorialActividadRepository extends HistorialActividadAPIService {
         final data = jsonDecode(respuesta.body);
         final resultado = HistorialactividadRespuesta.fromJson(data);
         return resultado;
-      } else {
-        return null;
+
+      } else if (respuesta.statusCode == 201){
+        final data = jsonDecode(respuesta.body);
+
+        final estado = Estado(estado: data['estado']['estado'], fechaActualizacion: data['estado']['fechaActualizacion']);
+        final resultado = HistorialactividadRespuesta(codigo: data['codigo'], estado: estado, alimentacion: [], hidratacion: [] );
+        return resultado;
+
+      } else { 
+        return HistorialactividadRespuesta(codigo: '500', estado: Estado(estado: '', fechaActualizacion: ''), alimentacion: [], hidratacion: []);
       }
       
     } catch (error) {
-      return null;
+      return HistorialactividadRespuesta(codigo: '500', estado: Estado(estado: '', fechaActualizacion: ''), alimentacion: [], hidratacion: []);
     }
   }
 

@@ -2,7 +2,7 @@ import '../data/repositories/historialActividadRepository.dart';
 import '../data/models/historialActividadModel.dart';
 
 abstract class HistorialActividadUseCases{
-  Future<HistorialactividadRespuesta?> execute(charolaId);
+  Future<HistorialactividadRespuesta> execute(charolaId);
 }
 
 class HistorialActividadUseCasesImp extends HistorialActividadUseCases{
@@ -11,7 +11,7 @@ class HistorialActividadUseCasesImp extends HistorialActividadUseCases{
   HistorialActividadUseCasesImp({HistorialActividadRepository? repositorio}) : repositorio = repositorio ?? HistorialActividadRepository();
 
   @override
-  Future<HistorialactividadRespuesta?> execute(charolaId) async {
+  Future<HistorialactividadRespuesta> execute(charolaId) async {
     return await repositorio.historialActividad(charolaId);
   }
 }

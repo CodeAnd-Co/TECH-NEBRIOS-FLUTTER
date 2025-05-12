@@ -43,63 +43,41 @@ class Estado {
 }
 
 class Alimentacion {
-  final int cantidadOtorgada;
+  final String cantidadOtorgada;
   final String fechaOtorgada;
-  final Comida comida;
+  final String nombre;
 
   Alimentacion({
     required this.cantidadOtorgada,
     required this.fechaOtorgada,
-    required this.comida,
+    required this.nombre,
   });
 
   factory Alimentacion.fromJson(Map<String, dynamic> json) {
     return Alimentacion(
       cantidadOtorgada: json['cantidadOtorgada'],
       fechaOtorgada: json['fechaOtorgada'],
-      comida: Comida.fromJson(json['COMIDA']),
-    );
-  }
-}
-
-class Comida {
-  final String nombre;
-
-  Comida({required this.nombre});
-
-  factory Comida.fromJson(Map<String, dynamic> json) {
-    return Comida(
       nombre: json['nombre'],
     );
   }
 }
 
 class Hidratacion {
-  final int cantidadOtorgada;
-  final String fechaOtrogada;
-  final HidratacionInfo hidratacion;
+  final String cantidadOtorgada;
+  final String fechaOtorgada;
+  final String nombre;
 
   Hidratacion({
     required this.cantidadOtorgada,
-    required this.fechaOtrogada,
-    required this.hidratacion,
+    required this.fechaOtorgada,
+    required this.nombre,
   });
 
   factory Hidratacion.fromJson(Map<String, dynamic> json) {
     return Hidratacion(
       cantidadOtorgada: json['cantidadOtorgada'],
-      fechaOtrogada: json['fechaOtrogada'],
-      hidratacion: HidratacionInfo.fromJson(json['HIDRATACION']),
+      fechaOtorgada: json['fechaOtorgada'],
+      nombre: json['nombre'],
     );
-  }
-}
-
-class HidratacionInfo {
-  final String nombre;
-
-  HidratacionInfo({required this.nombre});
-
-  factory HidratacionInfo.fromJson(Map<String, dynamic> json) {
-    return HidratacionInfo(nombre: json['nombre']);
   }
 }

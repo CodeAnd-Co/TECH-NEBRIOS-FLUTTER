@@ -4,7 +4,7 @@ import 'framework/viewmodels/menu_charolas.viewmodel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewmodel.dart';
 import 'package:tech_nebrios_tracker/framework/views/historialActividadView.dart';
-import './framework/viewmodels/historialActividadViewModel.dart';
+import 'framework/viewmodels/historialActividadViewmodel.dart';
 import './domain/historialActividadUseCases.dart';
 
 void main() {
@@ -20,7 +20,7 @@ class MainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create:
-              (_) => HistorialActividadViewModel(
+              (_) => HistorialActividadViewmodel(
                 HistorialActividadUseCasesImp(),
               ),
         ),

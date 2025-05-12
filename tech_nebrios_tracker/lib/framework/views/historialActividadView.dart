@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../viewmodels/historialActividadViewmodel.dart';
 
 class HistorialActvidadPopUp extends StatelessWidget {
   const HistorialActvidadPopUp({super.key});
 
-  void mostrarPopUpHistorialActividad(BuildContext context) {
+  void mostrarPopUpHistorialActividad(BuildContext context) async {
+    final vistaModelo = Provider.of<HistorialActividadViewmodel>(context, listen: false);
+    await vistaModelo.historialActividad(1);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -28,8 +32,13 @@ class HistorialActvidadPopUp extends StatelessWidget {
               ),
             ],
           ),
-
-          content: SingleChildScrollView(
+          content: vistaModelo.error ? 
+          Padding(
+            padding: const EdgeInsets.only(left: 20, top:10, bottom: 10),
+            child: Text(vistaModelo.mensajeError, style: TextStyle(fontSize: 18)) 
+          )
+          
+           : SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -53,12 +62,12 @@ class HistorialActvidadPopUp extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "Activa",
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.green),
+                          vistaModelo.estadoCharola,
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,  color: vistaModelo.estadoCharolaColor ? Colors.green : Colors.red),
                         ),
                       ),
                     ),
-                    buildDataCell('2/05/2025'),
+                    buildDataCell(vistaModelo.fechaActualizacion),
                   ]),
                 ],
               )
@@ -70,33 +79,35 @@ class HistorialActvidadPopUp extends StatelessWidget {
                 'Alimentación:',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                columns: [
-                  buildDataColumn('Tipo de alimento:'),
-                  buildDataColumn('Cantidad otorgada:'),
-                  buildDataColumn('Fecha de actualización:'),
-                ],
-                rows: [
-                  DataRow(cells: [
-                    buildDataCell('Manzana'),
-                    buildDataCell('10gr'),
-                    buildDataCell('2/05/2025'),
-                  ]),
-                  DataRow(cells: [
-                    buildDataCell('Pera'),
-                    buildDataCell('3gr'),
-                    buildDataCell('6/05/2025'),
-                  ]),
-                  DataRow(cells: [
-                    buildDataCell('Salvado'),
-                    buildDataCell('15gr'),
-                    buildDataCell('12/05/2025'),
-                  ]),
-                ],
-              ),
-              ),
+
+              vistaModelo.alimentacion.isEmpty 
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 20, top:10, bottom: 10),
+                  child: Text(
+                    "Aún no hay datos de alimentacion en esta charola",
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red),
+                  ),
+                ) :
+
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                  columns: [
+                    buildDataColumn('Tipo de alimento:'),
+                    buildDataColumn('Cantidad otorgada:'),
+                    buildDataColumn('Fecha de actualización:'),
+                  ],
+                  rows: vistaModelo.alimentacion
+                    .map(
+                      (alimento) => DataRow(cells: [
+                        buildDataCell(alimento.nombre),
+                        buildDataCell(alimento.cantidadOtorgada + " gr"),
+                        buildDataCell(alimento.fechaOtorgada),
+                      ]),
+                    )
+                    .toList(),
+                  ),
+                ),
 
               const Divider(color: Colors.grey, thickness: 1),
 
@@ -105,28 +116,39 @@ class HistorialActvidadPopUp extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
 
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                columns: [
-                  buildDataColumn('Tipo de hidratacion:'),
-                  buildDataColumn('Cantidad otorgada:'),
-                  buildDataColumn('Fecha de actualización:'),
-                ],
-                rows: [
-                  DataRow(cells: [
-                    buildDataCell('Zanahoria'),
-                    buildDataCell('25gr'),
-                    buildDataCell('2/05/2025'),
-                  ]),
-                ],
-                ),
-              ),
+              vistaModelo.hidratacion.isEmpty 
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 20, top:10, bottom: 10),
+                  child: Text(
+                    "Aún no hay datos de hidratación en esta charola",
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red),
+                  ),
+                ) :
 
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                  columns: [
+                    buildDataColumn('Tipo de hidratacion:'),
+                    buildDataColumn('Cantidad otorgada:'),
+                    buildDataColumn('Fecha de actualización:'),
+                  ],
+                  rows: vistaModelo.hidratacion
+                    .map(
+                      (hidratacion) => DataRow(cells: [
+                        buildDataCell(hidratacion.nombre),
+                        buildDataCell(hidratacion.cantidadOtorgada + " gr"),
+                        buildDataCell(hidratacion.fechaOtorgada),
+                      ]),
+                    )
+                    .toList(),
+                  ),
+                ),  
               const Divider(color: Colors.grey, thickness: 1),
               ]
             )
-          ),
+          )
+          
         );
       },
     );
@@ -166,7 +188,9 @@ class HistorialActvidadPopUp extends StatelessWidget {
       appBar: AppBar(title: const Text('Demo del Pop-up de Historial de Actividad')),
       body: Center(
         child: ElevatedButton(
-          onPressed: () => mostrarPopUpHistorialActividad(context),
+          onPressed: () {
+            mostrarPopUpHistorialActividad(context);
+          },
           child: const Text('Historial de actividad'),
         ),
       ),

@@ -20,6 +20,16 @@ class _EditarCharolaState extends State<EditarCharola> {
   @override
   void initState() {
     super.initState();
+
+    // Inicializar controladores con valores por defecto
+    viewModel = EditarCharolaViewModel(
+      EditarCharola(charolaId: widget.charolaId),
+    );
+
+    // Inicializar dropdowns con valores por defecto
+    viewModel.hidratacionItems = ["Zanahoria", "Manzana", "Agua"];
+
+    viewModel.alimentoItems = ["Salvado", "Avena", "Maíz"];
     final editarCharolaUseCase = EditarCharola(
       charolaId: 1,
     ); // Inicializa el caso de uso
@@ -165,91 +175,161 @@ class _EditarCharolaState extends State<EditarCharola> {
           backgroundColor: const Color.fromARGB(255, 245, 247, 250),
           body: Center(
             child: SizedBox(
-              width: 900,
-              height: 900,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(30),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+              width: 600,
+              child: Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                color: const Color.fromARGB(255, 240, 240, 240),
+                child: Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Título de la charola
+                      Texto.titulo1(
+                        texto: "C-111", // Nombre de la charola
+                        bold: true,
+                        tamanio: 48,
+                        color: const Color.fromARGB(250, 34, 166, 58),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Campo de estado
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Texto.titulo1(
-                            texto: "Editar Charola",
-                            bold: true,
-                            tamanio: 64,
-                            color: const Color.fromARGB(250, 34, 166, 58),
-                          ),
-                          const SizedBox(height: 20),
-                          // Campo de estado
-                          _buildTextFieldContainer(
-                            'Estado',
-                            viewModel.estadoController,
-                          ),
-                          const SizedBox(height: 20),
-                          // Campo de fecha
-                          _buildDateFieldContainer(
-                            'Fecha',
-                            viewModel.fechaController,
-                            context,
-                          ),
-                          const SizedBox(height: 20),
-                          // Campo de peso
-                          _buildTextFieldContainer(
-                            'Peso (Kg)',
-                            viewModel.pesoController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [PositiveNumberFormatter()],
-                          ),
-                          const SizedBox(height: 20),
-                          // Campo de hidratación
-                          _buildTextFieldContainer(
-                            'Hidratación (Kg)',
-                            viewModel.hidratacionController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [PositiveNumberFormatter()],
-                          ),
-                          const SizedBox(height: 20),
-                          // Campo de alimento
-                          _buildTextFieldContainer(
-                            'Alimento',
-                            viewModel.alimentoController,
-                          ),
-                          const SizedBox(height: 30),
-                          Wrap(
-                            spacing: 150,
-                            alignment: WrapAlignment.center,
-                            children: [
-                              _crearBotonTexto(
-                                'Cancelar',
-                                const Color.fromARGB(255, 228, 61, 61),
-                                () {
-                                  Navigator.of(context).pop();
-                                  print('Botón de Cancelar presionado');
-                                },
-                              ),
-                              _crearBotonTexto(
-                                'Confirmar',
-                                const Color.fromARGB(250, 34, 166, 58),
-                                () async {
-                                  await viewModel.editarCharola();
-                                  print('Botón de Confirmar presionado');
-                                },
-                              ),
-                            ],
+                          Texto.titulo2(texto: "Estado:"),
+                          Expanded(
+                            child: _buildTextFieldContainer(
+                              '',
+                              viewModel.estadoController,
+                            ),
                           ),
                         ],
                       ),
-                    ),
+                      const SizedBox(height: 20),
+
+                      // Campo de fecha
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Texto.titulo2(texto: "Fecha:"),
+                          Expanded(
+                            child: _buildDateFieldContainer(
+                              '',
+                              viewModel.fechaController,
+                              context,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Campo de peso
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Texto.titulo2(texto: "Peso:"),
+                          Expanded(
+                            child: _buildTextFieldContainer(
+                              '',
+                              viewModel.pesoController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [PositiveNumberFormatter()],
+                            ),
+                          ),
+                          Texto.titulo2(texto: "g"),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Campo de hidratación
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Texto.titulo2(texto: "Hidratación:"),
+                          Expanded(
+                            child: _buildDropdownFieldContainer(
+                              'Opcion',
+                              viewModel.hidratacionItems,
+                              viewModel.selectedHidratacion,
+                              (value) {
+                                viewModel.selectedHidratacion = value;
+                                viewModel.notifyListeners();
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildTextFieldContainer(
+                              'Cantidad',
+                              viewModel.hidratacionCantidadController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [PositiveNumberFormatter()],
+                            ),
+                          ),
+                          Texto.titulo2(texto: "g"),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Campo de alimento
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Texto.titulo2(texto: "Alimento:"),
+                          Expanded(
+                            child: _buildDropdownFieldContainer(
+                              'Opcion',
+                              viewModel.alimentoItems,
+                              viewModel.selectedAlimento,
+                              (value) {
+                                viewModel.selectedAlimento = value;
+                                viewModel.notifyListeners();
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildTextFieldContainer(
+                              'Cantidad',
+                              viewModel.alimentoCantidadController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [PositiveNumberFormatter()],
+                            ),
+                          ),
+                          Texto.titulo2(texto: "g"),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+
+                      // Botones
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _crearBotonTexto(
+                            'Cancelar',
+                            const Color.fromARGB(255, 228, 61, 61),
+                            () {
+                              Navigator.of(context).pop();
+                              print('Botón de Cancelar presionado');
+                            },
+                          ),
+                          _crearBotonTexto(
+                            'Confirmar',
+                            const Color.fromARGB(250, 34, 166, 58),
+                            () async {
+                              await viewModel.editarCharola();
+                              print('Botón de Confirmar presionado');
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

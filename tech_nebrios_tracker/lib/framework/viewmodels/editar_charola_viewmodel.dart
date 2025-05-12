@@ -9,13 +9,19 @@ class EditarCharolaViewModel extends ChangeNotifier {
   EditarCharolaViewModel(this.editarCharolaUseCase);
 
   final fechaController = TextEditingController();
-  final estadoController =
-      TextEditingController(); // Nuevo controlador para estado
-  final pesoController = TextEditingController(); // Nuevo controlador para peso
-  final hidratacionController =
-      TextEditingController(); // Nuevo controlador para hidratación
-  final alimentoController =
-      TextEditingController(); // Nuevo controlador para alimento
+  final estadoController = TextEditingController();
+  final pesoController = TextEditingController();
+  final hidratacionController = TextEditingController();
+  final alimentoController = TextEditingController();
+  final hidratacionCantidadController = TextEditingController();
+  final alimentoCantidadController = TextEditingController();
+
+  // Dropdowns
+  List<String> hidratacionItems = [];
+  String? selectedHidratacion;
+
+  List<String> alimentoItems = [];
+  String? selectedAlimento;
 
   Future<void> editarCharola() async {
     try {

@@ -10,6 +10,7 @@ import '../../../data/repositories/consultar_charola_repository.dart';
 import '../viewmodels/charola_viewmodel.dart';
 import 'components/atoms/texto.dart';
 import 'components/molecules/boton_texto.dart';
+import '../views/menuCharolasView.dart';
 
 class PantallaCharola extends StatefulWidget {
   final int charolaId;
@@ -95,10 +96,38 @@ class _PantallaCharolaState extends State<PantallaCharola> {
 
         // si es que la charola no existe mostrar un mensaje de error
         if (charola == null) {
-          return const Scaffold(
-            body: Center(child: Text('Charola no encontrada')),
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Charola no encontrada',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const VistaCharolas()),
+                      );
+                    },
+                    icon: const Icon(Icons.arrow_back),
+                    label: const Text('Volver a menú de charolas'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      backgroundColor: const Color(0xFF0066FF),
+                      foregroundColor: Colors.white,
+                      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
         }
+
 
         // se formatea la fecha
         var fechaFormateada = formatearFecha(charola.fechaCreacion);
@@ -173,7 +202,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                                 texto: Texto.titulo5(texto: 'Eliminar', color: Colors.white),
                                                 alPresionar: () async {
                                                   await viewModel.eliminarCharola(viewModel.charola!.charolaId);
-                                                  Navigator.of(context).pop(); // Cierra el diálogo
+                                                  Navigator.of(context).pop();
                                                   ScaffoldMessenger.of(context).showSnackBar(
                                                     SnackBar(content: Text('Charola eliminada con éxito')),
                                                   );

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tech_nebrios_tracker/framework/viewmodels/editar_charola_viewmodel.dart';
 import './components/atoms/texto.dart';
 import './components/molecules/boton_texto.dart';
+import '../../utils/positive_number_formatter.dart';
 
 class EditarCharola extends StatefulWidget {
   final int charolaId;
@@ -13,12 +15,15 @@ class EditarCharola extends StatefulWidget {
 }
 
 class _EditarCharolaState extends State<EditarCharola> {
-  late EditarCharolaViewmodel viewModel;
+  late EditarCharolaViewModel viewModel;
 
   @override
   void initState() {
     super.initState();
-    viewModel = EditarCharolaViewmodel();
+    final editarCharolaUseCase = EditarCharola(
+      charolaId: 1,
+    ); // Inicializa el caso de uso
+    viewModel = EditarCharolaViewModel(editarCharolaUseCase);
   }
 
   Widget _crearInfoFila(String label, String value) {
@@ -39,6 +44,99 @@ class _EditarCharolaState extends State<EditarCharola> {
       texto: Texto.titulo4(texto: texto, bold: true, color: Colors.white),
       alPresionar: alPresionar,
       colorBg: color,
+    );
+  }
+
+  Widget _buildDateFieldContainer(
+    String label,
+    TextEditingController controller,
+    BuildContext context,
+  ) {
+    return Container(
+      margin: const EdgeInsets.all(5), // Margen alrededor del TextField
+      child: SizedBox(
+        width: 200, // Ancho fijo para el campo de fecha
+        child: TextField(
+          controller: controller,
+          readOnly: true, // Evita que el usuario escriba manualmente
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            suffixIcon: const Icon(Icons.calendar_today), // Ícono de calendario
+          ),
+          onTap: () async {
+            // Mostrar el selector de fecha
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(), // Fecha inicial
+              firstDate: DateTime(2015), // Fecha mínima
+              lastDate: DateTime.now(), // Fecha máxima
+            );
+
+            if (pickedDate != null) {
+              // Formatear la fecha seleccionada
+              String formattedDate =
+                  "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+              controller.text = formattedDate; // Actualizar el TextField
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextFieldContainer(
+    String label,
+    TextEditingController controller, {
+    TextInputType keyboardType = TextInputType.text,
+    int? maxLength, // Nuevo parámetro para el límite de caracteres
+    List<TextInputFormatter>? inputFormatters,
+  }) {
+    return Container(
+      margin: const EdgeInsets.all(5), // Margen alrededor del TextField
+      child: SizedBox(
+        width: 200, // Ancho fijo para los TextFields
+        child: TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          inputFormatters:
+              maxLength != null
+                  ? [LengthLimitingTextInputFormatter(maxLength)]
+                  : null, // Limitar caracteres si se especifica maxLength
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDropdownFieldContainer(
+    String label,
+    List<String> items,
+    String? selectedValue,
+    ValueChanged<String?> onChanged,
+  ) {
+    return Container(
+      margin: const EdgeInsets.all(5), // Margen alrededor del Dropdown
+      child: SizedBox(
+        width: 200, // Ancho fijo para el Dropdown
+        child: DropdownButtonFormField<String>(
+          value: selectedValue,
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          ),
+          items:
+              items
+                  .map(
+                    (item) => DropdownMenuItem(value: item, child: Text(item)),
+                  )
+                  .toList(),
+          onChanged: onChanged,
+        ),
+      ),
     );
   }
 
@@ -84,16 +182,47 @@ class _EditarCharolaState extends State<EditarCharola> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Texto.titulo1(
-                            texto: "xd",
+                            texto: "Editar Charola",
                             bold: true,
                             tamanio: 64,
                             color: const Color.fromARGB(250, 34, 166, 58),
                           ),
-                          _crearInfoFila('Estado:', "charola.estado"),
-                          _crearInfoFila('Fecha:', "fechaFormateada"),
-                          _crearInfoFila('Peso:', "g"),
-                          _crearInfoFila('Hidratacion:', "xd"),
-                          _crearInfoFila('Alimento:', "xd"),
+                          const SizedBox(height: 20),
+                          // Campo de estado
+                          _buildTextFieldContainer(
+                            'Estado',
+                            viewModel.estadoController,
+                          ),
+                          const SizedBox(height: 20),
+                          // Campo de fecha
+                          _buildDateFieldContainer(
+                            'Fecha',
+                            viewModel.fechaController,
+                            context,
+                          ),
+                          const SizedBox(height: 20),
+                          // Campo de peso
+                          _buildTextFieldContainer(
+                            'Peso (Kg)',
+                            viewModel.pesoController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [PositiveNumberFormatter()],
+                          ),
+                          const SizedBox(height: 20),
+                          // Campo de hidratación
+                          _buildTextFieldContainer(
+                            'Hidratación (Kg)',
+                            viewModel.hidratacionController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [PositiveNumberFormatter()],
+                          ),
+                          const SizedBox(height: 20),
+                          // Campo de alimento
+                          _buildTextFieldContainer(
+                            'Alimento',
+                            viewModel.alimentoController,
+                          ),
+                          const SizedBox(height: 30),
                           Wrap(
                             spacing: 150,
                             alignment: WrapAlignment.center,
@@ -103,15 +232,15 @@ class _EditarCharolaState extends State<EditarCharola> {
                                 const Color.fromARGB(255, 228, 61, 61),
                                 () {
                                   Navigator.of(context).pop();
-                                  print('Botón de Eliminar presionado');
+                                  print('Botón de Cancelar presionado');
                                 },
                               ),
                               _crearBotonTexto(
                                 'Confirmar',
                                 const Color.fromARGB(250, 34, 166, 58),
-                                () {
-                                  Navigator.of(context).pop();
-                                  print('Botón de Editar presionado');
+                                () async {
+                                  await viewModel.editarCharola();
+                                  print('Botón de Confirmar presionado');
                                 },
                               ),
                             ],

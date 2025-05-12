@@ -30,4 +30,6 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/
+    - lib/framework/views/components/atoms/icons/X.png
   uses-material-design: true
+

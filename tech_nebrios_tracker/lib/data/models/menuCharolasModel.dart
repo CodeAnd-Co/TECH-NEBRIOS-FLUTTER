@@ -1,5 +1,8 @@
 /// Modelo que representa una charola individual.
 class Charola {
+  /// ID único de la charola.
+  final int charolaId;
+
   /// Nombre de la charola.
   final String nombreCharola;
 
@@ -7,6 +10,7 @@ class Charola {
   final DateTime fechaCreacion;
 
   Charola({
+    required this.charolaId,
     required this.nombreCharola,
     required this.fechaCreacion,
   });
@@ -14,11 +18,13 @@ class Charola {
   /// Construye una instancia de Charola desde un JSON.
   factory Charola.fromJson(Map<String, dynamic> json) {
     return Charola(
+      charolaId: json['charolaId'] as int,
       nombreCharola: json['nombreCharola'],
       fechaCreacion: DateTime.parse(json['fechaCreacion']),
     );
   }
 }
+
 
 /// Modelo que representa la respuesta paginada de la API para charolas.
 class CharolaTarjeta {

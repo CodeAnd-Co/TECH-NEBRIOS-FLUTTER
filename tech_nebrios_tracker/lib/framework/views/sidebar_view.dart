@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tech_nebrios_tracker/framework/views/menu_charolas.view.dart'; // Agrega otras vistas aquí si las tienes
+import 'package:tech_nebrios_tracker/framework/views/menuCharolasView.dart';
 
 class SidebarView extends StatefulWidget {
   final VoidCallback onLogout;
@@ -14,11 +14,11 @@ class _SidebarViewState extends State<SidebarView> {
   int _currentIndex = 0;
 
   final List<Widget> _views = [
-    VistaCharolas(), // Charolas
-    Placeholder(), // Tamizar
-    Placeholder(), // Frass
-    Placeholder(), // Alimentación
-    Placeholder(), // Descargar Excel
+    const VistaCharolas(), // Charolas
+    const Placeholder(), // Tamizar
+    const Placeholder(), // Frass
+    const Placeholder(), // Alimentación
+    const Placeholder(), // Descargar Excel
   ];
 
   @override
@@ -30,27 +30,38 @@ class _SidebarViewState extends State<SidebarView> {
           Container(
             width: 85,
             color: Colors.black,
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                Image.asset(
-                  'assets/images/zuustento.png',
-                  width: 60,
-                  height: 60,
-                ),
-                const SizedBox(height: 30),
-                _buildNavItem(icon: Icons.inventory_2, label: 'Charolas', index: 0),
-                _buildNavItem(icon: Icons.storage, label: 'Tamizar', index: 1),
-                _buildNavItem(icon: Icons.archive, label: 'Frass', index: 2),
-                _buildNavItem(icon: Icons.edit_note, label: 'Alimentación', index: 3),
-                _buildNavItem(icon: Icons.download, label: 'Excel', index: 4),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.logout, color: Colors.red),
-                  onPressed: widget.onLogout,
-                ),
-                const SizedBox(height: 16),
-              ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final height = constraints.maxHeight;
+                final spacing = height / 25;
+
+                return Column(
+                  children: [
+                    SizedBox(height: spacing),
+                    Image.asset(
+                      'assets/images/zuustento.png',
+                      width: 100,
+                      height: 100,
+                    ),
+                    SizedBox(height: spacing),
+                    _buildNavItem(icon: Icons.inventory_2, label: 'Charolas', index: 0),
+                    SizedBox(height: spacing),
+                    _buildNavItem(icon: Icons.storage, label: 'Tamizar', index: 1),
+                    SizedBox(height: spacing),
+                    _buildNavItem(icon: Icons.archive, label: 'Frass', index: 2),
+                    SizedBox(height: spacing),
+                    _buildNavItem(icon: Icons.edit_note, label: 'Alimento', index: 3),
+                    SizedBox(height: spacing),
+                    _buildNavItem(icon: Icons.download, label: 'Excel', index: 4),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.logout, color: Colors.red),
+                      onPressed: widget.onLogout,
+                    ),
+                    SizedBox(height: spacing),
+                  ],
+                );
+              },
             ),
           ),
 
@@ -66,28 +77,45 @@ class _SidebarViewState extends State<SidebarView> {
     );
   }
 
-  Widget _buildNavItem({required IconData icon, required String label, required int index}) {
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+  }) {
     final isSelected = _currentIndex == index;
 
-    return InkWell(
-      onTap: () => setState(() => _currentIndex = index),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.white),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.white.withOpacity(isSelected ? 1 : 0.6),
-              ),
-              textAlign: TextAlign.center,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final sidebarWidth = constraints.maxWidth;
+
+        final iconSize = sidebarWidth * 0.35;
+        final fontSize = sidebarWidth * 0.18;
+        final showLabel = screenWidth > 500;
+
+        return InkWell(
+          onTap: () => setState(() => _currentIndex = index),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: Colors.white, size: iconSize.clamp(18, 32)),
+                const SizedBox(height: 4),
+                if (showLabel)
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: fontSize.clamp(8, 13),
+                      color: Colors.white.withOpacity(isSelected ? 1 : 0.6),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../views/loginView.dart';
 import '../views/sidebar_view.dart';// El contenedor con el Drawer
 
+
 enum AppRoute {
   login,
   main, // nombre general para toda la app después del login

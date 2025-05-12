@@ -1,7 +1,7 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
 
-import '../data/models/menu_charolas.model.dart';
-import '../data/repositories/menu_charolas.repository.dart';
+import '../data/models/menuCharolasModel.dart';
+import '../data/repositories/menuCharolasRepository.dart';
 
 /// Interfaz para el caso de uso de obtención de charolas.
 /// Permite recuperar datos paginados desde el repositorio.
@@ -21,7 +21,7 @@ class ObtenerCharolasCasoUsoImpl implements ObtenerMenuCharolas {
       : repositorio = repositorio ?? CharolaRepositorio();
 
   @override
-  Future<CharolaTarjeta?> ejecutar({int pag = 1, int limite = 12}) {
+  Future<CharolaTarjeta?> ejecutar({int pag = 1, int limite = 15}) {
     return repositorio.obtenerCharolaRespuesta(pag, limite);
   }
 }

@@ -5,13 +5,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import '../models/constantes.dart';
-import '../models/menu_charolas.model.dart';
-import '../services/menu_charolasAPI.service.dart';
+import '../models/menuCharolasModel.dart';
+import '../services/menuCharolasAPI.service.dart';
 import '../../domain/usuarioUseCases.dart';
 
 /// Repositorio que implementa la lógica para consumir la API de charolas.
 /// Encapsula llamadas HTTP y transformación de datos.
-class CharolaRepositorio implements CharolaServicioApi {
+class CharolaRepositorio implements CharolaAPIService {
   final Logger _logger = Logger();
   /// Llama a la API para obtener charolas paginadas.
   ///

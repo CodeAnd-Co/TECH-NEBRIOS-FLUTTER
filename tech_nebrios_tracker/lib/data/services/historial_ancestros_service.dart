@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/historial_ancestros_model.dart';
 
 class HistorialAncestrosService {
-  static const _baseUrl = 'http://127.0.0.1:3000';
+  static const _baseUrl = 'http://localhost:3000';
 
   // Obtiene la lista de alimentos
   Future<HistorialAncestros> obtenerAncestros(int idCharola) async {

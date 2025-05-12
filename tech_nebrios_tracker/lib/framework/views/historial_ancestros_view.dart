@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import '../viewmodels/historial_ancestros_viewmodel.dart';
 import '../../data/models/historial_ancestros_model.dart';
 
-/// Pantalla que muestra el historial de ancestros de una charola
+/// Pantalla que dispara y muestra el popup de historial de ancestros
 class HistorialAncestrosScreen extends StatefulWidget {
   const HistorialAncestrosScreen({super.key, this.charolaId = 1});
 
@@ -16,22 +16,20 @@ class HistorialAncestrosScreen extends StatefulWidget {
   final int charolaId;
 
   @override
-  State<HistorialAncestrosScreen> createState() =>
-      _HistorialAncestrosScreenState();
+  State<HistorialAncestrosScreen> createState() => _HistorialAncestrosScreenState();
 }
 
 class _HistorialAncestrosScreenState extends State<HistorialAncestrosScreen> {
+  bool _hasShownPopup = false;
+
   @override
   void initState() {
     super.initState();
-    // Disparamos la carga en el primer frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (kDebugMode) {
         debugPrint('[View] initState: solicitando ancestros para id=${widget.charolaId}');
       }
-      context
-          .read<HistorialAncestrosViewModel>()
-          .obtenerAncestros(widget.charolaId);
+      context.read<HistorialAncestrosViewModel>().obtenerAncestros(widget.charolaId);
     });
   }
 
@@ -39,10 +37,12 @@ class _HistorialAncestrosScreenState extends State<HistorialAncestrosScreen> {
   Widget build(BuildContext context) {
     final vm = context.watch<HistorialAncestrosViewModel>();
 
-    if (kDebugMode) {
-      debugPrint('[View] isLoading=${vm.isLoading}');
-      debugPrint('[View] error=${vm.error}');
-      debugPrint('[View] datos count=${vm.historialAncestros.length}');
+    // Mostrar popup automáticamente una sola vez cuando haya datos
+    if (!vm.isLoading && vm.error == null && vm.historialAncestros.isNotEmpty && !_hasShownPopup) {
+      _hasShownPopup = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showHistorialPopup(context, vm.historialAncestros.first);
+      });
     }
 
     return Scaffold(
@@ -67,21 +67,22 @@ class _HistorialAncestrosScreenState extends State<HistorialAncestrosScreen> {
       return const Text('No hay ancestros disponibles');
     }
 
-    // Tomamos el primer historial (según diseño)
     final HistorialAncestros data = vm.historialAncestros.first;
-    return _HistorialAncestrosTable(data: data);
+    return ElevatedButton(
+      onPressed: () => _showHistorialPopup(context, data),
+      child: const Text('Ver Historial'),
+    );
   }
 }
 
-/// Widget que dibuja la tabla de ancestros según el mockup
+/// Tabla que muestra la lista de ancestros y fecha de creación
 class _HistorialAncestrosTable extends StatelessWidget {
   final HistorialAncestros data;
   const _HistorialAncestrosTable({required this.data, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFf5ecec),
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: Table(
         border: TableBorder.all(color: Colors.black, width: 1),
@@ -96,8 +97,7 @@ class _HistorialAncestrosTable extends StatelessWidget {
                 child: Text(
                   'Charolas Ancestros',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ),
               Padding(
@@ -105,39 +105,98 @@ class _HistorialAncestrosTable extends StatelessWidget {
                 child: Text(
                   'Fecha de creación',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ),
             ],
           ),
-          // Fila de datos
-          TableRow(children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: data.ancestros
-                    .map((a) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Text(a.nombreCharola,
-                              style: const TextStyle(fontSize: 16)),
-                        ))
-                    .toList(),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Center(
-                child: Text(
-                  DateFormat('dd/MM/yyyy').format(data.fechaCreacion),
-                  style: const TextStyle(fontSize: 16),
+          // Fila de datos con fondo crema
+          TableRow(
+            decoration: const BoxDecoration(color: Color(0xFFf5ecec)),
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: data.ancestros.map((a) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(a.nombreCharola, style: const TextStyle(fontSize: 16)),
+                    );
+                  }).toList(),
                 ),
               ),
-            ),
-          ]),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Center(
+                  child: Text(
+                    DateFormat('dd/MM/yyyy').format(data.fechaCreacion),
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
+}
+
+/// Diálogo personalizado con cierre en X rojo a la izquierda y texto centrado
+class HistorialAncestrosDialog extends StatelessWidget {
+  final HistorialAncestros data;
+  const HistorialAncestrosDialog({required this.data, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: SizedBox(
+        width: 500,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header con botón de cierre a la izquierda y título centrado
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Center(
+                    child: Text(
+                      'Historial de Ancestros',
+                      style: Theme.of(context).textTheme.titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      color: Colors.red,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            // Contenido con la tabla
+            _HistorialAncestrosTable(data: data),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Función de ayuda para mostrar el diálogo
+void _showHistorialPopup(BuildContext context, HistorialAncestros data) {
+  showDialog(
+    context: context,
+    builder: (_) => HistorialAncestrosDialog(data: data),
+  );
 }

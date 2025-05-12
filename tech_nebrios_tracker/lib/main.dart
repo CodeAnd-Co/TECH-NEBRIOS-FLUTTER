@@ -1,5 +1,3 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_nebrios_tracker/framework/views/historial_ancestros_view.dart';

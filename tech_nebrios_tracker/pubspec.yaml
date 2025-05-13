@@ -29,7 +29,7 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/images/zuustento_logo.png
+    - assets/images/
     - lib/framework/views/components/atoms/icons/X.png
   uses-material-design: true
 

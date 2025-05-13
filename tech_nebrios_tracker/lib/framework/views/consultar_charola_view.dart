@@ -10,6 +10,8 @@ import '../../../data/repositories/consultar_charola_repository.dart';
 import '../viewmodels/charola_viewmodel.dart';
 import 'components/atoms/texto.dart';
 import 'components/molecules/boton_texto.dart';
+import 'components/organisms/pop_up.dart';
+import './menuCharolasView.dart';
 
 class PantallaCharola extends StatefulWidget {
   final int charolaId;
@@ -34,9 +36,9 @@ class _PantallaCharolaState extends State<PantallaCharola> {
       ),
       EliminarCharolaUseCase(
         EliminarCharolaRepositoryImpl(
-          CharolaApiService(baseUrl: 'http://localhost:3000')
-        )
-      )
+          CharolaApiService(baseUrl: 'http://localhost:3000'),
+        ),
+      ),
     );
     viewModel.cargarCharola(widget.charolaId);
   }
@@ -63,27 +65,26 @@ class _PantallaCharolaState extends State<PantallaCharola> {
   }
 
   String formatearFecha(String fecha) {
-  try {
-    final dateTime = DateTime.parse(fecha);
-    if (fecha.contains('T')) {
-      final dia = dateTime.day.toString().padLeft(2, '0');
-      final mes = dateTime.month.toString().padLeft(2, '0');
-      final anio = dateTime.year.toString();
-      return '$dia/$mes/$anio';
-    } else {
+    try {
+      final dateTime = DateTime.parse(fecha);
+      if (fecha.contains('T')) {
+        final dia = dateTime.day.toString().padLeft(2, '0');
+        final mes = dateTime.month.toString().padLeft(2, '0');
+        final anio = dateTime.year.toString();
+        return '$dia/$mes/$anio';
+      } else {
+        return fecha;
+      }
+    } catch (e) {
       return fecha;
     }
-  } catch (e) {
-    return fecha;
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: viewModel,
       builder: (context, _) {
-
         // animación de carga
         if (viewModel.cargando) {
           return const Scaffold(
@@ -122,7 +123,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                       padding: const EdgeInsets.all(30),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [ 
+                        children: [
                           Texto.titulo1(
                             texto: charola.nombreCharola,
                             bold: true,
@@ -132,8 +133,14 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                           _crearInfoFila('Estado:', charola.estado),
                           _crearInfoFila('Fecha:', fechaFormateada),
                           _crearInfoFila('Peso:', '${charola.pesoCharola}g'),
-                          _crearInfoFila('Hidratacion:', '${charola.hidratacionNombre}  ${charola.hidratacionOtorgada}g'),
-                          _crearInfoFila('Alimento:', '${charola.comidaNombre}  ${charola.comidaOtorgada}g'),
+                          _crearInfoFila(
+                            'Hidratacion:',
+                            '${charola.hidratacionNombre}  ${charola.hidratacionOtorgada}g',
+                          ),
+                          _crearInfoFila(
+                            'Alimento:',
+                            '${charola.comidaNombre}  ${charola.comidaOtorgada}g',
+                          ),
                           Wrap(
                             spacing: 150,
                             alignment: WrapAlignment.center,
@@ -144,45 +151,30 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                 () {
                                   showDialog(
                                     context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        titlePadding: const EdgeInsets.only(top: 20, left: 5, right: 60),
-                                        title: Row(
-                                          children: [
-                                            IconButton(
-                                              onPressed: () => Navigator.of(context).pop(),
-                                              iconSize: 35,
-                                              icon: Icon(
-                                                Icons.close,
-                                                color: Colors.black, // Asegura que sea negra
+                                    builder: (context) {
+                                      return OrganismoPopUpConfirmacion(
+                                        onCancelar:
+                                            () => Navigator.of(context).pop(),
+                                        onConfirmar: () async {
+                                          await viewModel.eliminarCharola(
+                                            viewModel.charola!.charolaId,
+                                          );
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => const VistaCharolas(),
+                                            ),
+                                          );
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Charola eliminada con éxito',
                                               ),
                                             ),
-                                            Expanded(
-                                              child: Center(
-                                                child: Texto.titulo1(texto: 'Eliminar', bold: true),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        content: Texto.titulo5(texto: '¿Estas seguro de eliminar la charola?'),
-                                        actions: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              BotonTexto.simple(
-                                                texto: Texto.titulo5(texto: 'Eliminar', color: Colors.white),
-                                                alPresionar: () async {
-                                                  await viewModel.eliminarCharola(viewModel.charola!.charolaId);
-                                                  Navigator.of(context).pop(); // Cierra el diálogo
-                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(content: Text('Charola eliminada con éxito')),
-                                                  );
-                                                },
-                                                colorBg: Color.fromARGB(255, 228, 61, 61),
-                                              ),
-                                            ],
-                                          )
-                                        ],
+                                          );
+                                        },
                                       );
                                     },
                                   );
@@ -205,7 +197,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                 },
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),

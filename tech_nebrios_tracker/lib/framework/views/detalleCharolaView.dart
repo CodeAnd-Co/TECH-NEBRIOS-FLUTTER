@@ -1,21 +1,13 @@
-// RF10 https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
-
 import 'package:flutter/material.dart';
-import 'package:tech_nebrios_tracker/data/repositories/eliminar_charola_repository.dart';
-import 'package:tech_nebrios_tracker/domain/eliminar_charola.dart';
-import '../../../domain/consular_charola.dart';
-import '../../../data/models/charola_model.dart';
-import '../../../data/services/charola_api.dart';
-import '../../../data/repositories/consultar_charola_repository.dart';
-import '../viewmodels/charola_viewmodel.dart';
+import 'package:provider/provider.dart';
+import '../../framework/viewmodels/charolaViewModel.dart';
 import 'components/atoms/texto.dart';
 import 'components/molecules/boton_texto.dart';
 import 'components/organisms/pop_up.dart';
-import './menuCharolasView.dart';
+import 'charolasDashboardView.dart';
 
 class PantallaCharola extends StatefulWidget {
   final int charolaId;
-
   const PantallaCharola({super.key, required this.charolaId});
 
   @override
@@ -23,24 +15,35 @@ class PantallaCharola extends StatefulWidget {
 }
 
 class _PantallaCharolaState extends State<PantallaCharola> {
-  late CharolaViewModel viewModel;
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    viewModel = CharolaViewModel(
-      ObtenerCharolaUseCase(
-        ConsultarCharolaRepository(
-          CharolaApiService(baseUrl: 'http://localhost:3000'),
-        ),
-      ),
-      EliminarCharolaUseCase(
-        EliminarCharolaRepositoryImpl(
-          CharolaApiService(baseUrl: 'http://localhost:3000'),
-        ),
-      ),
-    );
-    viewModel.cargarCharola(widget.charolaId);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+
+      // Ejecutar después del build actual
+      Future.microtask(() {
+        context.read<CharolaViewModel>().cargarCharola(widget.charolaId);
+      });
+    }
+  }
+
+
+  String formatearFecha(String fecha) {
+    try {
+      final dateTime = DateTime.parse(fecha);
+      if (fecha.contains('T')) {
+        final dia = dateTime.day.toString().padLeft(2, '0');
+        final mes = dateTime.month.toString().padLeft(2, '0');
+        final anio = dateTime.year.toString();
+        return '$dia/$mes/$anio';
+      }
+      return fecha;
+    } catch (_) {
+      return fecha;
+    }
   }
 
   Widget _crearInfoFila(String label, String value) {
@@ -64,48 +67,28 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     );
   }
 
-  String formatearFecha(String fecha) {
-    try {
-      final dateTime = DateTime.parse(fecha);
-      if (fecha.contains('T')) {
-        final dia = dateTime.day.toString().padLeft(2, '0');
-        final mes = dateTime.month.toString().padLeft(2, '0');
-        final anio = dateTime.year.toString();
-        return '$dia/$mes/$anio';
-      } else {
-        return fecha;
-      }
-    } catch (e) {
-      return fecha;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: viewModel,
-      builder: (context, _) {
-        // animación de carga
-        if (viewModel.cargando) {
+    return Consumer<CharolaViewModel>(
+      builder: (context, viewModel, _) {
+        // Cargando detalle
+        if (viewModel.cargandoCharola) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        final Charola? charola = viewModel.charola;
-
-        // si es que la charola no existe mostrar un mensaje de error
-        if (charola == null) {
+        final detalle = viewModel.charola;
+        if (detalle == null) {
           return const Scaffold(
             body: Center(child: Text('Charola no encontrada')),
           );
         }
 
-        // se formatea la fecha
-        var fechaFormateada = formatearFecha(charola.fechaCreacion);
+        final fechaFormateada = formatearFecha(detalle.fechaCreacion);
 
         return Scaffold(
-          backgroundColor: const Color.fromARGB(255, 245, 247, 250),
+          backgroundColor: const Color(0xFFF5F7FA),
           body: Center(
             child: SizedBox(
               width: 900,
@@ -125,29 +108,30 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Texto.titulo1(
-                            texto: charola.nombreCharola,
+                            texto: detalle.nombreCharola,
                             bold: true,
                             tamanio: 64,
-                            color: const Color.fromARGB(250, 34, 166, 58),
+                            color: const Color(0xFF22A63A),
                           ),
-                          _crearInfoFila('Estado:', charola.estado),
+                          _crearInfoFila('Estado:', detalle.estado),
                           _crearInfoFila('Fecha:', fechaFormateada),
-                          _crearInfoFila('Peso:', '${charola.pesoCharola}g'),
+                          _crearInfoFila('Peso:', '${detalle.pesoCharola}g'),
                           _crearInfoFila(
-                            'Hidratacion:',
-                            '${charola.hidratacionNombre}  ${charola.hidratacionOtorgada}g',
+                            'Hidratación:',
+                            '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
                           ),
                           _crearInfoFila(
                             'Alimento:',
-                            '${charola.comidaNombre}  ${charola.comidaOtorgada}g',
+                            '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
                           ),
+                          const SizedBox(height: 20),
                           Wrap(
                             spacing: 150,
                             alignment: WrapAlignment.center,
                             children: [
                               _crearBotonTexto(
                                 'Eliminar',
-                                const Color.fromARGB(255, 228, 61, 61),
+                                const Color(0xFFE43D3D),
                                 () {
                                   showDialog(
                                     context: context,
@@ -182,18 +166,16 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                               ),
                               _crearBotonTexto(
                                 'Historial',
-                                const Color.fromARGB(255, 226, 56, 125),
+                                const Color(0xFFE2387B),
                                 () {
-                                  Navigator.of(context).pop();
-                                  print('Botón de Historial presionado');
+                                  // TODO: implementar navegación a Historial
                                 },
                               ),
                               _crearBotonTexto(
                                 'Editar',
-                                const Color.fromARGB(255, 36, 66, 204),
+                                const Color(0xFF2442CC),
                                 () {
-                                  Navigator.of(context).pop();
-                                  print('Botón de Historial presionado');
+                                  // TODO: implementar edición
                                 },
                               ),
                             ],

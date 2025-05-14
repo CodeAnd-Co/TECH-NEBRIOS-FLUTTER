@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:tech_nebrios_tracker/data/models/charola_model.dart';
+import 'package:tech_nebrios_tracker/data/models/charolaModel.dart';
 import 'package:tech_nebrios_tracker/framework/viewmodels/charola_viewmodel.dart';
 import '../mocks/mocks.mocks.dart';
 
@@ -16,7 +16,7 @@ void main() {
   });
 
   test('carga exitosa de charola', () async {
-    final fakeCharola = Charola(
+    final fakeCharola = CharolaDetalle(
       charolaId: 1011,
       nombreCharola: 'EQUIDDE',
       comidaOtorgada: 15,
@@ -31,11 +31,10 @@ void main() {
       comidaNombre: 'Cereza',
       comidaDesc: 'Fruta roja dulce',
       hidratacionNombre: 'Zanahoria',
-      hidratacionDesc: 'Vegetal'
+      hidratacionDesc: 'Vegetal',
     );
 
-    when(mockUseCase.obtenerCharola(1011))
-        .thenAnswer((_) async => fakeCharola);
+    when(mockUseCase.obtenerCharola(1011)).thenAnswer((_) async => fakeCharola);
 
     await viewModel.cargarCharola(1011);
 
@@ -49,8 +48,9 @@ void main() {
   });
 
   test('carga con error lanza excepción y charola queda null', () async {
-    when(mockUseCase.obtenerCharola(1011))
-        .thenThrow(Exception('Error al obtener la charola'));
+    when(
+      mockUseCase.obtenerCharola(1011),
+    ).thenThrow(Exception('Error al obtener la charola'));
 
     await viewModel.cargarCharola(1011);
 

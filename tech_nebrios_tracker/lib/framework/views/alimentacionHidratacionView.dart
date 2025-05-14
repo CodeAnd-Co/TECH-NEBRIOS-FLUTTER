@@ -1,12 +1,7 @@
-// RF23: Registrar un nuevo tipo de comida en el sistema
 import 'package:flutter/material.dart';
 import '../../data/models/alimentacionModel.dart';
 import '../viewmodels/alimentacionViewmodel.dart';
 
-/// Pantalla principal de alimentación e hidratación.
-///
-/// Muestra dos columnas: alimentos con scroll infinito
-/// y sección estática de hidratación.
 class AlimentacionScreen extends StatefulWidget {
   const AlimentacionScreen({super.key});
 
@@ -15,10 +10,7 @@ class AlimentacionScreen extends StatefulWidget {
 }
 
 class _AlimentacionScreenState extends State<AlimentacionScreen> {
-  /// ViewModel que maneja la lista y edición de alimentos.
-  final vm = AlimentacionViewModel();
-
-  /// Controlador de scroll para detectar fin de lista.
+  final AlimentacionViewModel vm = AlimentacionViewModel();
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -84,12 +76,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
-  /// Construye la columna de alimentos con encabezado y contenido.
   Widget _buildColumnSectionAlimentos() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Encabezado verde con título y botón de agregar
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: const BoxDecoration(
@@ -105,12 +95,11 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.add),
-                onPressed: () async {}, // TODO: implementar _onAgregarAlimento
+                onPressed: _onAgregarAlimento, // ✅ corrección aquí
               ),
             ],
           ),
         ),
-        // Lista con carga infinita
         Expanded(
           child: vm.alimentos.isEmpty && vm.isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -121,7 +110,6 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                     if (index < vm.alimentos.length) {
                       return _buildRowAlimento(vm.alimentos[index], index);
                     }
-                    // Indicador de carga al final
                     return const Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
                       child: Center(child: CircularProgressIndicator()),
@@ -133,14 +121,8 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
-  /// Construye la columna de hidratación (estática por ahora).
   Widget _buildColumnSectionHydratacion() {
-    const hidrataciones = [
-      'ejemplo',
-      'ejemplo',
-      'ejemplo',
-      'ejemplo',
-    ];
+    const hidrataciones = ['ejemplo', 'ejemplo', 'ejemplo', 'ejemplo'];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -159,12 +141,11 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.add),
-                onPressed: () {}, // TODO: implementar _onAgregarHidratacion
+                onPressed: () {},
               ),
             ],
           ),
         ),
-        // Filas de hidrataciones
         ...hidrataciones.asMap().entries.map((entry) {
           final text = entry.value;
           final bg = entry.key.isEven ? Colors.white : Colors.grey.shade200;
@@ -188,7 +169,6 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
-  /// Construye una fila de alimento con botones de editar y eliminar.
   Widget _buildRowAlimento(Alimento alimento, int index) {
     final bg = index.isEven ? Colors.white : Colors.grey.shade200;
     return Container(
@@ -198,14 +178,8 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       child: Row(
         children: [
           Expanded(child: Text(alimento.nombreAlimento)),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: Color(0xFFF44336)),
-            onPressed: () async {}, // TODO: implementar _onEliminarAlimento
-          ),
+          IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () {}),
         ],
       ),
     );
@@ -235,7 +209,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                 maxLength: 25,
                 decoration: const InputDecoration(labelText: 'Nombre:'),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
               TextField(
                 controller: descripcionController,
                 maxLength: 200,
@@ -250,48 +224,53 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
                     onPressed: () async {
                       final nombre = nombreController.text.trim();
                       final descripcion = descripcionController.text.trim();
 
-                      final resultado = await _viewModel
-                          .registrarAlimento(nombre, descripcion);
+                      final resultado = await vm.registrarAlimento(nombre, descripcion);
                       if (resultado == null) {
                         Navigator.of(context).pop();
-                        await _cargarAlimentos();
+                        await vm.cargarAlimentos();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(resultado)),
                         );
                       }
                     },
-                    child: const Text('Guardar'),
-                  ),
-                  ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
+                      minimumSize: const Size(120, 48), // 👉 Tamaño mínimo del botón
+                      textStyle: const TextStyle(fontSize: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
+                    child: const Text('Guardar'),
+                  ),
+                  const SizedBox(width: 40),
+                  ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(120, 48),
+                      textStyle: const TextStyle(fontSize: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
                     child: const Text('Cancelar'),
                   ),
                 ],
               ),
             ),
           ],
+
         );
       },
     );

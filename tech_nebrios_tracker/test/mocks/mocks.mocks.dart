@@ -6,15 +6,15 @@
 import 'dart:async' as _i6;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:tech_nebrios_tracker/data/models/charola_model.dart' as _i4;
+import 'package:tech_nebrios_tracker/data/models/charolaModel.dart' as _i4;
 import 'package:tech_nebrios_tracker/data/models/menuCharolasModel.dart' as _i9;
 import 'package:tech_nebrios_tracker/data/repositories/consultar_charola_repository.dart'
     as _i3;
 import 'package:tech_nebrios_tracker/data/repositories/eliminar_charola_repository.dart'
     as _i2;
-import 'package:tech_nebrios_tracker/domain/consular_charola.dart' as _i7;
-import 'package:tech_nebrios_tracker/domain/eliminar_charola.dart' as _i5;
-import 'package:tech_nebrios_tracker/domain/getMenuCharolas.dart' as _i8;
+import 'package:tech_nebrios_tracker/domain/consultarCharolaUseCase.dart' as _i7;
+import 'package:tech_nebrios_tracker/domain/eliminarCharolaUseCase.dart' as _i5;
+import 'package:tech_nebrios_tracker/domain/charolasDashboardUseCase.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -42,7 +42,7 @@ class _FakeCharolaRepository_1 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeCharola_2 extends _i1.SmartFake implements _i4.Charola {
+class _FakeCharola_2 extends _i1.SmartFake implements _i4.CharolaDetalle {
   _FakeCharola_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -98,14 +98,14 @@ class MockObtenerCharolaUseCase extends _i1.Mock
           as _i3.CharolaRepository);
 
   @override
-  _i6.Future<_i4.Charola> obtenerCharola(int? id) =>
+  _i6.Future<_i4.CharolaDetalle> obtenerCharola(int? id) =>
       (super.noSuchMethod(
             Invocation.method(#obtenerCharola, [id]),
-            returnValue: _i6.Future<_i4.Charola>.value(
+            returnValue: _i6.Future<_i4.CharolaDetalle>.value(
               _FakeCharola_2(this, Invocation.method(#obtenerCharola, [id])),
             ),
           )
-          as _i6.Future<_i4.Charola>);
+          as _i6.Future<_i4.CharolaDetalle>);
 }
 
 /// A class which mocks [ObtenerMenuCharolas].
@@ -118,10 +118,10 @@ class MockObtenerMenuCharolas extends _i1.Mock
   }
 
   @override
-  _i6.Future<_i9.CharolaTarjeta?> ejecutar({int? pag, int? limite}) =>
+  _i6.Future<_i9.CharolaDashboard?> ejecutar({int? pag, int? limite}) =>
       (super.noSuchMethod(
             Invocation.method(#ejecutar, [], {#pag: pag, #limite: limite}),
-            returnValue: _i6.Future<_i9.CharolaTarjeta?>.value(),
+            returnValue: _i6.Future<_i9.CharolaDashboard?>.value(),
           )
-          as _i6.Future<_i9.CharolaTarjeta?>);
+          as _i6.Future<_i9.CharolaDashboard?>);
 }

@@ -83,7 +83,6 @@ class PopUpCharola extends StatelessWidget {
                   tamanio: 35,
                   alPresionar: () {
                     Navigator.of(context).pop();
-                    print('Botón con ícono presionado');
                   },
                 ),
               ],
@@ -111,7 +110,6 @@ class PopUpCharola extends StatelessWidget {
                   const Color.fromARGB(255, 201, 45, 34),
                   () {
                     Navigator.of(context).pop();
-                    print('Botón de Eliminar presionado');
                   },
                 ),
                 _buildActionButton(
@@ -119,7 +117,6 @@ class PopUpCharola extends StatelessWidget {
                   const Color.fromARGB(255, 255, 57, 123),
                   () {
                     Navigator.of(context).pop();
-                    print('Botón de Historial presionado');
                   },
                 ),
                 _buildActionButton(
@@ -127,7 +124,6 @@ class PopUpCharola extends StatelessWidget {
                   const Color.fromARGB(255, 48, 104, 224),
                   () {
                     Navigator.of(context).pop();
-                    print('Botón de Editar presionado');
                   },
                 ),
               ],

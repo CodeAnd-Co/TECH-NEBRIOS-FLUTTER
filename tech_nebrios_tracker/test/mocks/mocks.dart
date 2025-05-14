@@ -1,8 +1,8 @@
 // Archivo: test/mocks/rock.dart
 import 'package:mockito/annotations.dart';
-import 'package:tech_nebrios_tracker/domain/consular_charola.dart';
-import 'package:tech_nebrios_tracker/domain/eliminar_charola.dart';
-import 'package:tech_nebrios_tracker/domain/getMenuCharolas.dart';
+import 'package:tech_nebrios_tracker/domain/consultarCharolaUseCase.dart';
+import 'package:tech_nebrios_tracker/domain/eliminarCharolaUseCase.dart';
+import 'package:tech_nebrios_tracker/domain/charolasDashboardUseCase.dart';
 
 @GenerateMocks([
   EliminarCharolaUseCase,

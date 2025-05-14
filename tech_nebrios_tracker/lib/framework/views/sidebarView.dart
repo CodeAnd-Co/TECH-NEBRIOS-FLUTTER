@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tech_nebrios_tracker/framework/views/menuCharolasView.dart';
+import 'package:tech_nebrios_tracker/framework/views/charolasDashboardView.dart';
 
 class SidebarView extends StatefulWidget {
   final VoidCallback onLogout;

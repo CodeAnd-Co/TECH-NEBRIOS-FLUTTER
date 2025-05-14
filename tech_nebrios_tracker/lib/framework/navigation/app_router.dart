@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../views/loginView.dart';
-import '../views/sidebar_view.dart';// El contenedor con el Drawer
+import '../views/sidebarView.dart';// El contenedor con el Drawer
 
 
 enum AppRoute {

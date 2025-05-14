@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import '../../data/models/alimentacionModel.dart';
 import '../viewmodels/alimentacionViewmodel.dart';
 
+/// Pantalla que permite visualizar y gestionar alimentos e hidratación.
+///
+/// Incluye scroll infinito en la sección de alimentos,
+/// un formulario para agregar nuevos alimentos y
+/// una sección estática de ejemplos de hidratación.
 class AlimentacionScreen extends StatefulWidget {
   const AlimentacionScreen({super.key});
 
@@ -9,15 +14,28 @@ class AlimentacionScreen extends StatefulWidget {
   _AlimentacionScreenState createState() => _AlimentacionScreenState();
 }
 
+/// Estado de [AlimentacionScreen].
+///
+/// Maneja el estado interno de la vista, incluyendo
+/// controladores, eventos de scroll y renderizado dinámico.
 class _AlimentacionScreenState extends State<AlimentacionScreen> {
+  /// ViewModel que contiene la lógica de negocios para alimentos.
   final AlimentacionViewModel vm = AlimentacionViewModel();
+
+  /// Controlador para manejar el scroll infinito de la lista.
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+
+    // Escucha cambios del ViewModel para actualizar la UI.
     vm.addListener(() => setState(() {}));
+
+    // Carga inicial de alimentos
     vm.cargarAlimentos();
+
+    // Detecta cuando el usuario llega al final del scroll
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200 &&
@@ -35,6 +53,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     super.dispose();
   }
 
+  /// Construye la UI general de la pantalla.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,10 +71,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           ),
           const Text(
             'Vizualiza tu alimentación',
-            style: TextStyle(
-              fontSize: 18,
-              color: Color.fromARGB(255, 0, 0, 0),
-            ),
+            style: TextStyle(fontSize: 18, color: Colors.black),
           ),
           const SizedBox(height: 24),
           Expanded(
@@ -75,10 +91,12 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Construye la columna que contiene la lista de alimentos.
   Widget _buildColumnSectionAlimentos() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Header
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: const BoxDecoration(
@@ -94,11 +112,12 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.add),
-                onPressed: _onAgregarAlimento, // ✅ corrección aquí
+                onPressed: _onAgregarAlimento,
               ),
             ],
           ),
         ),
+        // Lista dinámica con scroll infinito
         Expanded(
           child: vm.alimentos.isEmpty && vm.isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -120,11 +139,13 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Construye la columna de hidratación (datos simulados).
   Widget _buildColumnSectionHydratacion() {
     const hidrataciones = ['ejemplo', 'ejemplo', 'ejemplo', 'ejemplo'];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Header
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: const BoxDecoration(
@@ -145,6 +166,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
             ],
           ),
         ),
+        // Lista estática
         ...hidrataciones.asMap().entries.map((entry) {
           final text = entry.value;
           final bg = entry.key.isEven ? Colors.white : Colors.grey.shade200;
@@ -156,10 +178,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               children: [
                 Expanded(child: Text(text)),
                 IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {},
-                ),
+                IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () {}),
               ],
             ),
           );
@@ -168,6 +187,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Construye una fila individual con un [alimento] y botones de acción.
   Widget _buildRowAlimento(Alimento alimento, int index) {
     final bg = index.isEven ? Colors.white : Colors.grey.shade200;
     return Container(
@@ -184,6 +204,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Muestra un formulario emergente para registrar un nuevo alimento.
   void _onAgregarAlimento() {
     final nombreController = TextEditingController();
     final descripcionController = TextEditingController();
@@ -243,7 +264,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
-                      minimumSize: const Size(120, 48), // 👉 Tamaño mínimo del botón
+                      minimumSize: const Size(120, 48),
                       textStyle: const TextStyle(fontSize: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
@@ -269,7 +290,6 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               ),
             ),
           ],
-
         );
       },
     );

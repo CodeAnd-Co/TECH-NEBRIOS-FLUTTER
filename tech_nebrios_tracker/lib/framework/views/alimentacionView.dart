@@ -43,19 +43,18 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
         children: [
           const SizedBox(height: 40),
           const Text(
-            "Modificar datos",
+            "Alimentación",
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
           const Padding(
             padding: EdgeInsets.only(top: 4.0),
-            child: Divider(color: Color(0xFF385881), thickness: 2, height: 20),
+            child: Divider(color: Color.fromARGB(255, 0, 0, 0), thickness: 3, height: 20),
           ),
           const Text(
-            'Selecciona el dato a editar',
+            'Vizualiza tu alimentación',
             style: TextStyle(
-              fontWeight: FontWeight.bold,
               fontSize: 18,
-              color: Colors.pink,
+              color: Color.fromARGB(255, 0, 0, 0),
             ),
           ),
           const SizedBox(height: 24),

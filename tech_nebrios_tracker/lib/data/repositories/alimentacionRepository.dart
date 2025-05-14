@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/alimentacionModel.dart';
 import '../models/constantes.dart';
-import '../services/alimentacionService.dart';
+import '../services/alimentacionAPIService.dart';
 
 /// Repositorio que implementa [AlimentacionService] y realiza
 /// las llamadas HTTP a la API de alimentación.

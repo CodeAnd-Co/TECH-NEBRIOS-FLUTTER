@@ -4,7 +4,8 @@
 import 'package:flutter/foundation.dart';
 import '../../data/models/alimentacionModel.dart';
 import '../../data/repositories/alimentacionRepository.dart';
-import '../../domain/alimentacionDomain.dart';
+import '../../domain/editarAlimentacionDomain.dart';
+import '../../domain/registrarAlimentacionDomain.dart';
 
 /// ViewModel que controla el estado y la lógica de la pantalla
 /// de alimentación (lista, edición, registro y scroll infinito).

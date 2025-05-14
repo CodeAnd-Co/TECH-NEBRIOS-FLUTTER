@@ -87,14 +87,14 @@ class CharolaTarjeta extends StatelessWidget {
 }
 
 /// Vista principal que muestra todas las charolas en un grid paginado.
-class VistaTamizadoIndividual extends StatefulWidget {
-  const VistaTamizadoIndividual({super.key});
+class VistaTamizadoMultiple extends StatefulWidget {
+  const VistaTamizadoMultiple({super.key});
 
   @override
-  State<VistaTamizadoIndividual> createState() => _VistaTamizadoIndividualState();
+  State<VistaTamizadoMultiple> createState() => _VistaTamizadoMultipleState();
 }
 
-class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
+class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -237,7 +237,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                           children: [
                             // Campo de texto para FRAS
                             Expanded(
-                              flex: 3,
+                              flex: 1,
                               child: TextField(
                                 decoration: InputDecoration(
                                   labelText: 'Fras (g)',
@@ -249,43 +249,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                             const SizedBox(width: 16),
                             // Dropdown para FRAS
                             Expanded(
-                              flex: 2,
-                              child: DropdownButtonFormField<String>(
-                                decoration: InputDecoration(
-                                  labelText: 'Alimento',
-                                  border: OutlineInputBorder(),
-                                ),
-                                items: ['Tipo A', 'Tipo B', 'Tipo C'].map((String tipo) {
-                                  return DropdownMenuItem<String>(
-                                    value: tipo,
-                                    child: Text(tipo),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  // Manejar selección de tipo
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
                               flex: 1,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  labelText: 'Cantidad (g)',
-                                  border: OutlineInputBorder(),
-                                ),
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            // Campo de texto para PUPA
-                            Expanded(
-                              flex: 3,
                               child: TextField(
                                 decoration: InputDecoration(
                                   labelText: 'Pupa (g)',
@@ -294,40 +258,9 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            // Dropdown para PUPA
-                            Expanded(
-                              flex: 2,
-                              child: DropdownButtonFormField<String>(
-                                decoration: InputDecoration(
-                                  labelText: 'Hidratación',
-                                  border: OutlineInputBorder(),
-                                ),
-                                items: ['Tipo A', 'Tipo B', 'Tipo C'].map((String tipo) {
-                                  return DropdownMenuItem<String>(
-                                    value: tipo,
-                                    child: Text(tipo),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  // Manejar selección de tipo
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              flex: 1,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  labelText: 'Cantidad (g)',
-                                  border: OutlineInputBorder(),
-                                ),
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
                           ],
                         ),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),

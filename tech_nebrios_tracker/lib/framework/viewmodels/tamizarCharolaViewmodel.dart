@@ -4,13 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import '../../data/models/menuCharolasModel.dart';
 import '../views/tamizarCharolaIndividualView.dart';
+import '../views/tamizarMultiplesCharolasView.dart';
 
 /// ViewModel encargado de gestionar los datos de las charolas que se van a tamizar.
 /// Implementa la vista previa de selección de charolas.
 class TamizadoViewModel extends ChangeNotifier {
   final Logger _logger = Logger();
-  /// Caso de uso para obtener las charolas desde el repositorio.
-  
+
+  /// Se definen controladores para el texto
+  final frasController = TextEditingController();
+  final pupaController = TextEditingController();
+  final alimentoCantidadController = TextEditingController();
+  final hidratacionCantidadController = TextEditingController();
   /// Lista de charolas actualmente mostradas en la vista.
   List<Charola> charolasParaTamizar = [];
 
@@ -57,7 +62,12 @@ class TamizadoViewModel extends ChangeNotifier {
         ),
       );
     }else{
-
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => VistaTamizadoMultiple(),
+        ),
+      );
     }
   }
 
@@ -75,6 +85,7 @@ class TamizadoViewModel extends ChangeNotifier {
 
   void quitarCharola(Charola charola) {
     charolasParaTamizar.remove(charola);
+    _hasError = false;
     notifyListeners();
   }
 

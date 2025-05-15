@@ -1,6 +1,7 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
 // RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 // RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
+// RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
 
 /// Modelo que representa el detalle completo de una charola,
 /// incluyendo su relación con comida e hidratación.
@@ -150,6 +151,7 @@ class CharolaDashboard {
   }
 }
 
+/// Modelos para representar la comida y la hidratación asignada a una charola.
 class ComidaAsignada {
   final int comidaId;
   double cantidadOtorgada;
@@ -174,6 +176,8 @@ class HidratacionAsignada {
       };
 }
 
+/// Modelo que representa el registro de una nueva charola.
+/// Incluye información sobre la comida e hidratación asignada.
 class CharolaRegistro {
   final String nombreCharola;
   final DateTime fechaCreacion;

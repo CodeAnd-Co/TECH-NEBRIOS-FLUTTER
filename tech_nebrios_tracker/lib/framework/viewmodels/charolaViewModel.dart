@@ -1,6 +1,7 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
 // RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 // RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
+// RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -38,6 +39,7 @@ class CharolaViewModel extends ChangeNotifier {
     _menuUseCase = ObtenerCharolasUseCaseImpl(repositorio: _repo);
     _registrarUseCase = RegistrarCharolaUseCaseImpl(repositorio: _repo);
 
+    // Carga inicial de charolas y dropdowns
     cargarCharolas();
     cargarAlimentos();
     cargarHidratacion();
@@ -86,6 +88,8 @@ class CharolaViewModel extends ChangeNotifier {
   final TextEditingController hidratacionCicloController =
       TextEditingController();
 
+  /// Valida el formulario y registra la charola si es válido.
+  /// Si el formulario no es válido, muestra un mensaje de error.
   Future<void> registrarCharola() async {
     try {
       final parts = fechaController.text.split('/');

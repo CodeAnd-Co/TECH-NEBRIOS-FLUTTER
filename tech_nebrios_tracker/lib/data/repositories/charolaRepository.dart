@@ -1,4 +1,5 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
+// RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
 
 import 'dart:io';
 import 'dart:convert';
@@ -129,6 +130,7 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
         body: json.encode(charola.toJson()),
       );
 
+      // Verifica el código de estado HTTP
       if (response.statusCode == 200 || response.statusCode == 201) {
         return;
       }

@@ -212,7 +212,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
     showDialog(
       context: context,
-      builder: (_) {
+      builder: (BuildContext dialogContext)  {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           backgroundColor: const Color(0xFFF8F1F1),
@@ -253,11 +253,13 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       final descripcion = descripcionController.text.trim();
 
                       final resultado = await vm.registrarAlimento(nombre, descripcion);
+                      if (!mounted) return;
+
                       if (resultado == null) {
-                        Navigator.of(context).pop();
+                        Navigator.of(dialogContext).pop();
                         await vm.cargarAlimentos();
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        ScaffoldMessenger.of(dialogContext).showSnackBar(
                           SnackBar(content: Text(resultado)),
                         );
                       }
@@ -275,7 +277,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                   ),
                   const SizedBox(width: 40),
                   ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Navigator.of(dialogContext).pop(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,

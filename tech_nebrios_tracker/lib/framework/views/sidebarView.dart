@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tech_nebrios_tracker/framework/views/charolasDashboardView.dart';
 import 'package:tech_nebrios_tracker/framework/views/reporteView.dart';
+import 'package:tech_nebrios_tracker/framework/views/alimentacionView.dart';
 
 class SidebarView extends StatefulWidget {
   final VoidCallback onLogout;
@@ -18,7 +19,7 @@ class _SidebarViewState extends State<SidebarView> {
     const VistaCharolas(),
     const Placeholder(),
     const Placeholder(),
-    const Placeholder(),
+    const AlimentacionScreen(),
     const VistaTablaCharolas(),
   ];
 

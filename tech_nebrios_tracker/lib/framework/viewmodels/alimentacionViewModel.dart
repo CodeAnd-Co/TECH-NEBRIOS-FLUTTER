@@ -4,8 +4,11 @@
 import 'package:flutter/foundation.dart';
 import '../../data/models/alimentacionModel.dart';
 import '../../data/repositories/alimentacionRepository.dart';
-import '../../domain/editarAlimentacionDomain.dart';
+import '../../domain/editarAlimentacionUseCase.dart';
+import '../../domain/eliminarAlimentacionUseCase.dart';
 import '../../domain/registrarAlimentacionDomain.dart';
+
+
 
 /// ViewModel que controla el estado y la lógica de la pantalla
 /// de alimentación (lista, edición, registro y scroll infinito).
@@ -14,6 +17,7 @@ import '../../domain/registrarAlimentacionDomain.dart';
 class AlimentacionViewModel extends ChangeNotifier {
   final AlimentacionRepository _repo;
   final EditarAlimentoCasoUso _editarCasoUso;
+  final EliminarAlimentoCasoUso _eliminarCasoUso;
   final RegistrarAlimentoCasoUso _registrarCasoUso;
 
   /// Tamaño de cada “chunk” que se mostrará por scroll.
@@ -34,18 +38,21 @@ class AlimentacionViewModel extends ChangeNotifier {
   AlimentacionViewModel({
     AlimentacionRepository? repo,
     EditarAlimentoCasoUso? editarCasoUso,
+    EliminarAlimentoCasoUso? eliminarCasoUso,
     RegistrarAlimentoCasoUso? registrarCasoUso,
-  }) : _repo = repo ?? AlimentacionRepository(),
-       _editarCasoUso =
-           editarCasoUso ??
-           EditarAlimentoCasoUsoImpl(
-             repositorio: repo ?? AlimentacionRepository(),
-           ),
-       _registrarCasoUso =
-           registrarCasoUso ??
-           RegistrarAlimentoCasoUsoImpl(
-             repositorio: repo ?? AlimentacionRepository(),
-           );
+  })  : _repo = repo ?? AlimentacionRepository(),
+        _editarCasoUso = editarCasoUso ??
+            EditarAlimentoCasoUsoImpl(
+              repositorio: repo ?? AlimentacionRepository(),
+            ),
+        _registrarCasoUso = registrarCasoUso ??
+            RegistrarAlimentoCasoUsoImpl(
+              repositorio: repo ?? AlimentacionRepository(),
+            ),
+        _eliminarCasoUso = eliminarCasoUso ??
+            EliminarAlimentoCasoUsoImpl(
+              repositorio: repo ?? AlimentacionRepository(),
+            );
 
   /// Indica si actualmente se está cargando más datos.
   bool get isLoading => _isLoading;
@@ -83,6 +90,23 @@ class AlimentacionViewModel extends ChangeNotifier {
       _agregarSiguienteChunk();
       _setLoading(false);
     });
+  }
+
+  /// Elimina un alimento de la lista y vuelve a cargar datos.
+  ///
+  /// Lanza excepción si no se puede eliminar.
+  Future<void> eliminarAlimento(int idAlimento) async {
+    _setLoading(true);
+    try {
+      await _eliminarCasoUso.eliminar(idAlimento: idAlimento);
+      await cargarAlimentos();
+    } on Exception catch (e) {
+      final msg = e.toString();
+      if (msg.contains('500')) throw Exception('❌ Error del servidor.');
+      throw Exception('❌ Error desconocido. $e');
+    } finally {
+      _setLoading(false);
+    }
   }
 
   /// Edita un [alimento] y vuelve a recargar datos.

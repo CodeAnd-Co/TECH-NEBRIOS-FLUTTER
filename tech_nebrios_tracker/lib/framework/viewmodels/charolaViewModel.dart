@@ -1,4 +1,5 @@
-// lib/framework/viewmodels/charolaViewModel.dart
+// RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
@@ -13,7 +14,7 @@ import '../../domain/consultarCharolaUseCase.dart';
 import '../../domain/eliminarCharolaUseCase.dart';
 import '../../domain/charolasDashboardUseCase.dart';
 import '../../domain/registrarCharolaUseCase.dart';
-
+/// ViewModel encargado de gestionar el estado de la vista de charolas.
 class CharolaViewModel extends ChangeNotifier {
   final _logger = Logger();
   final CharolaRepository _repo = CharolaRepository();
@@ -140,11 +141,12 @@ class CharolaViewModel extends ChangeNotifier {
   // === LISTADO PAGINADO ===
   List<CharolaTarjeta> charolas = [];
   int pagActual = 1;
-  final int limite = 15;
+  final int limite = 100;
   bool _cargandoLista = false;
   bool get cargandoLista => _cargandoLista;
   bool hayMas = true;
   int totalPags = 1;
+  String estadoActual = 'activa';
 
   Future<void> cargarCharolas({bool reset = false}) async {
     if (_cargandoLista) return;
@@ -157,7 +159,7 @@ class CharolaViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final dash = await _menuUseCase.ejecutar(pag: pagActual, limite: limite);
+      final dash = await _menuUseCase.ejecutar(pag: pagActual, limite: limite, estado: estadoActual);
       if (dash != null) {
         charolas = dash.data;
         totalPags = dash.totalPags;
@@ -188,5 +190,11 @@ class CharolaViewModel extends ChangeNotifier {
       pagActual++;
       cargarCharolas();
     }
+  }
+
+  void cambiarEstado(String nuevoEstado) {
+  estadoActual = nuevoEstado;
+  pagActual = 1;
+  cargarCharolas(reset: true);
   }
 }

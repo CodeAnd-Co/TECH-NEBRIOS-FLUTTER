@@ -8,7 +8,6 @@ import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewModel.dart';
 
-
 /// Punto de entrada principal para la aplicación Tech Nebrios Tracker.
 ///
 /// Inicializa los bindings de Flutter y establece un tamaño mínimo de ventana
@@ -43,7 +42,7 @@ class MyApp extends StatelessWidget {
       title: 'Zuustento Tracker',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
       ),
       home: Router(

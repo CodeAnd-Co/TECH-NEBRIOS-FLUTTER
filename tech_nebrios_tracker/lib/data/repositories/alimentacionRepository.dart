@@ -56,6 +56,22 @@ class AlimentacionRepository extends AlimentacionService {
     // Si es 200 OK, simplemente retorna
   }
 
+  /// Elimina un alimento existente en el sistema.
+  ///
+  /// [idAlimento] es el identificador del alimento a eliminar.
+  @override
+  Future<void> eliminarAlimento(int idAlimento) async {
+    final uri = Uri.parse('${APIRutas.ALIMENTACION}/eliminar/$idAlimento');
+    final response = await http.delete(uri);
+
+    // Manejo de códigos de error específicos
+    if (response.statusCode == 500) {
+      throw Exception('❌ Error del servidor.');
+    } else if (response.statusCode != 200) {
+      throw Exception('❌ Error desconocido (${response.statusCode}).');
+    }
+  }
+
   /// Envía los datos de un nuevo tipo de comida al backend para su registro.
   ///
   /// Realiza una solicitud `POST` al endpoint `ALIMENTACION/agregar` con el

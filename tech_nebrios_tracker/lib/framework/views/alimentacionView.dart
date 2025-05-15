@@ -207,10 +207,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
             icon: const Icon(Icons.edit),
             onPressed: () => _onEditarAlimento(alimento),
           ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => _onEliminarAlimento(alimento.idAlimento)),
         ],
       ),
     );
@@ -377,6 +374,43 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               ),
             ],
           ),
+    );
+  }
+
+  /// Muestra un diálogo de confirmación para eliminar [alimento].
+  /// Si se confirma, llama a [vm.eliminarAlimento].
+  void _onEliminarAlimento(int idAlimento) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFFF8F1F1),
+        title: const Text('Eliminar Alimento'),
+        content: const Text('¿Estás seguro de eliminar este alimento?'),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              await vm.eliminarAlimento(idAlimento);
+              Navigator.of(dialogContext).pop();
+              ScaffoldMessenger.of(dialogContext).showSnackBar(
+                const SnackBar(content: Text('Alimento eliminado exitosamente')),
+              );
+            },
+            child: const Text('Eliminar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      ),
     );
   }
 }

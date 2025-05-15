@@ -6,9 +6,9 @@ import 'package:tech_nebrios_tracker/data/models/charolaModel.dart';
 abstract class CharolaAPIService {
   /// Obtiene las charolas paginadas desde el backend.
   ///
-  /// pag es la página actual y limite la cantidad de elementos por página.
-  /// Retorna un mapa con los datos obtenidos o null si hay error.
-  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite);
+  /// [pag] es la página actual, [limite] la cantidad de elementos por página,
+  /// y [estado] filtra por charolas activas o pasadas.
+  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {String estado});
 
   Future<CharolaDetalle> obtenerCharola(int id);
 

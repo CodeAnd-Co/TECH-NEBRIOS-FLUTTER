@@ -1,3 +1,5 @@
+// RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
+
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -13,23 +15,19 @@ class CharolaRepository {
   final UserUseCases _userUseCases = UserUseCases();
 
   /// Obtiene charolas paginadas.
-  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(
-    int pag,
-    int limite,
-  ) async {
+  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {String estado = 'activa'}) async {
+    final uri = Uri.parse('${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite&estado=$estado');
+    final UserUseCases _userUseCases = UserUseCases();
     final token = await _userUseCases.obtenerTokenActual();
-    final uri = Uri.parse(
-      '${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite',
-    );
 
     try {
       final respuesta = await http.get(
         uri,
         headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+        );
 
       if (respuesta.statusCode == 200) {
         return jsonDecode(respuesta.body);
@@ -38,23 +36,23 @@ class CharolaRepository {
       } else if (respuesta.statusCode == 500) {
         throw Exception('Error del servidor. Inténtelo más tarde');
       } else {
-        _logger.e('Error HTTP: ${respuesta.statusCode}');
+        _logger.e("Error HTTP: ${respuesta.statusCode}");
       }
-    } on SocketException {
+    } on SocketException catch (_) {
+      // Error 101: problema de red o conexión
       throw Exception('❌ Error de conexión. Verifique su red.');
     } catch (e) {
-      _logger.e('Error al conectarse al backend: $e');
+      _logger.e("Error al conectarse al backend: $e");
     }
 
     return null;
   }
 
   /// Convierte la respuesta cruda de la API en un modelo [CharolaDashboard].
-  Future<CharolaDashboard?> obtenerCharolaRespuesta(
-    int pag,
-    int limite,
-  ) async {
-    final data = await obtenerCharolasPaginadas(pag, limite);
+  ///
+  /// Retorna null si la respuesta no es válida.
+  Future<CharolaDashboard?> obtenerCharolaRespuesta(int pag, int limite, {String estado = 'activa'}) async {
+    final data = await obtenerCharolasPaginadas(pag, limite, estado: estado);
     if (data != null) {
       return CharolaDashboard.fromJson(data);
     }

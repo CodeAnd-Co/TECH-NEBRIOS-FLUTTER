@@ -19,6 +19,12 @@ abstract class AlimentacionService {
   /// Lanza excepción en caso de error (400, 500, etc.).
   Future<void> editarAlimento(Alimento alimento);
 
+
+  /// Elimina un alimento existente en el sistema.
+  ///
+  /// [idAlimento] es el identificador del alimento a eliminar.
+  Future<void> eliminarAlimento(int idAlimento);
+  
   /// Registra un nuevo tipo de comida en el sistema.
   ///
   /// [nombre] es el nombre del nuevo alimento.

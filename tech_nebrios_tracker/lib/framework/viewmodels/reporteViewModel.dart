@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../domain/tablaUseCases.dart';
+import '../../domain/reporteUseCases.dart';
 import 'package:open_file/open_file.dart';
 
 
-class TablaViewModel extends ChangeNotifier{
+class ReporteViewModel extends ChangeNotifier{
   final TablaUseCasesImp tabla;
 
-  TablaViewModel(this.tabla);
+  ReporteViewModel(this.tabla);
 
   List? valoresTabla = [];
   String _estadoDescarga = '';
@@ -17,13 +17,13 @@ class TablaViewModel extends ChangeNotifier{
   String get estadoDescarga => _estadoDescarga;
   String get mensajeGet => _mensajeGet;
 
-  Future<void> getTabla() async {
+  Future<void> getDatos() async {
     try{
       _estadoDescarga = '';
       _mensajeGet = '';
       notifyListeners();
 
-      var respuesta = await tabla.repositorio.getTabla();
+      var respuesta = await tabla.repositorio.getDatos();
       valoresTabla = respuesta['mensaje'];
       var codigo = respuesta['codigo'];
 

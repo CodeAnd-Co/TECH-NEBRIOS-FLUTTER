@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/tablaViewModel.dart';
+import '../viewmodels/reporteViewModel.dart';
 
 class VistaTablaCharolas extends StatefulWidget {
   const VistaTablaCharolas({super.key});
@@ -17,8 +17,8 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
   @override
   void initState() {
     super.initState();
-    final vistaModelo = Provider.of<TablaViewModel>(context, listen: false);
-    vistaModelo.getTabla();
+    final vistaModelo = Provider.of<ReporteViewModel>(context, listen: false);
+    vistaModelo.getDatos();
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
@@ -37,7 +37,7 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
 
   @override
   Widget build(BuildContext context) {
-    final vistaModelo = Provider.of<TablaViewModel>(context);
+    final vistaModelo = Provider.of<ReporteViewModel>(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -53,7 +53,7 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await vistaModelo.getTabla();
+          await vistaModelo.getDatos();
           setState(() {
             _currentMaxItems = _itemsPerPage;
           });

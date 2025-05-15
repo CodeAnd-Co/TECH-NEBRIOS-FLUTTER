@@ -1,4 +1,4 @@
-class TablaModel {
+class ReporteModel {
   String nombreCharola;
   double comidaCiclo;
   double hidratacionCiclo;
@@ -8,7 +8,7 @@ class TablaModel {
   DateTime fechaCreacion;
   double pesoCharola;
 
-  TablaModel({
+  ReporteModel({
     required this.nombreCharola,
     required this.comidaCiclo,
     required this.hidratacionCiclo,

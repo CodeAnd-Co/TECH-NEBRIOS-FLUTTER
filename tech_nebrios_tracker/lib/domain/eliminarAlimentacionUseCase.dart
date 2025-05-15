@@ -1,5 +1,4 @@
 //RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
-import 'package:tech_nebrios_tracker/data/models/alimentacionModel.dart';
 import '../data/repositories/alimentacionRepository.dart';
 
 /// Interfaz de caso de uso para editar un alimento.

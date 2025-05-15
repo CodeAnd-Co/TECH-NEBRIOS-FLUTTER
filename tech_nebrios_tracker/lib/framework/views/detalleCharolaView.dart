@@ -257,11 +257,6 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                   runSpacing: 10,
                                   children: [
                                     _crearBotonIcono(
-                                      icono: Icons.device_hub,
-                                      texto: 'Ancestros',
-                                      alPresionar: () {},
-                                    ),
-                                    _crearBotonIcono(
                                       icono: Icons.edit,
                                       texto: 'Editar',
                                       alPresionar: () {},
@@ -274,6 +269,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                     _crearBotonIcono(
                                       icono: Icons.water_drop,
                                       texto: 'Hidratar',
+                                      alPresionar: () {},
+                                    ),
+                                    _crearBotonIcono(
+                                      icono: Icons.device_hub,
+                                      texto: 'Ancestros',
                                       alPresionar: () {},
                                     ),
                                     _crearBotonIcono(

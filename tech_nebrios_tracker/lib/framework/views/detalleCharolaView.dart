@@ -161,35 +161,6 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                           color: Colors.white,
                           child: Column(
                             children: [
-                              // Parte superior con información de la charola
-                              Padding(
-                                padding: const EdgeInsets.all(30),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Texto.titulo1(
-                                      texto: detalle.nombreCharola,
-                                      bold: true,
-                                      tamanio: 64,
-                                      color: const Color(0xFF22A63A),
-                                    ),
-                                    _crearInfoFila('Estado:', detalle.estado),
-                                    _crearInfoFila('Fecha:', fechaFormateada),
-                                    _crearInfoFila(
-                                      'Peso:',
-                                      '${detalle.pesoCharola}g',
-                                    ),
-                                    _crearInfoFila(
-                                      'Hidratación:',
-                                      '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
-                                    ),
-                                    _crearInfoFila(
-                                      'Alimento:',
-                                      '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
-                                    ),
-                                  ],
-                                ),
-                              ),
                               // Eliminar icono
                               Align(
                                 alignment: Alignment.topRight,
@@ -255,6 +226,35 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                       );
                                     },
                                   ),
+                                ),
+                              ),
+                              // Parte superior con información de la charola
+                              Padding(
+                                padding: const EdgeInsets.all(30),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Texto.titulo1(
+                                      texto: detalle.nombreCharola,
+                                      bold: true,
+                                      tamanio: 64,
+                                      color: const Color(0xFF22A63A),
+                                    ),
+                                    _crearInfoFila('Estado:', detalle.estado),
+                                    _crearInfoFila('Fecha:', fechaFormateada),
+                                    _crearInfoFila(
+                                      'Peso:',
+                                      '${detalle.pesoCharola}g',
+                                    ),
+                                    _crearInfoFila(
+                                      'Hidratación:',
+                                      '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
+                                    ),
+                                    _crearInfoFila(
+                                      'Alimento:',
+                                      '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
+                                    ),
+                                  ],
                                 ),
                               ),
                               // Parte inferior con botones

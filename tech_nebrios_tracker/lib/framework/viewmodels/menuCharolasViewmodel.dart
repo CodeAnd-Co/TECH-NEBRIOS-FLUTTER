@@ -26,7 +26,7 @@ class CharolaVistaModelo extends ChangeNotifier {
   int pagActual = 1;
 
   /// Cantidad de elementos por página (valor fijo por ahora).
-  final int limite = 15;
+  final int limite = 100;
 
   /// Estado de carga actual.
   bool cargando = false;

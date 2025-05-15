@@ -1,7 +1,7 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
 import 'package:flutter/material.dart';
 import '../../data/models/alimentacionModel.dart';
-import '../viewmodels/alimentacionViewmodel.dart';
+import '../viewmodels/alimentacionViewModel.dart';
 
 /// Pantalla que permite visualizar y gestionar alimentos e hidratación.
 ///

@@ -1,0 +1,1 @@
+//  RF18 (Historial de actividad)

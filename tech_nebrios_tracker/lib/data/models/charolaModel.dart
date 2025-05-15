@@ -1,8 +1,11 @@
-// RF10 https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
+// RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
+// RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
 
+/// Modelo que representa el detalle completo de una charola,
+/// incluyendo su relación con comida e hidratación.
 class CharolaDetalle {
-  // atributos de charola
+  // Atributos principales de la charola
   final int charolaId;
   final String nombreCharola;
   final int comidaOtorgada;
@@ -19,7 +22,7 @@ class CharolaDetalle {
   final String hidratacionNombre;
   final String hidratacionDesc;
 
-  // constructor por defecto de charola
+  /// Constructor principal del modelo.
   CharolaDetalle({
     required this.charolaId,
     required this.nombreCharola,
@@ -38,16 +41,15 @@ class CharolaDetalle {
     required this.hidratacionDesc,
   });
 
+  /// Método para construir una instancia desde un JSON.
   factory CharolaDetalle.fromJson(Map<String, dynamic> json) {
     final charolaData = json['charola'];
     final comidaRelacion = json['relacionComida'];
     final hidratacionRelacion = json['relacionHidratacion'];
-    final comidaData =
-        json['comida'] ?? {}; // se instancia vacio si es que es nulo
-    final hidratacionData =
-        json['hidratacion'] ?? {}; // se instancia vacio si es que es nulo
+    final comidaData = json['comida'] ?? {}; // Previene errores si es null
+    final hidratacionData = json['hidratacion'] ?? {};
 
-    // función para transformar un valor a int y si es nulo lo retorna como 0
+    /// Función auxiliar para parsear valores a entero, con manejo de nulos.
     int parseToInt(dynamic value) {
       if (value == null) return 0;
       if (value is int) return value;
@@ -78,24 +80,26 @@ class CharolaDetalle {
   }
 }
 
-/// Modelo que representa una charola individual.
+/// Modelo que representa una charola en su forma resumida
+/// para visualización tipo "tarjeta".
 class CharolaTarjeta {
   /// ID único de la charola.
   final int charolaId;
 
-  /// Nombre de la charola.
+  /// Nombre identificador de la charola.
   final String nombreCharola;
 
   /// Fecha de creación de la charola.
   final DateTime fechaCreacion;
 
+  /// Constructor principal.
   CharolaTarjeta({
     required this.charolaId,
     required this.nombreCharola,
     required this.fechaCreacion,
   });
 
-  /// Construye una instancia de Charola desde un JSON.
+  /// Método para construir una instancia desde un JSON.
   factory CharolaTarjeta.fromJson(Map<String, dynamic> json) {
     return CharolaTarjeta(
       charolaId: json['charolaId'] as int,
@@ -105,23 +109,25 @@ class CharolaTarjeta {
   }
 }
 
-/// Modelo que representa la respuesta paginada de la API para charolas.
+/// Modelo que representa la respuesta paginada de la API
+/// al consultar charolas.
 class CharolaDashboard {
-  /// Total de elementos disponibles en la base de datos.
+  /// Total de elementos encontrados en la base de datos.
   final int total;
 
-  /// Página actual.
+  /// Número de página actual.
   final int pag;
 
-  /// Límite de elementos por página.
+  /// Número de elementos por página.
   final int limite;
 
-  /// Total de páginas calculadas por la API.
+  /// Número total de páginas disponibles.
   final int totalPags;
 
-  /// Lista de charolas contenidas en esta página.
+  /// Lista de charolas correspondientes a esta página.
   final List<CharolaTarjeta> data;
 
+  /// Constructor principal.
   CharolaDashboard({
     required this.total,
     required this.pag,
@@ -130,17 +136,16 @@ class CharolaDashboard {
     required this.data,
   });
 
-  /// Construye una instancia de CharolaTarjeta desde un JSON.
+  /// Método para construir una instancia desde un JSON.
   factory CharolaDashboard.fromJson(Map<String, dynamic> json) {
     return CharolaDashboard(
       total: json['total'],
       pag: json['page'],
       limite: json['limit'],
       totalPags: json['totalPages'],
-      data:
-          (json['data'] as List)
-              .map((item) => CharolaTarjeta.fromJson(item))
-              .toList(),
+      data: (json['data'] as List)
+          .map((item) => CharolaTarjeta.fromJson(item))
+          .toList(),
     );
   }
 }

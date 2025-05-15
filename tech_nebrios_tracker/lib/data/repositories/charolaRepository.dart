@@ -140,7 +140,7 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
     } on SocketException {
       throw Exception('❌ Error de conexión. Verifique su red.');
     } catch (e) {
-      _logger.e('Error al registrar charola');
+      _logger.e('Error al registrar charola: $e');
       rethrow;
     }
   }

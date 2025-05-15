@@ -1,4 +1,6 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
+// RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
+// RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -13,6 +15,7 @@ import '../../domain/consultarCharolaUseCase.dart';
 import '../../domain/eliminarCharolaUseCase.dart';
 import '../../domain/charolasDashboardUseCase.dart';
 import '../../domain/registrarCharolaUseCase.dart';
+
 /// ViewModel encargado de gestionar el estado de la vista de charolas.
 class CharolaViewModel extends ChangeNotifier {
   final _logger = Logger();
@@ -22,11 +25,13 @@ class CharolaViewModel extends ChangeNotifier {
 
   final formKey = GlobalKey<FormState>();
 
+  // Casos de uso para operaciones relacionadas a charolas
   late final ObtenerCharolaUseCase _obtenerUseCase;
   late final EliminarCharolaUseCase _eliminarUseCase;
   late final ObtenerMenuCharolas _menuUseCase;
   late final RegistrarCharolaUseCase _registrarUseCase;
 
+  /// Constructor sin parámetros que inicializa los casos de uso con el repositorio
   CharolaViewModel() {
     _obtenerUseCase = ObtenerCharolaUseCaseImpl(charolaRepository: _repo);
     _eliminarUseCase = EliminarCharolaUseCaseImpl(charolaRepository: _repo);
@@ -78,7 +83,8 @@ class CharolaViewModel extends ChangeNotifier {
   final TextEditingController fechaController = TextEditingController();
   final TextEditingController comidaCicloController = TextEditingController();
   final TextEditingController pesoController = TextEditingController();
-  final TextEditingController hidratacionCicloController = TextEditingController();
+  final TextEditingController hidratacionCicloController =
+      TextEditingController();
 
   Future<void> registrarCharola() async {
     try {
@@ -97,13 +103,13 @@ class CharolaViewModel extends ChangeNotifier {
           ComidaAsignada(
             comidaId: selectedAlimentacion!.idAlimento,
             cantidadOtorgada: double.parse(comidaCicloController.text),
-          )
+          ),
         ],
         hidrataciones: [
           HidratacionAsignada(
             hidratacionId: selectedHidratacion!.idHidratacion,
             cantidadOtorgada: double.parse(hidratacionCicloController.text),
-          )
+          ),
         ],
       );
       await _registrarUseCase.registrar(charola: registro);
@@ -115,26 +121,27 @@ class CharolaViewModel extends ChangeNotifier {
   }
 
   /// Limpia todos los campos del formulario y selecciones.
-void resetForm() {
-  nombreController.clear();
-  densidadLarvaController.clear();
-  fechaController.clear();
-  comidaCicloController.clear();
-  pesoController.clear();
-  hidratacionCicloController.clear();
-  selectedAlimentacion = null;
-  selectedHidratacion = null;
-  notifyListeners();
-}
+  void resetForm() {
+    nombreController.clear();
+    densidadLarvaController.clear();
+    fechaController.clear();
+    comidaCicloController.clear();
+    pesoController.clear();
+    hidratacionCicloController.clear();
+    selectedAlimentacion = null;
+    selectedHidratacion = null;
+    notifyListeners();
+  }
 
+  // === DETALLE DE UNA CHAROLA ===
+  CharolaDetalle? _charola; // Detalle de la charola actual
+  CharolaDetalle? get charola => _charola; // Getter del detalle
 
-  // === DETALLE DE CHAROLA ===
-  CharolaDetalle? _charola;
-  CharolaDetalle? get charola => _charola;
-
-  bool _cargandoCharola = false;
+  bool _cargandoCharola =
+      false; // Bandera para indicar si se está cargando el detalle
   bool get cargandoCharola => _cargandoCharola;
 
+  /// Carga el detalle de una charola por ID
   Future<void> cargarCharola(int id) async {
     _cargandoCharola = true;
     notifyListeners();
@@ -144,18 +151,20 @@ void resetForm() {
       _logger.e('Error cargando detalle: $e');
       _charola = null;
     }
-    _cargandoCharola = false;
-    notifyListeners();
+    _cargandoCharola = false; notifyListeners();
   }
 
+  /// Elimina una charola por ID
   Future<void> eliminarCharola(int id) async {
     _cargandoCharola = true;
     notifyListeners();
     try {
-      await _eliminarUseCase.eliminar(id);
-      _charola = null;
+      await _eliminarUseCase.eliminar(
+        id,
+      ); // Llama al caso de uso de eliminación
+      _charola = null; // Limpia el detalle después de eliminar
     } catch (e) {
-      _logger.e('Error eliminando charola: $e');
+      _logger.e('Error eliminando charola: $e'); // Registra el error
     }
     _cargandoCharola = false;
     notifyListeners();
@@ -171,27 +180,35 @@ void resetForm() {
   int totalPags = 1;
   String estadoActual = 'activa';
 
+  /// Carga la lista de charolas con paginación. Si [reset] es true, reinicia la paginación.
   Future<void> cargarCharolas({bool reset = false}) async {
-    if (_cargandoLista) return;
+    if (_cargandoLista) return; // Previene múltiples cargas simultáneas
+
     if (reset) {
       pagActual = 1;
-      charolas.clear();
+      charolas.clear(); // Limpia lista si es reinicio
     }
 
     _cargandoLista = true;
     notifyListeners();
 
     try {
-      final dash = await _menuUseCase.ejecutar(pag: pagActual, limite: limite, estado: estadoActual);
+      final dash = await _menuUseCase.ejecutar(
+        pag: pagActual,
+        limite: limite,
+        estado: estadoActual,
+      );
       if (dash != null) {
-        charolas = dash.data;
-        totalPags = dash.totalPags;
-        hayMas = pagActual < totalPags;
+        charolas = dash.data; // Asigna las nuevas charolas
+        totalPags = dash.totalPags; // Total de páginas disponibles
+        hayMas = pagActual < totalPags; // Verifica si hay más páginas
       }
     } catch (e) {
-      final msg = e.toString().contains('401')
-          ? '🚫 401: No autorizado'
-          : e.toString().contains('101')
+      // Manejo básico de errores comunes con logs personalizados
+      final msg =
+          e.toString().contains('401')
+              ? '🚫 401: No autorizado'
+              : e.toString().contains('101')
               ? '🌐 101: Problemas de red'
               : '💥 Error interno del servidor';
       _logger.e(msg);
@@ -201,6 +218,7 @@ void resetForm() {
     }
   }
 
+  /// Carga la página anterior si existe
   void cargarPaginaAnterior() {
     if (pagActual > 1) {
       pagActual--;
@@ -208,6 +226,7 @@ void resetForm() {
     }
   }
 
+  /// Carga la página siguiente si no es la última
   void cargarPaginaSiguiente() {
     if (pagActual < totalPags) {
       pagActual++;
@@ -216,8 +235,8 @@ void resetForm() {
   }
 
   void cambiarEstado(String nuevoEstado) {
-  estadoActual = nuevoEstado;
-  pagActual = 1;
-  cargarCharolas(reset: true);
+    estadoActual = nuevoEstado;
+    pagActual = 1;
+    cargarCharolas(reset: true);
   }
 }

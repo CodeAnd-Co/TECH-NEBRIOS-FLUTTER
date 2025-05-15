@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
 import 'dart:io';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import './framework/viewmodels/reporteViewModel.dart';
 import 'framework/viewmodels/charolaViewModel.dart';
@@ -49,6 +50,15 @@ class MyApp extends StatelessWidget {
         routerDelegate: AppRouter(),
         backButtonDispatcher: RootBackButtonDispatcher(),
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es', ''), // Español
+      ],
+      locale: const Locale('es', ''), // Establecer el idioma por defecto
     );
   }
 }

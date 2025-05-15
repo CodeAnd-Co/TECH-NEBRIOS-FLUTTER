@@ -227,6 +227,7 @@ class RegistrarCharolaView extends StatelessWidget {
           onTap: () async {
             final pickedDate = await showDatePicker(
               context: context,
+              locale: const Locale('es', 'ES'),
               initialDate: DateTime.now(),
               firstDate: DateTime(2000),
               lastDate: DateTime.now(),

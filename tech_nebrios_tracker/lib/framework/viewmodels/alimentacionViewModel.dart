@@ -6,7 +6,7 @@ import '../../data/models/alimentacionModel.dart';
 import '../../data/repositories/alimentacionRepository.dart';
 import '../../domain/editarAlimentacionUseCase.dart';
 import '../../domain/eliminarAlimentacionUseCase.dart';
-import '../../domain/registrarAlimentacionDomain.dart';
+import '../../domain/registrarAlimentacionUseCase.dart';
 
 
 

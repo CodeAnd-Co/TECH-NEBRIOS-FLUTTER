@@ -1,13 +1,16 @@
+// RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
+// RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 import 'components/atoms/texto.dart';
-import 'components/molecules/boton_texto.dart';
 import 'components/organisms/pop_up.dart';
 import 'charolasDashboardView.dart';
 
+/// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
-  final int charolaId;
+  final int charolaId; // ID de la charola que se va a mostrar
   const PantallaCharola({super.key, required this.charolaId});
 
   @override
@@ -15,7 +18,7 @@ class PantallaCharola extends StatefulWidget {
 }
 
 class _PantallaCharolaState extends State<PantallaCharola> {
-  bool _initialized = false;
+  bool _initialized = false; // Controla si ya se inicializó la carga de datos
 
   @override
   void didChangeDependencies() {
@@ -23,14 +26,14 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     if (!_initialized) {
       _initialized = true;
 
-      // Ejecutar después del build actual
+      // Se carga la charola de forma asíncrona después del primer build
       Future.microtask(() {
         context.read<CharolaViewModel>().cargarCharola(widget.charolaId);
       });
     }
   }
 
-
+  /// Formatea una fecha en formato ISO a formato dd/mm/yyyy
   String formatearFecha(String fecha) {
     try {
       final dateTime = DateTime.parse(fecha);
@@ -42,10 +45,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
       }
       return fecha;
     } catch (_) {
-      return fecha;
+      return fecha; // Si falla el parseo, se retorna la fecha original
     }
   }
 
+  /// Crea una fila de información con un label y un valor
   Widget _crearInfoFila(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -59,11 +63,22 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     );
   }
 
-  Widget _crearBotonTexto(String texto, Color color, VoidCallback alPresionar) {
-    return BotonTexto.simple(
-      texto: Texto.titulo4(texto: texto, bold: true, color: Colors.white),
-      alPresionar: alPresionar,
-      colorBg: color,
+  /// Crea un botón con ícono y texto pequeño debajo
+  Widget _crearBotonIcono({
+    required IconData icono,
+    required String texto,
+    required VoidCallback alPresionar,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: Icon(icono, color: Colors.black),
+          onPressed: alPresionar,
+          iconSize: 65,
+        ),
+        Texto.titulo4(texto: texto, bold: true),
+      ],
     );
   }
 
@@ -71,7 +86,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
   Widget build(BuildContext context) {
     return Consumer<CharolaViewModel>(
       builder: (context, viewModel, _) {
-        // Cargando detalle
+        // Muestra indicador de carga mientras se obtiene el detalle
         if (viewModel.cargandoCharola) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -79,6 +94,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
         }
 
         final detalle = viewModel.charola;
+        // Si no se encuentra la charola, se muestra un mensaje
         if (detalle == null) {
           return const Scaffold(
             body: Center(child: Text('Charola no encontrada')),
@@ -87,104 +103,195 @@ class _PantallaCharolaState extends State<PantallaCharola> {
 
         final fechaFormateada = formatearFecha(detalle.fechaCreacion);
 
+        // UI principal de la pantalla
         return Scaffold(
           backgroundColor: const Color(0xFFF5F7FA),
-          body: Center(
-            child: SizedBox(
-              width: 900,
-              height: 900,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  children: [
+                    // Botón arriba a la izquierda
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20, left: 20),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
+                          ),
+                          tooltip: 'Regresar',
+                          onPressed: () {
+                            viewModel.cargarCharolas(reset: true);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => ChangeNotifierProvider.value(
+                                      value: viewModel,
+                                      child: const VistaCharolas(),
+                                    ),
+                              ),
+                            );
+                          },
+                          iconSize: 55,
+                        ),
+                      ),
                     ),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(30),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Texto.titulo1(
-                            texto: detalle.nombreCharola,
-                            bold: true,
-                            tamanio: 64,
-                            color: const Color(0xFF22A63A),
+                    const SizedBox(height: 20),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: IntrinsicHeight(
+                        child: Card(
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          _crearInfoFila('Estado:', detalle.estado),
-                          _crearInfoFila('Fecha:', fechaFormateada),
-                          _crearInfoFila('Peso:', '${detalle.pesoCharola}g'),
-                          _crearInfoFila(
-                            'Hidratación:',
-                            '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
-                          ),
-                          _crearInfoFila(
-                            'Alimento:',
-                            '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
-                          ),
-                          const SizedBox(height: 20),
-                          Wrap(
-                            spacing: 150,
-                            alignment: WrapAlignment.center,
+                          color: Colors.white,
+                          child: Column(
                             children: [
-                              _crearBotonTexto(
-                                'Eliminar',
-                                const Color(0xFFE43D3D),
-                                () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return OrganismoPopUpConfirmacion(
-                                        onCancelar:
-                                            () => Navigator.of(context).pop(),
-                                        onConfirmar: () async {
-                                          await viewModel.eliminarCharola(
-                                            viewModel.charola!.charolaId,
-                                          );
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => const VistaCharolas(),
-                                            ),
-                                          );
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Charola eliminada con éxito',
-                                              ),
-                                            ),
+                              // Parte superior con información de la charola
+                              Padding(
+                                padding: const EdgeInsets.all(30),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Texto.titulo1(
+                                      texto: detalle.nombreCharola,
+                                      bold: true,
+                                      tamanio: 64,
+                                      color: const Color(0xFF22A63A),
+                                    ),
+                                    _crearInfoFila('Estado:', detalle.estado),
+                                    _crearInfoFila('Fecha:', fechaFormateada),
+                                    _crearInfoFila(
+                                      'Peso:',
+                                      '${detalle.pesoCharola}g',
+                                    ),
+                                    _crearInfoFila(
+                                      'Hidratación:',
+                                      '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
+                                    ),
+                                    _crearInfoFila(
+                                      'Alimento:',
+                                      '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Eliminar icono
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                      size: 55,
+                                    ),
+                                    tooltip: 'Eliminar',
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return OrganismoPopUpConfirmacion(
+                                            onCancelar:
+                                                () =>
+                                                    Navigator.of(context).pop(),
+                                            onConfirmar: () async {
+                                              await viewModel.eliminarCharola(
+                                                viewModel.charola!.charolaId,
+                                              );
+                                              await viewModel.cargarCharolas(
+                                                reset: true,
+                                              );
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (
+                                                        _,
+                                                      ) => ChangeNotifierProvider.value(
+                                                        value: viewModel,
+                                                        child:
+                                                            const VistaCharolas(),
+                                                      ),
+                                                ),
+                                              );
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'Charola eliminada con éxito',
+                                                  ),
+                                                ),
+                                              );
+                                            },
                                           );
                                         },
                                       );
                                     },
-                                  );
-                                },
+                                  ),
+                                ),
                               ),
-                              _crearBotonTexto(
-                                'Historial',
-                                const Color(0xFFE2387B),
-                                () {
-                                  // TODO: implementar navegación a Historial
-                                },
-                              ),
-                              _crearBotonTexto(
-                                'Editar',
-                                const Color(0xFF2442CC),
-                                () {
-                                  // TODO: implementar edición
-                                },
+                              // Parte inferior con botones
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 40,
+                                  vertical: 20,
+                                ),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFEDEDED),
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(20),
+                                    bottomRight: Radius.circular(20),
+                                  ),
+                                ),
+                                child: Wrap(
+                                  alignment: WrapAlignment.spaceAround,
+                                  spacing: 20,
+                                  runSpacing: 10,
+                                  children: [
+                                    _crearBotonIcono(
+                                      icono: Icons.edit,
+                                      texto: 'Editar',
+                                      alPresionar: () {},
+                                    ),
+                                    _crearBotonIcono(
+                                      icono: Icons.bug_report,
+                                      texto: 'Alimentar',
+                                      alPresionar: () {},
+                                    ),
+                                    _crearBotonIcono(
+                                      icono: Icons.water_drop,
+                                      texto: 'Hidratar',
+                                      alPresionar: () {},
+                                    ),
+                                    _crearBotonIcono(
+                                      icono: Icons.device_hub,
+                                      texto: 'Ancestros',
+                                      alPresionar: () {},
+                                    ),
+                                    _crearBotonIcono(
+                                      icono: Icons.history,
+                                      texto: 'Actividades',
+                                      alPresionar: () {},
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
           ),

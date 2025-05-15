@@ -12,7 +12,7 @@ import '../services/alimentacionAPIService.dart';
 /// Responsable de:
 ///  - Construir URIs (endpoints).
 ///  - Gestionar respuestas y errores HTTP.
-///  - Convertir JSON a modelos [Alimento].
+///  - Convertir JSON a modelos [Hidratacion].
 class AlimentacionRepository extends AlimentacionService {
   @override
   Future<List<Alimento>> obtenerAlimentos() async {
@@ -45,7 +45,6 @@ class AlimentacionRepository extends AlimentacionService {
       }),
     );
 
-
     // Manejo de códigos de error específicos
     if (response.statusCode == 400) {
       throw Exception('❌ Datos no válidos.');
@@ -72,18 +71,11 @@ class AlimentacionRepository extends AlimentacionService {
   /// @throws [Exception] si ocurre un error en la solicitud o respuesta.
   @override
   Future<void> postDatosComida(String nombre, String descripcion) async {
-    final uri = Uri.parse(
-      '${APIRutas.ALIMENTACION}/agregar',
-    );
+    final uri = Uri.parse('${APIRutas.ALIMENTACION}/agregar');
     final response = await http.post(
       uri,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'nombre': nombre,
-        'descripcion': descripcion,
-      }),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'nombre': nombre, 'descripcion': descripcion}),
     );
 
     if (response.statusCode == 400) {
@@ -96,5 +88,4 @@ class AlimentacionRepository extends AlimentacionService {
       throw Exception('❌ Error desconocido (${response.statusCode}).');
     }
   }
-
 }

@@ -8,7 +8,6 @@ import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewModel.dart';
 
-import 'framework/views/alimentacionView.dart';
 
 /// Punto de entrada principal para la aplicación Tech Nebrios Tracker.
 ///

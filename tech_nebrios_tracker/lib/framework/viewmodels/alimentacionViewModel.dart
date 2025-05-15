@@ -7,7 +7,6 @@ import '../../data/repositories/alimentacionRepository.dart';
 import '../../domain/editarAlimentacionDomain.dart';
 import '../../domain/registrarAlimentacionDomain.dart';
 
-
 /// ViewModel que controla el estado y la lógica de la pantalla
 /// de alimentación (lista, edición, registro y scroll infinito).
 ///
@@ -36,15 +35,17 @@ class AlimentacionViewModel extends ChangeNotifier {
     AlimentacionRepository? repo,
     EditarAlimentoCasoUso? editarCasoUso,
     RegistrarAlimentoCasoUso? registrarCasoUso,
-  })  : _repo = repo ?? AlimentacionRepository(),
-        _editarCasoUso = editarCasoUso ??
-            EditarAlimentoCasoUsoImpl(
-              repositorio: repo ?? AlimentacionRepository(),
-            ),
-        _registrarCasoUso = registrarCasoUso ??
-            RegistrarAlimentoCasoUsoImpl(
-              repositorio: repo ?? AlimentacionRepository(),
-            );
+  }) : _repo = repo ?? AlimentacionRepository(),
+       _editarCasoUso =
+           editarCasoUso ??
+           EditarAlimentoCasoUsoImpl(
+             repositorio: repo ?? AlimentacionRepository(),
+           ),
+       _registrarCasoUso =
+           registrarCasoUso ??
+           RegistrarAlimentoCasoUsoImpl(
+             repositorio: repo ?? AlimentacionRepository(),
+           );
 
   /// Indica si actualmente se está cargando más datos.
   bool get isLoading => _isLoading;
@@ -133,7 +134,10 @@ class AlimentacionViewModel extends ChangeNotifier {
 
     _setLoading(true);
     try {
-      await _registrarCasoUso.registrar(nombre: nombre, descripcion: descripcion);
+      await _registrarCasoUso.registrar(
+        nombre: nombre,
+        descripcion: descripcion,
+      );
       await cargarAlimentos();
       return null;
     } on Exception catch (e) {
@@ -149,10 +153,11 @@ class AlimentacionViewModel extends ChangeNotifier {
 
   /// Toma el siguiente rango de [_chunkSize] ítems y los añade.
   void _agregarSiguienteChunk() {
-    final nextIndex = (_currentIndex + _chunkSize).clamp(0, _allAlimentos.length);
-    _pagedAlimentos.addAll(
-      _allAlimentos.getRange(_currentIndex, nextIndex),
+    final nextIndex = (_currentIndex + _chunkSize).clamp(
+      0,
+      _allAlimentos.length,
     );
+    _pagedAlimentos.addAll(_allAlimentos.getRange(_currentIndex, nextIndex));
     _currentIndex = nextIndex;
     notifyListeners();
   }

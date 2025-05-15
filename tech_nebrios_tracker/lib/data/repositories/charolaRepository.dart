@@ -119,4 +119,33 @@ class CharolaRepository {
       rethrow;
     }
   }
+
+  /// Registra una nueva charola.
+  Future<void> registrarCharola(CharolaRegistro charola) async {
+    final token = await _userUseCases.obtenerTokenActual();
+    final uri = Uri.parse('${APIRutas.CHAROLA}/registrarCharola');
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(charola.toJson()),
+      );
+
+      if (response.statusCode == 200) return;
+      if (response.statusCode == 401) {
+        throw Exception('No autorizado. Por favor, inicie sesión.');
+      }
+      _logger.e('Error HTTP: ${response.statusCode}');
+      throw Exception('Error al registrar la charola');
+    } on SocketException {
+      throw Exception('❌ Error de conexión. Verifique su red.');
+    } catch (e) {
+      _logger.e('Error al registrar charola: $e');
+      rethrow;
+    }
+  }
 }

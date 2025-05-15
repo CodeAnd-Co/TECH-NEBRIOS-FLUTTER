@@ -1,30 +1,107 @@
-// lib/viewmodels/charolaViewModel.dart
-
+// lib/framework/viewmodels/charolaViewModel.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
+
+import '../../data/models/charolaModel.dart';
+import '../../data/models/alimentacionModel.dart';
+import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/charolaRepository.dart';
+import '../../data/repositories/alimentacionRepository.dart';
+import '../../data/repositories/hidratacionRepository.dart';
 import '../../domain/consultarCharolaUseCase.dart';
 import '../../domain/eliminarCharolaUseCase.dart';
 import '../../domain/charolasDashboardUseCase.dart';
-import '../../data/models/charolaModel.dart';
-
+import '../../domain/registrarCharolaUseCase.dart';
 
 class CharolaViewModel extends ChangeNotifier {
   final _logger = Logger();
+  final CharolaRepository _repo = CharolaRepository();
+  final AlimentacionRepository _alimentoRepo = AlimentacionRepository();
+  final HidratacionRepository _hidratacionRepo = HidratacionRepository();
 
   late final ObtenerCharolaUseCase _obtenerUseCase;
   late final EliminarCharolaUseCase _eliminarUseCase;
   late final ObtenerMenuCharolas _menuUseCase;
+  late final RegistrarCharolaUseCase _registrarUseCase;
 
-  /// Constructor sin parámetros: crea repo y use-cases internamente.
   CharolaViewModel() {
-    final repo = CharolaRepository();
-    _obtenerUseCase = ObtenerCharolaUseCaseImpl(charolaRepository: repo);
-    _eliminarUseCase = EliminarCharolaUseCaseImpl(charolaRepository: repo);
-    _menuUseCase = ObtenerCharolasUseCaseImpl(repositorio: repo);
+    _obtenerUseCase = ObtenerCharolaUseCaseImpl(charolaRepository: _repo);
+    _eliminarUseCase = EliminarCharolaUseCaseImpl(charolaRepository: _repo);
+    _menuUseCase = ObtenerCharolasUseCaseImpl(repositorio: _repo);
+    _registrarUseCase = RegistrarCharolaUseCaseImpl(repositorio: _repo);
 
-    // Carga inicial de listado
     cargarCharolas();
+  }
+
+  // === Dropdowns para registrar ===
+  List<Alimento> alimentos = [];
+  List<Hidratacion> hidrataciones = [];
+  Alimento? selectedAlimentacion;
+  Hidratacion? selectedHidratacion;
+  bool _cargandoDropdowns = false;
+  bool get cargandoDropdowns => _cargandoDropdowns;
+
+  Future<void> cargarAlimentos() async {
+    _cargandoDropdowns = true;
+    notifyListeners();
+    try {
+      alimentos = await _alimentoRepo.obtenerAlimentos();
+    } catch (e) {
+      _logger.e('Error cargando alimentos: $e');
+    } finally {
+      _cargandoDropdowns = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> cargarHidratacion() async {
+    _cargandoDropdowns = true;
+    notifyListeners();
+    try {
+      hidrataciones = await _hidratacionRepo.obtenerHidratacion();
+    } catch (e) {
+      _logger.e('Error cargando hidrataciones: $e');
+    } finally {
+      _cargandoDropdowns = false;
+      notifyListeners();
+    }
+  }
+
+  // Controladores de formulario
+  final TextEditingController nombreController = TextEditingController();
+  final TextEditingController densidadLarvaController = TextEditingController();
+  final TextEditingController fechaController = TextEditingController();
+  final TextEditingController comidaCicloController = TextEditingController();
+  final TextEditingController pesoController = TextEditingController();
+  final TextEditingController hidratacionCicloController = TextEditingController();
+
+  Future<void> registrarCharola() async {
+    try {
+      final registro = CharolaRegistro(
+        nombreCharola: nombreController.text,
+        fechaCreacion: DateTime.parse(fechaController.text),
+        densidadLarva: double.parse(densidadLarvaController.text),
+        pesoCharola: double.parse(pesoController.text),
+        comidas: [
+          ComidaAsignada(
+            comidaId: selectedAlimentacion!.idAlimento,
+            cantidadOtorgada: double.parse(comidaCicloController.text),
+          )
+        ],
+        hidrataciones: [
+          HidratacionAsignada(
+            hidratacionId: selectedHidratacion!.idHidratacion,
+            cantidadOtorgada: double.parse(hidratacionCicloController.text),
+          )
+        ],
+      );
+      await _registrarUseCase;
+      _logger.i('Charola registrada');
+    } catch (e) {
+      _logger.e('Error al registrar charola: $e');
+      rethrow;
+    }
   }
 
   // === DETALLE DE CHAROLA ===
@@ -35,24 +112,29 @@ class CharolaViewModel extends ChangeNotifier {
   bool get cargandoCharola => _cargandoCharola;
 
   Future<void> cargarCharola(int id) async {
-    _cargandoCharola = true; notifyListeners();
+    _cargandoCharola = true;
+    notifyListeners();
     try {
       _charola = await _obtenerUseCase.obtenerCharola(id);
-    } catch (_) {
+    } catch (e) {
+      _logger.e('Error cargando detalle: $e');
       _charola = null;
     }
-    _cargandoCharola = false; notifyListeners();
+    _cargandoCharola = false;
+    notifyListeners();
   }
 
   Future<void> eliminarCharola(int id) async {
-    _cargandoCharola = true; notifyListeners();
+    _cargandoCharola = true;
+    notifyListeners();
     try {
       await _eliminarUseCase.eliminar(id);
       _charola = null;
     } catch (e) {
       _logger.e('Error eliminando charola: $e');
     }
-    _cargandoCharola = false; notifyListeners();
+    _cargandoCharola = false;
+    notifyListeners();
   }
 
   // === LISTADO PAGINADO ===
@@ -66,18 +148,12 @@ class CharolaViewModel extends ChangeNotifier {
 
   Future<void> cargarCharolas({bool reset = false}) async {
     if (_cargandoLista) return;
-
     if (reset) {
       pagActual = 1;
       charolas.clear();
     }
 
-    // if (refresh) {
-    //   charolas.clear();
-    //   pagActual = 1;
-    //   hayMas = true;
-    // }
-    _cargandoLista = true; 
+    _cargandoLista = true;
     notifyListeners();
 
     try {
@@ -89,13 +165,13 @@ class CharolaViewModel extends ChangeNotifier {
       }
     } catch (e) {
       final msg = e.toString().contains('401')
-        ? '🚫 401: No autorizado'
-        : e.toString().contains('101')
-          ? '🌐 101: Problemas de red'
-          : '💥 Error interno del servidor';
+          ? '🚫 401: No autorizado'
+          : e.toString().contains('101')
+              ? '🌐 101: Problemas de red'
+              : '💥 Error interno del servidor';
       _logger.e(msg);
     } finally {
-      _cargandoLista = false; 
+      _cargandoLista = false;
       notifyListeners();
     }
   }

@@ -68,7 +68,11 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           ),
           const Padding(
             padding: EdgeInsets.only(top: 4.0),
-            child: Divider(color: Color.fromARGB(255, 0, 0, 0), thickness: 3, height: 20),
+            child: Divider(
+              color: Color.fromARGB(255, 0, 0, 0),
+              thickness: 3,
+              height: 20,
+            ),
           ),
           const Text(
             'Vizualiza tu alimentación',
@@ -120,21 +124,22 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
         ),
         // Lista dinámica con scroll infinito
         Expanded(
-          child: vm.alimentos.isEmpty && vm.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  controller: _scrollController,
-                  itemCount: vm.alimentos.length + (vm.hasMore ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index < vm.alimentos.length) {
-                      return _buildRowAlimento(vm.alimentos[index], index);
-                    }
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  },
-                ),
+          child:
+              vm.alimentos.isEmpty && vm.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                    controller: _scrollController,
+                    itemCount: vm.alimentos.length + (vm.hasMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index < vm.alimentos.length) {
+                        return _buildRowAlimento(vm.alimentos[index], index);
+                      }
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    },
+                  ),
         ),
       ],
     );
@@ -160,10 +165,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                 'Hidratación',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () {},
-              ),
+              IconButton(icon: const Icon(Icons.add), onPressed: () {}),
             ],
           ),
         ),
@@ -179,7 +181,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               children: [
                 Expanded(child: Text(text)),
                 IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
-                IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () {}),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {},
+                ),
               ],
             ),
           );
@@ -202,7 +207,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
             icon: const Icon(Icons.edit),
             onPressed: () => _onEditarAlimento(alimento),
           ),
-          IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () {},
+          ),
         ],
       ),
     );
@@ -215,7 +223,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext)  {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           backgroundColor: const Color(0xFFF8F1F1),
@@ -255,16 +263,19 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       final nombre = nombreController.text.trim();
                       final descripcion = descripcionController.text.trim();
 
-                      final resultado = await vm.registrarAlimento(nombre, descripcion);
+                      final resultado = await vm.registrarAlimento(
+                        nombre,
+                        descripcion,
+                      );
                       if (!mounted) return;
 
                       if (resultado == null) {
                         Navigator.of(dialogContext).pop();
                         await vm.cargarAlimentos();
                       } else {
-                        ScaffoldMessenger.of(dialogContext).showSnackBar(
-                          SnackBar(content: Text(resultado)),
-                        );
+                        ScaffoldMessenger.of(
+                          dialogContext,
+                        ).showSnackBar(SnackBar(content: Text(resultado)));
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -303,63 +314,69 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
   /// Muestra un diálogo para editar [alimento] y guarda cambios.
   void _onEditarAlimento(Alimento alimento) {
-    final nombreController = TextEditingController(text: alimento.nombreAlimento);
-    final descripcionController = TextEditingController(text: alimento.descripcionAlimento);
+    final nombreController = TextEditingController(
+      text: alimento.nombreAlimento,
+    );
+    final descripcionController = TextEditingController(
+      text: alimento.descripcionAlimento,
+    );
 
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        backgroundColor: const Color(0xFFF8F1F1),
-        title: const Text('Modificar Alimento'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nombreController,
-              decoration: const InputDecoration(labelText: 'Nombre:'),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: descripcionController,
-              decoration: const InputDecoration(labelText: 'Descripción:'),
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: () async {
-              final resultado = await vm.editarAlimento(
-                Alimento(
-                  idAlimento: alimento.idAlimento,
-                  nombreAlimento: nombreController.text.trim(),
-                  descripcionAlimento: descripcionController.text.trim(),
+      builder:
+          (BuildContext dialogContext) => AlertDialog(
+            backgroundColor: const Color(0xFFF8F1F1),
+            title: const Text('Modificar Alimento'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nombreController,
+                  decoration: const InputDecoration(labelText: 'Nombre:'),
                 ),
-              );
-              if (resultado == null) {
-                Navigator.of(dialogContext).pop();
-              } else {
-                ScaffoldMessenger.of(dialogContext)
-                    .showSnackBar(SnackBar(content: Text(resultado)));
-              }
-            },
-            child: const Text('Guardar'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
+                const SizedBox(height: 10),
+                TextField(
+                  controller: descripcionController,
+                  decoration: const InputDecoration(labelText: 'Descripción:'),
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                ),
+              ],
             ),
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancelar'),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () async {
+                  final resultado = await vm.editarAlimento(
+                    Alimento(
+                      idAlimento: alimento.idAlimento,
+                      nombreAlimento: nombreController.text.trim(),
+                      descripcionAlimento: descripcionController.text.trim(),
+                    ),
+                  );
+                  if (resultado == null) {
+                    Navigator.of(dialogContext).pop();
+                  } else {
+                    ScaffoldMessenger.of(
+                      dialogContext,
+                    ).showSnackBar(SnackBar(content: Text(resultado)));
+                  }
+                },
+                child: const Text('Guardar'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancelar'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

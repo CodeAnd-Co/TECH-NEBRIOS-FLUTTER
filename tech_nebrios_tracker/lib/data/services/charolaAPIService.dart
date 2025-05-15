@@ -13,4 +13,6 @@ abstract class CharolaAPIService {
   Future<CharolaDetalle> obtenerCharola(int id);
 
   Future<void> eliminarCharola(int id);
+
+  Future<void> registrarCharola(CharolaRegistro charola);
 }

@@ -137,7 +137,61 @@ class CharolaDashboard {
       limite: json['limit'],
       totalPags: json['totalPages'],
       data:
-          (json['data'] as List).map((item) => CharolaTarjeta.fromJson(item)).toList(),
+          (json['data'] as List)
+              .map((item) => CharolaTarjeta.fromJson(item))
+              .toList(),
     );
   }
+}
+
+class ComidaAsignada {
+  final int comidaId;
+  double cantidadOtorgada;
+
+  ComidaAsignada({required this.comidaId, required this.cantidadOtorgada});
+
+  Map<String, dynamic> toJson() => {
+        'comidaId': comidaId,
+        'cantidadOtorgada': cantidadOtorgada,
+      };
+}
+
+class HidratacionAsignada {
+  final int hidratacionId;
+  double cantidadOtorgada;
+
+  HidratacionAsignada({required this.hidratacionId, required this.cantidadOtorgada});
+
+  Map<String, dynamic> toJson() => {
+        'hidratacionId': hidratacionId,
+        'cantidadOtorgada': cantidadOtorgada,
+      };
+}
+
+class CharolaRegistro {
+  final String nombreCharola;
+  final DateTime fechaCreacion;
+  final double densidadLarva;
+  final double pesoCharola;
+  final List<ComidaAsignada> comidas;
+  final List<HidratacionAsignada> hidrataciones;
+
+  CharolaRegistro({
+    required this.nombreCharola,
+    required this.fechaCreacion,
+    required this.densidadLarva,
+    required this.pesoCharola,
+    required this.comidas,
+    required this.hidrataciones,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'nombreCharola': nombreCharola,
+        'fechaCreacion': fechaCreacion.toIso8601String(),
+        'densidadLarva': densidadLarva,
+        'pesoCharola': pesoCharola,
+        'comidas': comidas.map((comida) => comida.toJson()).toList(),
+        'hidrataciones':
+            hidrataciones.map((hidratacion) => hidratacion.toJson()).toList(),
+      };
 }

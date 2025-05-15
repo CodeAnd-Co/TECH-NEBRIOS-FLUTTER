@@ -33,6 +33,8 @@ class CharolaViewModel extends ChangeNotifier {
     _registrarUseCase = RegistrarCharolaUseCaseImpl(repositorio: _repo);
 
     cargarCharolas();
+    cargarAlimentos();
+    cargarHidratacion();
   }
 
   // === Dropdowns para registrar ===
@@ -79,9 +81,15 @@ class CharolaViewModel extends ChangeNotifier {
 
   Future<void> registrarCharola() async {
     try {
+      final parts = fechaController.text.split('/');
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      final fecha = DateTime(year, month, day);
+
       final registro = CharolaRegistro(
         nombreCharola: nombreController.text,
-        fechaCreacion: DateTime.parse(fechaController.text),
+        fechaCreacion: fecha,
         densidadLarva: double.parse(densidadLarvaController.text),
         pesoCharola: double.parse(pesoController.text),
         comidas: [
@@ -97,7 +105,7 @@ class CharolaViewModel extends ChangeNotifier {
           )
         ],
       );
-      await _registrarUseCase;
+      await _registrarUseCase.registrar(charola: registro);
       _logger.i('Charola registrada');
     } catch (e) {
       _logger.e('Error al registrar charola: $e');

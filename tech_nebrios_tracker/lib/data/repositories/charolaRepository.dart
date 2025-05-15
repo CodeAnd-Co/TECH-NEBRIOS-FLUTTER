@@ -15,38 +15,34 @@ class CharolaRepository {
   final UserUseCases _userUseCases = UserUseCases();
 
   /// Obtiene charolas paginadas.
-  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {String estado = 'activa'}) async {
-    final uri = Uri.parse('${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite&estado=$estado');
-    final UserUseCases _userUseCases = UserUseCases();
-    final token = await _userUseCases.obtenerTokenActual();
+Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {String estado = 'activa'}) async {
+  final uri = Uri.parse('${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite&estado=$estado');
+  final token = await _userUseCases.obtenerTokenActual();
 
-    try {
-      final respuesta = await http.get(
-        uri,
-        headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-        );
+  try {
+    final respuesta = await http.get(uri, headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    });
 
-      if (respuesta.statusCode == 200) {
-        return jsonDecode(respuesta.body);
-      } else if (respuesta.statusCode == 401) {
-        throw Exception('Debe iniciar sesión para continuar');
-      } else if (respuesta.statusCode == 500) {
-        throw Exception('Error del servidor. Inténtelo más tarde');
-      } else {
-        _logger.e("Error HTTP: ${respuesta.statusCode}");
-      }
-    } on SocketException catch (_) {
-      // Error 101: problema de red o conexión
-      throw Exception('❌ Error de conexión. Verifique su red.');
-    } catch (e) {
-      _logger.e("Error al conectarse al backend: $e");
+    if (respuesta.statusCode == 200) {
+      return jsonDecode(respuesta.body) as Map<String, dynamic>;
+    } else if (respuesta.statusCode == 401) {
+      throw Exception('Debe iniciar sesión para continuar');
+    } else if (respuesta.statusCode == 500) {
+      throw Exception('Error del servidor. Inténtelo más tarde');
+    } else {
+      _logger.e("Error HTTP inesperado: ${respuesta.statusCode}");
+      throw Exception('Error HTTP ${respuesta.statusCode}');
     }
-
-    return null;
+  } on SocketException catch (_) {
+    throw Exception('❌ Error de conexión. Verifique su red.');
+  } catch (e) {
+    _logger.e("Error al conectarse al backend (paginado): $e");
+    rethrow;
   }
+}
+
 
   /// Convierte la respuesta cruda de la API en un modelo [CharolaDashboard].
   ///
@@ -133,7 +129,10 @@ class CharolaRepository {
         body: json.encode(charola.toJson()),
       );
 
-      if (response.statusCode == 200) return;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+  // Éxito: charola creada
+        return;
+      }
       if (response.statusCode == 401) {
         throw Exception('No autorizado. Por favor, inicie sesión.');
       }

@@ -187,7 +187,7 @@ class CharolaRegistro {
   });
 
   Map<String, dynamic> toJson() => {
-        'nombreCharola': nombreCharola,
+        'nombre': nombreCharola,
         'fechaCreacion': fechaCreacion.toIso8601String(),
         'densidadLarva': densidadLarva,
         'pesoCharola': pesoCharola,

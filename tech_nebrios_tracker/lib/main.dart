@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'framework/viewmodels/menuCharolasViewmodel.dart';
-import 'framework/navigation/app_router.dart';
-import 'framework/viewmodels/loginViewmodel.dart';
 
-/// Punto de entrada de la aplicación.
+import './framework/viewmodels/reporteViewModel.dart';
+import 'framework/viewmodels/charolaViewModel.dart';
+import 'framework/navigation/app_router.dart';
+import 'framework/viewmodels/loginViewModel.dart';
+
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
-        ChangeNotifierProvider(create: (_) => CharolaVistaModelo()),
+        ChangeNotifierProvider(create: (_) => CharolaViewModel()),
+        ChangeNotifierProvider(create: (_) => ReporteViewModel())
       ],
       child: const MyApp(),
     ),

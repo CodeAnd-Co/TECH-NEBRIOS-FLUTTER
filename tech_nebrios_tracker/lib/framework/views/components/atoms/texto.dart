@@ -6,6 +6,7 @@ class Texto extends StatelessWidget {
   final Color color;
   final String fuente;
   final FontWeight grosor;
+  final bool centrado;
 
   // Constructor privado
   const Texto._({
@@ -15,20 +16,10 @@ class Texto extends StatelessWidget {
     required this.color,
     required this.fuente,
     required this.grosor,
+    required this.centrado,
   });
 
-  /// Constructores factory para diferentes estilos
-  ///
-  /// Los estilos se basaron en MarkDown:
-  /// Texto, Título 1 ... Título 6
-  /// 
-  /// Forma de uso:
-  /// Texto.titulo1(texto: 'Título 1', tamanio: 64)         Para cambiar el tamaño
-  /// Texto.titulo2(texto: 'Título 2', color: Colors.red)   Para cambiar al color
-  /// Texto.titulo3(texto: 'Título 3', bold: true)          Para resaltar el texto
-  /// Texto.titulo4(texto: 'Título 4', fuente: 'Roboto')    Para cambiar la tipografía
-  /// Texto.titulo5(texto: 'Título 5')                      Caso normal
-
+  // Métodos factory para diferentes estilos
   factory Texto.texto({
     Key? key,
     required String texto,
@@ -36,6 +27,7 @@ class Texto extends StatelessWidget {
     Color color = Colors.black,
     String fuente = 'San Francisco',
     bool bold = false,
+    bool centrado = false,
   }) {
     return Texto._(
       key: key,
@@ -44,6 +36,7 @@ class Texto extends StatelessWidget {
       color: color,
       fuente: fuente,
       grosor: bold ? FontWeight.w400 : FontWeight.w300,
+      centrado: centrado,
     );
   }
 
@@ -54,6 +47,7 @@ class Texto extends StatelessWidget {
     Color color = Colors.black,
     String fuente = 'San Francisco',
     bool bold = false,
+    bool centrado = false,
   }) {
     return Texto._(
       key: key,
@@ -62,6 +56,7 @@ class Texto extends StatelessWidget {
       color: color,
       fuente: fuente,
       grosor: bold ? FontWeight.w700 : FontWeight.w600,
+      centrado: centrado,
     );
   }
 
@@ -72,6 +67,7 @@ class Texto extends StatelessWidget {
     Color color = Colors.black,
     String fuente = 'San Francisco',
     bool bold = false,
+    bool centrado = false,
   }) {
     return Texto._(
       key: key,
@@ -80,6 +76,7 @@ class Texto extends StatelessWidget {
       color: color,
       fuente: fuente,
       grosor: bold ? FontWeight.w700 : FontWeight.w600,
+      centrado: centrado,
     );
   }
 
@@ -90,6 +87,7 @@ class Texto extends StatelessWidget {
     Color color = Colors.black,
     String fuente = 'San Francisco',
     bool bold = false,
+    bool centrado = false,
   }) {
     return Texto._(
       key: key,
@@ -98,6 +96,7 @@ class Texto extends StatelessWidget {
       color: color,
       fuente: fuente,
       grosor: bold ? FontWeight.w600 : FontWeight.w500,
+      centrado: centrado,
     );
   }
 
@@ -108,6 +107,7 @@ class Texto extends StatelessWidget {
     Color color = Colors.black,
     String fuente = 'San Francisco',
     bool bold = false,
+    bool centrado = false,
   }) {
     return Texto._(
       key: key,
@@ -116,6 +116,7 @@ class Texto extends StatelessWidget {
       color: color,
       fuente: fuente,
       grosor: bold ? FontWeight.w600 : FontWeight.w500,
+      centrado: centrado,
     );
   }
 
@@ -126,6 +127,7 @@ class Texto extends StatelessWidget {
     Color color = Colors.black,
     String fuente = 'San Francisco',
     bool bold = false,
+    bool centrado = false,
   }) {
     return Texto._(
       key: key,
@@ -134,6 +136,7 @@ class Texto extends StatelessWidget {
       color: color,
       fuente: fuente,
       grosor: bold ? FontWeight.w500 : FontWeight.w400,
+      centrado: centrado,
     );
   }
 
@@ -144,6 +147,7 @@ class Texto extends StatelessWidget {
     Color color = Colors.black,
     String fuente = 'San Francisco',
     bool bold = false,
+    bool centrado = false,
   }) {
     return Texto._(
       key: key,
@@ -152,6 +156,7 @@ class Texto extends StatelessWidget {
       color: color,
       fuente: fuente,
       grosor: bold ? FontWeight.w500 : FontWeight.w400,
+      centrado: centrado,
     );
   }
 
@@ -159,6 +164,7 @@ class Texto extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       texto,
+      textAlign: centrado ? TextAlign.center : TextAlign.start,
       style: TextStyle(
         fontSize: tamanio,
         color: color,

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import '../views/loginView.dart';
-import '../views/sidebar_view.dart';// El contenedor con el Drawer
+import '../views/sidebarView.dart';// El contenedor con el Drawer
 
+import '../../domain/cerrarSesionUseCase.dart';
+import '../../data/repositories/usuarioRepository.dart';
+
+final localStorage = UserRepository();
+final cerrarSesionUseCase = CerrarSesionUseCaseImpl(localStorage);
 
 enum AppRoute {
   login,
@@ -50,7 +55,13 @@ class AppRouter extends RouterDelegate<AppRoute>
         if (_currentRoute == AppRoute.main)
           MaterialPage(
             key: const ValueKey('SidebarMain'),
-            child: SidebarView(onLogout: navigateToLogin),
+            child: SidebarView(
+              onLogout: () async {
+                await cerrarSesionUseCase.call();
+
+                navigateToLogin();
+              },
+              ),
           ),
       ],
       onPopPage: (route, result) => route.didPop(result),

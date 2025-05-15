@@ -30,7 +30,6 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     }
   }
 
-
   String formatearFecha(String fecha) {
     try {
       final dateTime = DateTime.parse(fecha);
@@ -143,10 +142,16 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                           await viewModel.eliminarCharola(
                                             viewModel.charola!.charolaId,
                                           );
+                                          await viewModel.cargarCharolas(
+                                            reset: true,
+                                          );
                                           Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (_) => const VistaCharolas(),
+                                              builder: (_) => ChangeNotifierProvider.value(
+                                                value: viewModel,
+                                                child: const VistaCharolas(),
+                                              ),
                                             ),
                                           );
                                           ScaffoldMessenger.of(

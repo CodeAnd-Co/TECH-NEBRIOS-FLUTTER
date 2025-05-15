@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 import 'components/atoms/texto.dart';
 import 'components/organisms/pop_up.dart';
-import 'charolasDashboardView.dart';
+import 'sidebarView.dart';
 
 /// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
@@ -130,7 +130,17 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                 builder:
                                     (_) => ChangeNotifierProvider.value(
                                       value: viewModel,
-                                      child: const VistaCharolas(),
+                                      child: SidebarView(
+                                        onLogout: () {
+                                          // Aquí pon la lógica para cerrar sesión
+                                          Navigator.popUntil(
+                                            context,
+                                            (route) => route.isFirst,
+                                          );
+                                        },
+                                        initialIndex:
+                                            0, // 0 es la pestaña de Charolas
+                                      ),
                                     ),
                               ),
                             );
@@ -215,8 +225,18 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                                         _,
                                                       ) => ChangeNotifierProvider.value(
                                                         value: viewModel,
-                                                        child:
-                                                            const VistaCharolas(),
+                                                        child: SidebarView(
+                                                          onLogout: () {
+                                                            // Aquí pon la lógica para cerrar sesión
+                                                            Navigator.popUntil(
+                                                              context,
+                                                              (route) =>
+                                                                  route.isFirst,
+                                                            );
+                                                          },
+                                                          initialIndex:
+                                                              0, // 0 es la pestaña de Charolas
+                                                        ),
                                                       ),
                                                 ),
                                               );

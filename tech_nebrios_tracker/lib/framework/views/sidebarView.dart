@@ -5,8 +5,9 @@ import 'package:tech_nebrios_tracker/framework/views/alimentacionView.dart';
 
 class SidebarView extends StatefulWidget {
   final VoidCallback onLogout;
+  final int initialIndex;
 
-  const SidebarView({Key? key, required this.onLogout}) : super(key: key);
+  const SidebarView({Key? key, required this.onLogout, this.initialIndex = 0}) : super(key: key);
 
   @override
   State<SidebarView> createState() => _SidebarViewState();
@@ -14,6 +15,12 @@ class SidebarView extends StatefulWidget {
 
 class _SidebarViewState extends State<SidebarView> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
   final List<Widget> _views = [
     const VistaCharolas(),

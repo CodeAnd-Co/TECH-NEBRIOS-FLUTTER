@@ -11,11 +11,19 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
+  window_size: ^0.1.0
+  logger: ^2.0.2
   
   http: ^1.1.0 # Comunicación HTTP
   dio: ^5.3.2  # Cliente HTTP más avanzado
   cached_network_image: ^3.2.3 # Cargar imágenes
-  mockito: ^5.4.6
+  intl: ^0.18.1
+  open_file: ^3.3.2
+  connectivity_plus: ^5.0.2
+  dartz: ^0.10.1
+  shared_preferences: ^2.1.1
+  jwt_decode: ^0.3.1 # Decodificar JWT
+  mockito: ^5.4.6 
   build_runner: ^2.4.15
 
 dev_dependencies:
@@ -24,4 +32,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter:
+  assets:
+    - assets/images/
   uses-material-design: true
+

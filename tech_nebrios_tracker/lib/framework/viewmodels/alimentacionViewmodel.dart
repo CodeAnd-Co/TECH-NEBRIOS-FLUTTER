@@ -7,6 +7,7 @@ import '../../data/repositories/alimentacionRepository.dart';
 import '../../domain/editarAlimentacionDomain.dart';
 import '../../domain/registrarAlimentacionDomain.dart';
 
+//Test
 /// ViewModel que controla el estado y la lógica de la pantalla
 /// de alimentación (lista, edición, registro y scroll infinito).
 ///

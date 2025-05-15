@@ -1,3 +1,6 @@
-// Modelo para RF2 (Consultar gráficas), RF11 (Descargar reportes)
+abstract class ReporteAPIService {
 
-// Aquí va la abstract class
+  Future<Map<dynamic, dynamic>> getDatos();
+ 
+  Future<Map<dynamic, dynamic>> postDescargarArchivo();
+}

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import './framework/viewmodels/reporteViewModel.dart';
 import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewModel.dart';
 
-/// Punto de entrada de la aplicación.
 void main() {
   runApp(
     MultiProvider(

@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 import 'components/atoms/texto.dart';
 import 'components/molecules/boton_texto.dart';
+import 'components/organisms/pop_up.dart';
+import 'charolasDashboardView.dart';
 
 class PantallaCharola extends StatefulWidget {
   final int charolaId;
@@ -19,11 +21,15 @@ class _PantallaCharolaState extends State<PantallaCharola> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
-      // Solicita al ViewModel cargar el detalle
-      context.read<CharolaViewModel>().cargarCharola(widget.charolaId);
       _initialized = true;
+
+      // Ejecutar después del build actual
+      Future.microtask(() {
+        context.read<CharolaViewModel>().cargarCharola(widget.charolaId);
+      });
     }
   }
+
 
   String formatearFecha(String fecha) {
     try {
@@ -129,51 +135,32 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                 () {
                                   showDialog(
                                     context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      titlePadding: const EdgeInsets.only(
-                                          top: 20, left: 5, right: 60),
-                                      title: Row(
-                                        children: [
-                                          IconButton(
-                                            onPressed: () => Navigator.of(ctx).pop(),
-                                            icon: const Icon(Icons.close, size: 35),
-                                          ),
-                                          Expanded(
-                                            child: Center(
-                                              child: Texto.titulo1(
-                                                  texto: 'Eliminar', bold: true),
+                                    builder: (context) {
+                                      return OrganismoPopUpConfirmacion(
+                                        onCancelar:
+                                            () => Navigator.of(context).pop(),
+                                        onConfirmar: () async {
+                                          await viewModel.eliminarCharola(
+                                            viewModel.charola!.charolaId,
+                                          );
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => const VistaCharolas(),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      content: Texto.titulo5(
-                                          texto:
-                                              '¿Estás seguro de eliminar la charola?'),
-                                      actions: [
-                                        Center(
-                                          child: BotonTexto.simple(
-                                            texto: Texto.titulo5(
-                                                texto: 'Eliminar',
-                                                color: Colors.white),
-                                            alPresionar: () async {
-                                              await viewModel
-                                                  .eliminarCharola(
-                                                      detalle.charolaId);
-                                              Navigator.of(ctx).pop();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                      'Charola eliminada con éxito'),
-                                                ),
-                                              );
-                                            },
-                                            colorBg:
-                                                const Color(0xFFE43D3D),
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                                          );
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Charola eliminada con éxito',
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
                                   );
                                 },
                               ),

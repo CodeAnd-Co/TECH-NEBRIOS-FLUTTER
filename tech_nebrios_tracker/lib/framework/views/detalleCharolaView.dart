@@ -1,3 +1,6 @@
+// RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
+// RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
@@ -6,8 +9,9 @@ import 'components/molecules/boton_texto.dart';
 import 'components/organisms/pop_up.dart';
 import 'charolasDashboardView.dart';
 
+/// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
-  final int charolaId;
+  final int charolaId; // ID de la charola que se va a mostrar
   const PantallaCharola({super.key, required this.charolaId});
 
   @override
@@ -15,7 +19,7 @@ class PantallaCharola extends StatefulWidget {
 }
 
 class _PantallaCharolaState extends State<PantallaCharola> {
-  bool _initialized = false;
+  bool _initialized = false; // Controla si ya se inicializó la carga de datos
 
   @override
   void didChangeDependencies() {
@@ -23,13 +27,14 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     if (!_initialized) {
       _initialized = true;
 
-      // Ejecutar después del build actual
+      // Se carga la charola de forma asíncrona después del primer build
       Future.microtask(() {
         context.read<CharolaViewModel>().cargarCharola(widget.charolaId);
       });
     }
   }
 
+  /// Formatea una fecha en formato ISO a formato dd/mm/yyyy
   String formatearFecha(String fecha) {
     try {
       final dateTime = DateTime.parse(fecha);
@@ -41,10 +46,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
       }
       return fecha;
     } catch (_) {
-      return fecha;
+      return fecha; // Si falla el parseo, se retorna la fecha original
     }
   }
 
+  /// Crea una fila de información con un label y un valor
   Widget _crearInfoFila(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -58,6 +64,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     );
   }
 
+  /// Crea un botón con texto personalizado y callback
   Widget _crearBotonTexto(String texto, Color color, VoidCallback alPresionar) {
     return BotonTexto.simple(
       texto: Texto.titulo4(texto: texto, bold: true, color: Colors.white),
@@ -70,7 +77,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
   Widget build(BuildContext context) {
     return Consumer<CharolaViewModel>(
       builder: (context, viewModel, _) {
-        // Cargando detalle
+        // Muestra indicador de carga mientras se obtiene el detalle
         if (viewModel.cargandoCharola) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -78,6 +85,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
         }
 
         final detalle = viewModel.charola;
+        // Si no se encuentra la charola, se muestra un mensaje
         if (detalle == null) {
           return const Scaffold(
             body: Center(child: Text('Charola no encontrada')),
@@ -86,6 +94,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
 
         final fechaFormateada = formatearFecha(detalle.fechaCreacion);
 
+        // UI principal de la pantalla
         return Scaffold(
           backgroundColor: const Color(0xFFF5F7FA),
           body: Center(
@@ -106,28 +115,36 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // Título con el nombre de la charola
                           Texto.titulo1(
                             texto: detalle.nombreCharola,
                             bold: true,
                             tamanio: 64,
                             color: const Color(0xFF22A63A),
                           ),
+                          // Fila con estado
                           _crearInfoFila('Estado:', detalle.estado),
+                          // Fila con fecha
                           _crearInfoFila('Fecha:', fechaFormateada),
+                          // Fila con peso
                           _crearInfoFila('Peso:', '${detalle.pesoCharola}g'),
+                          // Fila con hidratación
                           _crearInfoFila(
                             'Hidratación:',
                             '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
                           ),
+                          // Fila con alimento
                           _crearInfoFila(
                             'Alimento:',
                             '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
                           ),
                           const SizedBox(height: 20),
+                          // Botones de acción: Eliminar, Historial, Editar
                           Wrap(
                             spacing: 150,
                             alignment: WrapAlignment.center,
                             children: [
+                              // Botón Eliminar con confirmación
                               _crearBotonTexto(
                                 'Eliminar',
                                 const Color(0xFFE43D3D),
@@ -169,6 +186,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                   );
                                 },
                               ),
+                              // Botón Historial (pendiente de implementar)
                               _crearBotonTexto(
                                 'Historial',
                                 const Color(0xFFE2387B),
@@ -176,6 +194,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                   // TODO: implementar navegación a Historial
                                 },
                               ),
+                              // Botón Editar (pendiente de implementar)
                               _crearBotonTexto(
                                 'Editar',
                                 const Color(0xFF2442CC),

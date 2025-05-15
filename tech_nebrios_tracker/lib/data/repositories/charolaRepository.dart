@@ -130,7 +130,6 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-  // Éxito: charola creada
         return;
       }
       if (response.statusCode == 401) {
@@ -141,7 +140,7 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
     } on SocketException {
       throw Exception('❌ Error de conexión. Verifique su red.');
     } catch (e) {
-      _logger.e('Error al registrar charola: $e');
+      _logger.e('Error al registrar charola');
       rethrow;
     }
   }

@@ -1,7 +1,6 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
 import '../../data/models/charolaModel.dart';
@@ -20,6 +19,8 @@ class CharolaViewModel extends ChangeNotifier {
   final CharolaRepository _repo = CharolaRepository();
   final AlimentacionRepository _alimentoRepo = AlimentacionRepository();
   final HidratacionRepository _hidratacionRepo = HidratacionRepository();
+
+  final formKey = GlobalKey<FormState>();
 
   late final ObtenerCharolaUseCase _obtenerUseCase;
   late final EliminarCharolaUseCase _eliminarUseCase;
@@ -51,7 +52,7 @@ class CharolaViewModel extends ChangeNotifier {
     try {
       alimentos = await _alimentoRepo.obtenerAlimentos();
     } catch (e) {
-      _logger.e('Error cargando alimentos: $e');
+      _logger.e('Error cargando alimentos');
     } finally {
       _cargandoDropdowns = false;
       notifyListeners();
@@ -64,7 +65,7 @@ class CharolaViewModel extends ChangeNotifier {
     try {
       hidrataciones = await _hidratacionRepo.obtenerHidratacion();
     } catch (e) {
-      _logger.e('Error cargando hidrataciones: $e');
+      _logger.e('Error cargando hidrataciones');
     } finally {
       _cargandoDropdowns = false;
       notifyListeners();
@@ -108,10 +109,24 @@ class CharolaViewModel extends ChangeNotifier {
       await _registrarUseCase.registrar(charola: registro);
       _logger.i('Charola registrada');
     } catch (e) {
-      _logger.e('Error al registrar charola: $e');
+      _logger.e('Error al registrar charola');
       rethrow;
     }
   }
+
+  /// Limpia todos los campos del formulario y selecciones.
+void resetForm() {
+  nombreController.clear();
+  densidadLarvaController.clear();
+  fechaController.clear();
+  comidaCicloController.clear();
+  pesoController.clear();
+  hidratacionCicloController.clear();
+  selectedAlimentacion = null;
+  selectedHidratacion = null;
+  notifyListeners();
+}
+
 
   // === DETALLE DE CHAROLA ===
   CharolaDetalle? _charola;

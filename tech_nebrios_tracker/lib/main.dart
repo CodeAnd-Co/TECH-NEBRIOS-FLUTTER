@@ -12,6 +12,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => CharolaViewModel()),
+        ChangeNotifierProvider(create: (_) => ReporteViewModel())
       ],
       child: const MyApp(),
     ),

@@ -11,7 +11,7 @@ class ReporteRepository extends ReporteAPIService {
   Future<Map<dynamic, dynamic>> getDatos() async{
 
     // Construir la URL
-    final url = Uri.parse('${APIRutas.REPORTE}/geDatos');
+    final url = Uri.parse('${APIRutas.REPORTE}/getDatos');
 
     try{
       // Esperar la respuesta de la llamada al backend

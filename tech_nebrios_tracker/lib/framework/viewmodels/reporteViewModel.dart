@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../domain/reporteUseCases.dart';
+import '../../data/repositories/reporteRepository.dart';
 import 'package:open_file/open_file.dart';
 
 
 class ReporteViewModel extends ChangeNotifier{
-  final TablaUseCasesImp tabla;
+  late final TablaUseCasesImp tabla;
 
-  ReporteViewModel(this.tabla);
+  ReporteViewModel(){
+    tabla = TablaUseCasesImp();
+  }
 
   List? valoresTabla = [];
   String _estadoDescarga = '';

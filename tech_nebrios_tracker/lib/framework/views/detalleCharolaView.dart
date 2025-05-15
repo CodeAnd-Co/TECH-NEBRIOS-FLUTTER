@@ -123,7 +123,17 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                           ),
                           tooltip: 'Regresar',
                           onPressed: () {
-                            // TODO regresar a la pantalla de charolas
+                            viewModel.cargarCharolas(reset: true);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => ChangeNotifierProvider.value(
+                                      value: viewModel,
+                                      child: const VistaCharolas(),
+                                    ),
+                              ),
+                            );
                           },
                           iconSize: 55,
                         ),

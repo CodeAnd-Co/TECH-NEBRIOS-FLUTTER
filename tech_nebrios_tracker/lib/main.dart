@@ -1,41 +1,55 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
-// Aquí puedes importar tus viewmodels reales cuando estén listos
-// import 'framework/viewmodels/alimentacion_viewmodel.dart';
+import 'package:window_size/window_size.dart';
+import 'dart:io';
 
-import 'framework/views/alimentacion_hidratacion_view.dart'; // Asegúrate de importar bien tu pantalla
+import './framework/viewmodels/reporteViewModel.dart';
+import 'framework/viewmodels/charolaViewModel.dart';
+import 'framework/navigation/app_router.dart';
+import 'framework/viewmodels/loginViewModel.dart';
 
+import 'framework/views/alimentacionView.dart';
+
+/// Punto de entrada principal para la aplicación Tech Nebrios Tracker.
+///
+/// Inicializa los bindings de Flutter y establece un tamaño mínimo de ventana
+/// cuando se ejecuta en Windows, Linux o macOS. Luego ejecuta la aplicación.
 void main() {
-  runApp(const NebriosApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowMinSize(const Size(1000, 700)); // Tamaño mínimo deseado
+    // setWindowMaxSize(const Size(1600, 1200)); // (opcional) Tamaño máximo
+  }
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
+        ChangeNotifierProvider(create: (_) => CharolaViewModel()),
+        ChangeNotifierProvider(create: (_) => ReporteViewModel())
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class NebriosApp extends StatelessWidget {
-  const NebriosApp({super.key});
+/// Clase principal que define la estructura básica de la app.
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider(create: (_) => 'dummy'), // temporal para evitar crash
-        // Aquí irán tus ViewModels
-        // ChangeNotifierProvider(create: (_) => AlimentacionViewModel()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Tech Nebrios Tracker',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-          useMaterial3: true,
-        ),
-        // Para pruebas iniciales, colocamos directamente la pantalla
-        home: const AlimentacionScreen(),
-
-        // En producción lo cambiarás por tu router
-        // home: Router(
-        //   routerDelegate: AppRouter(),
-        //   backButtonDispatcher: RootBackButtonDispatcher(),
-        // ),
+    return MaterialApp(
+      title: 'Zuustento Tracker',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey),
+        useMaterial3: true,
+      ),
+      home: Router(
+        routerDelegate: AppRouter(),
+        backButtonDispatcher: RootBackButtonDispatcher(),
       ),
     );
   }

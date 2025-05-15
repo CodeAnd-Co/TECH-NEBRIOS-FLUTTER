@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:window_size/window_size.dart';
+import 'dart:io';
 
 import './framework/viewmodels/reporteViewModel.dart';
 import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewModel.dart';
 
+import 'framework/views/alimentacionView.dart';
+
+/// Punto de entrada principal para la aplicación Tech Nebrios Tracker.
+///
+/// Inicializa los bindings de Flutter y establece un tamaño mínimo de ventana
+/// cuando se ejecuta en Windows, Linux o macOS. Luego ejecuta la aplicación.
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowMinSize(const Size(1000, 700)); // Tamaño mínimo deseado
+    // setWindowMaxSize(const Size(1600, 1200)); // (opcional) Tamaño máximo
+  }
+
   runApp(
     MultiProvider(
       providers: [
@@ -27,6 +42,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Zuustento Tracker',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey),
         useMaterial3: true,

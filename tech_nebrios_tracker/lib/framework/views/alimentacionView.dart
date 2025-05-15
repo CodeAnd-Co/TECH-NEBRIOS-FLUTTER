@@ -198,7 +198,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       child: Row(
         children: [
           Expanded(child: Text(alimento.nombreAlimento)),
-          IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => _onEditarAlimento(alimento),
+          ),
           IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () {}),
         ],
       ),
@@ -295,6 +298,68 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           ],
         );
       },
+    );
+  }
+
+  /// Muestra un diálogo para editar [alimento] y guarda cambios.
+  void _onEditarAlimento(Alimento alimento) {
+    final nombreController = TextEditingController(text: alimento.nombreAlimento);
+    final descripcionController = TextEditingController(text: alimento.descripcionAlimento);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFFF8F1F1),
+        title: const Text('Modificar Alimento'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nombreController,
+              decoration: const InputDecoration(labelText: 'Nombre:'),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: descripcionController,
+              decoration: const InputDecoration(labelText: 'Descripción:'),
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              final resultado = await vm.editarAlimento(
+                Alimento(
+                  idAlimento: alimento.idAlimento,
+                  nombreAlimento: nombreController.text.trim(),
+                  descripcionAlimento: descripcionController.text.trim(),
+                ),
+              );
+              if (resultado == null) {
+                Navigator.of(dialogContext).pop();
+              } else {
+                ScaffoldMessenger.of(dialogContext)
+                    .showSnackBar(SnackBar(content: Text(resultado)));
+              }
+            },
+            child: const Text('Guardar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      ),
     );
   }
 }

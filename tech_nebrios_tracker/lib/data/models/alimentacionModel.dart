@@ -24,7 +24,7 @@ class Alimento {
     required this.descripcionAlimento,
   });
 
-  /// Crea una instancia de [Alimento] a partir de un [json] Map.
+  /// Crea una instancia de [Hidratacion] a partir de un [json] Map.
   factory Alimento.fromJson(Map<String, dynamic> json) {
     return Alimento(
       idAlimento: json['comidaId'] as int,

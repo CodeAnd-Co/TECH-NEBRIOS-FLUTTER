@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/charolaModel.dart' as modelo;
+import './sidebarView.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
@@ -110,6 +111,7 @@ class VistaCharolas extends StatelessWidget {
         elevation: 0,
         backgroundColor: const Color(0xFFF5F7FA),
       ),
+      drawer: SidebarView(),
       body: SafeArea(
         child: Consumer<CharolaViewModel>(
           builder: (context, vm, _) {

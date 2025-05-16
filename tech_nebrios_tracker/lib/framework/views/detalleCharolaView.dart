@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 import 'components/atoms/texto.dart';
 import 'components/organisms/pop_up.dart';
-import 'sidebarView.dart';
 
 /// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
@@ -97,10 +96,13 @@ class _PantallaCharolaState extends State<PantallaCharola> {
         final detalle = viewModel.charola;
         // Si no se encuentra la charola, se muestra un mensaje
         if (detalle == null) {
-          return const Scaffold(
-            body: Center(child: Text('Charola no encontrada')),
-          );
+          // Volver al dashboard si no se encuentra la charola
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.onRegresar(); // <- Llama a la función que cierra el detalle
+          });
+          return const SizedBox.shrink(); // No muestra nada mientras redirige
         }
+
 
         final fechaFormateada = formatearFecha(detalle.fechaCreacion);
 
@@ -113,24 +115,18 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                 child: Column(
                   children: [
                     // Botón arriba a la izquierda
-                    if (Navigator.canPop(context))
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20, left: 20),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              color: Colors.black,
-                            ),
-                            tooltip: 'Regresar',
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            iconSize: 55,
-                          ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20, left: 20),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Colors.black),
+                          tooltip: 'Regresar',
+                          onPressed: widget.onRegresar, // <--- AQUÍ EL CAMBIO CLAVE
+                          iconSize: 55,
                         ),
                       ),
+                    ),
                     const SizedBox(height: 20),
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1200),
@@ -170,28 +166,9 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                               await viewModel.cargarCharolas(
                                                 reset: true,
                                               );
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (
-                                                        _,
-                                                      ) => ChangeNotifierProvider.value(
-                                                        value: viewModel,
-                                                        child: SidebarView(
-                                                          onLogout: () {
-                                                            // Aquí pon la lógica para cerrar sesión
-                                                            Navigator.popUntil(
-                                                              context,
-                                                              (route) =>
-                                                                  route.isFirst,
-                                                            );
-                                                          },
-                                                          initialIndex:
-                                                              0, // 0 es la pestaña de Charolas
-                                                        ),
-                                                      ),
-                                                ),
+                                              widget.onRegresar(); // <- Vuelve al dashboard limpiamente
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(content: Text('Charola eliminada con éxito')),
                                               );
                                               ScaffoldMessenger.of(
                                                 context,

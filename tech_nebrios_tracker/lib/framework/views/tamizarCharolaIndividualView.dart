@@ -239,6 +239,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                             Expanded(
                               flex: 3,
                               child: TextField(
+                                controller:seleccionVM.frasController,
                                 decoration: InputDecoration(
                                   labelText: 'Fras (g)',
                                   border: OutlineInputBorder(),
@@ -255,14 +256,14 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                                   labelText: 'Alimento',
                                   border: OutlineInputBorder(),
                                 ),
-                                items: ['Tipo A', 'Tipo B', 'Tipo C'].map((String tipo) {
+                                items: seleccionVM.alimentos.map((String tipo) {
                                   return DropdownMenuItem<String>(
                                     value: tipo,
                                     child: Text(tipo),
                                   );
                                 }).toList(),
                                 onChanged: (value) {
-                                  // Manejar selección de tipo
+                                  seleccionVM.seleccionAlimentacion = value; 
                                 },
                               ),
                             ),
@@ -270,6 +271,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                             Expanded(
                               flex: 1,
                               child: TextField(
+                                controller:seleccionVM.alimentoCantidadController,
                                 decoration: InputDecoration(
                                   labelText: 'Cantidad (g)',
                                   border: OutlineInputBorder(),
@@ -287,6 +289,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                             Expanded(
                               flex: 3,
                               child: TextField(
+                                controller:seleccionVM.pupaController,
                                 decoration: InputDecoration(
                                   labelText: 'Pupa (g)',
                                   border: OutlineInputBorder(),
@@ -303,14 +306,14 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                                   labelText: 'Hidratación',
                                   border: OutlineInputBorder(),
                                 ),
-                                items: ['Tipo A', 'Tipo B', 'Tipo C'].map((String tipo) {
+                                items: seleccionVM.hidratacion.map((String tipo) {
                                   return DropdownMenuItem<String>(
                                     value: tipo,
                                     child: Text(tipo),
                                   );
                                 }).toList(),
                                 onChanged: (value) {
-                                  // Manejar selección de tipo
+                                  seleccionVM.seleccionHidratacion = value;
                                 },
                               ),
                             ),
@@ -318,6 +321,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                             Expanded(
                               flex: 1,
                               child: TextField(
+                                controller:seleccionVM.hidratacionCantidadController,
                                 decoration: InputDecoration(
                                   labelText: 'Cantidad (g)',
                                   border: OutlineInputBorder(),

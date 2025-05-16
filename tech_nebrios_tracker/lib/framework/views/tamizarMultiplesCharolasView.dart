@@ -113,6 +113,8 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                 );
               });
             }
+            seleccionVM.cargarAlimentos();
+            seleccionVM.cargarHidratacion();
             return Column(
               children: [
                 const SizedBox(height: 16),
@@ -239,6 +241,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                             Expanded(
                               flex: 1,
                               child: TextField(
+                                controller:seleccionVM.frasController,
                                 decoration: InputDecoration(
                                   labelText: 'Fras (g)',
                                   border: OutlineInputBorder(),
@@ -251,6 +254,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                             Expanded(
                               flex: 1,
                               child: TextField(
+                                controller:seleccionVM.pupaController,
                                 decoration: InputDecoration(
                                   labelText: 'Pupa (g)',
                                   border: OutlineInputBorder(),

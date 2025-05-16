@@ -3,21 +3,45 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import '../../data/models/menuCharolasModel.dart';
+import '../../data/repositories/tamizarCharolaRepository.dart';
+import '../../domain/tamizarCharolaUseCases.dart';
 import '../views/tamizarCharolaIndividualView.dart';
 import '../views/tamizarMultiplesCharolasView.dart';
+import '../../data/models/tamizadoIndividualModel.dart';
+import '../../data/models/tamizadoMultipleModel.dart';
 
 /// ViewModel encargado de gestionar los datos de las charolas que se van a tamizar.
 /// Implementa la vista previa de selección de charolas.
 class TamizadoViewModel extends ChangeNotifier {
   final Logger _logger = Logger();
+  final TamizarCharolaRepository repository = TamizarCharolaRepository();
+  final TamizarCharolaUseCases tamizarCharolaUseCases = TamizarCharolaUseCasesImpl();
+
+  List<String> alimentos = [];
+  String? seleccionAlimentacion;
+  bool _alimentosCargados = false;
+
+  List<String> hidratacion = [];
+  String? seleccionHidratacion;
+  bool _hidratacionCargados = false;
 
   /// Se definen controladores para el texto
   final frasController = TextEditingController();
   final pupaController = TextEditingController();
   final alimentoCantidadController = TextEditingController();
   final hidratacionCantidadController = TextEditingController();
-  /// Lista de charolas actualmente mostradas en la vista.
+
+  /// Lista de charolas seleccionadas por el usuario.
   List<Charola> charolasParaTamizar = [];
+
+  /// Lista de nombres de charolas seleccionadas por el usuario.
+  List<String> nombresCharolas = [];
+
+  /// Se definen variables para convertir de texto a número
+  double frasCantidad = 0;
+  double pupaCantidad = 0;
+  double alimentoCantidad = 0;
+  double hidratacionCantidad = 0;
 
   /// Estado de carga actual.
   bool cargando = false;
@@ -28,16 +52,42 @@ class TamizadoViewModel extends ChangeNotifier {
   String get errorMessage => _errorMessage;
   bool get hasError => _hasError;
 
-  Future<void> tamizarCharola() async {
+  TamizadoViewModel() {
+    cargarAlimentos();
+    cargarHidratacion();
+  }
+
+  Future<void> tamizarCharolaIndividual() async {
     try {
       cargando = true;
+      _hasError = false;
       notifyListeners();
 
-      // Simulación de una llamada a la API
-      await Future.delayed(const Duration(seconds: 2));
+      ///Se validan todas las entradas del usuario
+      verificacionDeCampos();
 
-      // Aquí puedes agregar la lógica para tamizar las charolas seleccionadas
-      // Por ejemplo, enviar una solicitud a la API para tamizar las charolas
+      ///Se extraen solo los nombres de las charolas seleccionadas
+      conseguirNombresCharolas();
+
+      ///Se convierten los campos de texto a números
+      convertirCampos();
+
+      ///Se obtiene la fecha actual sin la hora
+      DateTime fecha = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+      /// Se construye el objeto de tamizado individual
+      TamizadoIndividual tamizadoIndividual = TamizadoIndividual(
+        charolas: nombresCharolas,
+        alimento: seleccionAlimentacion!,
+        hidratacion: seleccionHidratacion!,
+        fras: frasCantidad,
+        pupa: pupaCantidad,
+        alimentoCantidad: alimentoCantidad,
+        hidratacionCantidad: hidratacionCantidad,
+        fecha: fecha,
+      );
+
+      await tamizarCharolaUseCases.tamizarCharola(tamizadoIndividual);
 
       cargando = false;
       notifyListeners();
@@ -46,6 +96,66 @@ class TamizadoViewModel extends ChangeNotifier {
       _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
       cargando = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> tamizarCharolaMultiple() async {
+    try {
+      cargando = true;
+      _hasError = false;
+      notifyListeners();
+
+      ///Se validan todas las entradas del usuario
+      verificacionDeCampos();
+
+      ///Se extraen solo los nombres de las charolas seleccionadas
+      conseguirNombresCharolas();
+
+      ///Se convierten los campos de texto a números
+      convertirCampos();
+
+      ///Se obtiene la fecha actual sin la hora
+      DateTime fecha = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+      /// Se construye el objeto de tamizado múltiple
+      TamizadoMultiple tamizadoMultiple = TamizadoMultiple(
+        charolas: nombresCharolas,
+        fras: frasCantidad,
+        pupa: pupaCantidad,
+        fecha: fecha,
+      );
+
+      await tamizarCharolaUseCases.tamizarCharolasMultiples(tamizadoMultiple);
+
+      cargando = false;
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+      cargando = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> cargarAlimentos() async {
+    if (_alimentosCargados) return; // Evita cargar los datos más de una vez
+    try {
+      alimentos = await tamizarCharolaUseCases.cargarAlimentos();
+      _alimentosCargados = true; // Marca los datos como cargados
+      notifyListeners(); // Notifica a la vista que los datos han cambiado
+    } catch (e) {
+      print('Error al cargar los alimentos: $e');
+    }
+  }
+
+  Future<void> cargarHidratacion() async {
+    if (_hidratacionCargados) return; // Evita cargar los datos más de una vez
+    try {
+      hidratacion = await tamizarCharolaUseCases.cargarHidratacion();
+      _hidratacionCargados = true; // Marca los datos como cargados
+      notifyListeners(); // Notifica a la vista que los datos han cambiado
+    } catch (e) {
+      print('Error al cargar la hidratación: $e');
     }
   }
 
@@ -87,6 +197,90 @@ class TamizadoViewModel extends ChangeNotifier {
     charolasParaTamizar.remove(charola);
     _hasError = false;
     notifyListeners();
+  }
+
+  void verificacionDeCampos(){
+    if(charolasParaTamizar.length == 1){
+      revisarCampoFras();
+      revisarCampoPupa();
+      revisarCampoAlimentoCantidad();
+      revisarCampoHidratacionCantidad();
+      revisarSeleccionAlimentacion();
+      revisarSeleccionHidratacion();
+    }else{
+      revisarCampoFras();
+      revisarCampoPupa();
+    }
+  }
+
+  void convertirCampos(){
+    if(charolasParaTamizar.length == 1){
+      frasCantidad = double.parse(frasController.text);
+      pupaCantidad = double.parse(pupaController.text);
+      alimentoCantidad = double.parse(alimentoCantidadController.text);
+      hidratacionCantidad = double.parse(hidratacionCantidadController.text);
+    }else{
+      frasCantidad = double.parse(frasController.text);
+      pupaCantidad = double.parse(pupaController.text);
+    }
+  }
+
+  void revisarCampoFras(){
+    if(frasController.text.isEmpty){
+      _hasError = true;
+      _errorMessage = 'El campo de Fras no puede estar vacío.';
+    }
+    notifyListeners();
+    return;
+  }
+
+  void revisarCampoPupa(){
+    if(pupaController.text.isEmpty){
+      _hasError = true;
+      _errorMessage = 'El campo de Pupa no puede estar vacío.';
+    }
+    notifyListeners();
+    return;
+  }
+
+  void revisarCampoAlimentoCantidad(){
+    if(alimentoCantidadController.text.isEmpty){
+      _hasError = true;
+      _errorMessage = 'El campo de Cantidad de Alimento no puede estar vacío.';
+    }
+    notifyListeners();
+    return;
+  }
+
+  void revisarCampoHidratacionCantidad(){
+    if(hidratacionCantidadController.text.isEmpty){
+      _hasError = true;
+      _errorMessage = 'El campo de Cantidad de Hidratación no puede estar vacío.';
+    }
+    notifyListeners();
+    return;
+  }
+
+  void revisarSeleccionAlimentacion(){
+    if(seleccionAlimentacion == null){
+      _hasError = true;
+      _errorMessage = 'Por favor, selecciona un alimento.';
+    }
+    notifyListeners();
+    return;
+  }
+
+  void revisarSeleccionHidratacion(){
+    if(seleccionHidratacion == null){
+      _hasError = true;
+      _errorMessage = 'Por favor, selecciona una hidratación.';
+    }
+    notifyListeners();
+    return;
+  }
+
+  void conseguirNombresCharolas() {
+    nombresCharolas = charolasParaTamizar.map((charola) => charola.nombreCharola).toList();
   }
 
 }

@@ -63,7 +63,7 @@ class Texto extends StatelessWidget {
   factory Texto.titulo2({
     Key? key,
     required String texto,
-    double tamanio = 28,
+    double tamanio = 24,
     Color color = Colors.black,
     String fuente = 'San Francisco',
     bool bold = false,
@@ -75,7 +75,7 @@ class Texto extends StatelessWidget {
       tamanio: tamanio,
       color: color,
       fuente: fuente,
-      grosor: bold ? FontWeight.w700 : FontWeight.w600,
+      grosor: bold ? FontWeight.w700 : FontWeight.normal,
       centrado: centrado,
     );
   }

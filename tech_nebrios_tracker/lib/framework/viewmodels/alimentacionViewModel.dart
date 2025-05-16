@@ -6,7 +6,7 @@ import '../../data/models/alimentacionModel.dart';
 import '../../data/repositories/alimentacionRepository.dart';
 import '../../domain/editarAlimentacionUseCase.dart';
 import '../../domain/eliminarAlimentacionUseCase.dart';
-import '../../domain/registrarAlimentacionDomain.dart';
+import '../../domain/registrarAlimentacionUseCase.dart';
 
 
 
@@ -158,7 +158,10 @@ class AlimentacionViewModel extends ChangeNotifier {
 
     _setLoading(true);
     try {
-      await _registrarCasoUso.registrar(nombre: nombre, descripcion: descripcion);
+      await _registrarCasoUso.registrar(
+        nombre: nombre,
+        descripcion: descripcion,
+      );
       await cargarAlimentos();
       return null;
     } on Exception catch (e) {
@@ -174,10 +177,11 @@ class AlimentacionViewModel extends ChangeNotifier {
 
   /// Toma el siguiente rango de [_chunkSize] ítems y los añade.
   void _agregarSiguienteChunk() {
-    final nextIndex = (_currentIndex + _chunkSize).clamp(0, _allAlimentos.length);
-    _pagedAlimentos.addAll(
-      _allAlimentos.getRange(_currentIndex, nextIndex),
+    final nextIndex = (_currentIndex + _chunkSize).clamp(
+      0,
+      _allAlimentos.length,
     );
+    _pagedAlimentos.addAll(_allAlimentos.getRange(_currentIndex, nextIndex));
     _currentIndex = nextIndex;
     notifyListeners();
   }

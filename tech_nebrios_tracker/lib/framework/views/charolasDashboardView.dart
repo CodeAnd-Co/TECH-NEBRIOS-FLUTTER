@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/charolaModel.dart' as modelo;
+import './registrarCharolaView.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
@@ -45,14 +46,18 @@ class CharolaTarjeta extends StatelessWidget {
 
             return Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
                     decoration: BoxDecoration(
                       color: color,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(8),
+                      ),
                     ),
                     padding: EdgeInsets.symmetric(vertical: paddingVertical),
                     child: Text(
@@ -139,7 +144,10 @@ class VistaCharolas extends StatelessWidget {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
                               ),
                             ),
                           ),
@@ -148,8 +156,12 @@ class VistaCharolas extends StatelessWidget {
                           // Botón responsivo
                           ElevatedButton.icon(
                             onPressed: () {
-                              // TODO: Define esta navegación o acción para registrar una nueva charola
-                              // Navigator.push(context, MaterialPageRoute(builder: (_) => PantallaRegistroCharola()));
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => RegistrarCharolaView(),
+                                ),
+                              );
                             },
                             icon: Icon(Icons.add, size: iconSize.clamp(20, 30)),
                             label: Text(
@@ -160,7 +172,10 @@ class VistaCharolas extends StatelessWidget {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 22,
+                              ),
                               backgroundColor: const Color(0xFF0066FF),
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
@@ -177,7 +192,10 @@ class VistaCharolas extends StatelessWidget {
 
                 /// Toggle Activas / Pasadas
                 ToggleButtons(
-                  isSelected: [vm.estadoActual == 'activa', vm.estadoActual == 'pasada'],
+                  isSelected: [
+                    vm.estadoActual == 'activa',
+                    vm.estadoActual == 'pasada',
+                  ],
                   onPressed: (index) {
                     final estado = index == 0 ? 'activa' : 'pasada';
                     vm.cambiarEstado(estado);
@@ -186,31 +204,36 @@ class VistaCharolas extends StatelessWidget {
                   selectedColor: Colors.white,
                   fillColor: const Color(0xFF0066FF),
                   color: Colors.black87,
-                  textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  constraints: const BoxConstraints(minHeight: 40, minWidth: 150),
-                  children: const [
-                    Text('Activas'),
-                    Text('Pasadas'),
-                  ],
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  constraints: const BoxConstraints(
+                    minHeight: 40,
+                    minWidth: 150,
+                  ),
+                  children: const [Text('Activas'), Text('Pasadas')],
                 ),
                 const SizedBox(height: 10),
 
                 /// Carga inicial
                 if (vm.cargandoLista && vm.charolas.isEmpty)
-
-                  const Expanded(child: Center(child: CircularProgressIndicator()))
-
+                  const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  )
                 /// Mensaje cuando no hay resultados
                 else if (!vm.cargandoLista && vm.charolas.isEmpty)
                   const Expanded(
                     child: Center(
                       child: Text(
                         'No hay charolas registradas 🧺',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   )
-
                 /// Grid de charolas
                 else
                   Expanded(
@@ -218,20 +241,23 @@ class VistaCharolas extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: GridView.builder(
                         itemCount: vm.charolas.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5,
-                          crossAxisSpacing: 4,
-                          // mainAxisSpacing: 16,
-                          childAspectRatio: 1.3,
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 5,
+                              crossAxisSpacing: 4,
+                              // mainAxisSpacing: 16,
+                              childAspectRatio: 1.3,
+                            ),
                         itemBuilder: (context, index) {
-                          final modelo.CharolaTarjeta charola = vm.charolas[index];
+                          final modelo.CharolaTarjeta charola =
+                              vm.charolas[index];
                           return LayoutBuilder(
                             builder: (context, constraints) {
                               return AspectRatio(
                                 aspectRatio: 1.3,
                                 child: CharolaTarjeta(
-                                  fecha: "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
+                                  fecha:
+                                      "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
                                   nombreCharola: charola.nombreCharola,
                                   color: obtenerColorPorNombre(charola.nombreCharola),
                                   onTap: () => onVerDetalle(charola.charolaId),
@@ -248,7 +274,10 @@ class VistaCharolas extends StatelessWidget {
                 if (vm.charolas.isNotEmpty) ...[
                   Text(
                     "Página ${vm.pagActual} de ${vm.totalPags}",
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -264,16 +293,30 @@ class VistaCharolas extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton.icon(
-                              onPressed: vm.pagActual > 1 ? vm.cargarPaginaAnterior : null,
-                              icon: Icon(Icons.arrow_back, size: iconSize.clamp(26, 32)),
+                              onPressed:
+                                  vm.pagActual > 1
+                                      ? vm.cargarPaginaAnterior
+                                      : null,
+                              icon: Icon(
+                                Icons.arrow_back,
+                                size: iconSize.clamp(26, 32),
+                              ),
                               label: Text(
                                 "Anterior",
-                                style: TextStyle(fontSize: fontSize.clamp(19, 22)),
+                                style: TextStyle(
+                                  fontSize: fontSize.clamp(19, 22),
+                                ),
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFE9EEF6),
-                                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 20),
-                                minimumSize: Size(buttonWidth.clamp(80, 200), 48),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 18,
+                                  vertical: 20,
+                                ),
+                                minimumSize: Size(
+                                  buttonWidth.clamp(80, 200),
+                                  48,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -281,11 +324,20 @@ class VistaCharolas extends StatelessWidget {
                             ),
                             const SizedBox(width: 16),
                             ElevatedButton(
-                              onPressed: vm.pagActual < vm.totalPags ? vm.cargarPaginaSiguiente : null,
+                              onPressed:
+                                  vm.pagActual < vm.totalPags
+                                      ? vm.cargarPaginaSiguiente
+                                      : null,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFE9EEF6),
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                minimumSize: Size(buttonWidth.clamp(120, 200), 48),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 20,
+                                ),
+                                minimumSize: Size(
+                                  buttonWidth.clamp(120, 200),
+                                  48,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -295,10 +347,15 @@ class VistaCharolas extends StatelessWidget {
                                 children: [
                                   Text(
                                     "Siguiente",
-                                    style: TextStyle(fontSize: fontSize.clamp(19, 22)),
+                                    style: TextStyle(
+                                      fontSize: fontSize.clamp(19, 22),
+                                    ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Icon(Icons.arrow_forward, size: iconSize.clamp(26, 32)),
+                                  Icon(
+                                    Icons.arrow_forward,
+                                    size: iconSize.clamp(26, 32),
+                                  ),
                                 ],
                               ),
                             ),
@@ -320,14 +377,14 @@ class VistaCharolas extends StatelessWidget {
 /// Asigna un color al encabezado de la tarjeta basado en el nombre.
 Color obtenerColorPorNombre(String nombre) {
   if (nombre.startsWith('C-')) {
-    return const Color(0xFF22A63A); 
+    return const Color(0xFF22A63A);
   } else if (nombre.startsWith('E-')) {
-    return const Color(0xFFE2387B); 
+    return const Color(0xFFE2387B);
   } else if (nombre.startsWith('T1-') ||
-             nombre.startsWith('T2-') ||
-             nombre.startsWith('T3-') ||
-             nombre.startsWith('T4-')) {
-    return const Color(0xFF22A63A); 
+      nombre.startsWith('T2-') ||
+      nombre.startsWith('T3-') ||
+      nombre.startsWith('T4-')) {
+    return const Color(0xFF22A63A);
   }
   return Colors.grey; // Color por defecto
 }

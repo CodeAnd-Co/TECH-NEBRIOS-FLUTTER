@@ -1,6 +1,7 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
 // RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 // RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
+// RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
 
 /// Modelo que representa el detalle completo de una charola,
 /// incluyendo su relación con comida e hidratación.
@@ -148,4 +149,59 @@ class CharolaDashboard {
           .toList(),
     );
   }
+}
+
+/// Modelos para representar la comida y la hidratación asignada a una charola.
+class ComidaAsignada {
+  final int comidaId;
+  double cantidadOtorgada;
+
+  ComidaAsignada({required this.comidaId, required this.cantidadOtorgada});
+
+  Map<String, dynamic> toJson() => {
+        'comidaId': comidaId,
+        'cantidadOtorgada': cantidadOtorgada,
+      };
+}
+
+class HidratacionAsignada {
+  final int hidratacionId;
+  double cantidadOtorgada;
+
+  HidratacionAsignada({required this.hidratacionId, required this.cantidadOtorgada});
+
+  Map<String, dynamic> toJson() => {
+        'hidratacionId': hidratacionId,
+        'cantidadOtorgada': cantidadOtorgada,
+      };
+}
+
+/// Modelo que representa el registro de una nueva charola.
+/// Incluye información sobre la comida e hidratación asignada.
+class CharolaRegistro {
+  final String nombreCharola;
+  final DateTime fechaCreacion;
+  final double densidadLarva;
+  final double pesoCharola;
+  final List<ComidaAsignada> comidas;
+  final List<HidratacionAsignada> hidrataciones;
+
+  CharolaRegistro({
+    required this.nombreCharola,
+    required this.fechaCreacion,
+    required this.densidadLarva,
+    required this.pesoCharola,
+    required this.comidas,
+    required this.hidrataciones,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'nombre': nombreCharola,
+        'fechaCreacion': fechaCreacion.toIso8601String(),
+        'densidadLarva': densidadLarva,
+        'pesoCharola': pesoCharola,
+        'comidas': comidas.map((comida) => comida.toJson()).toList(),
+        'hidrataciones':
+            hidrataciones.map((hidratacion) => hidratacion.toJson()).toList(),
+      };
 }

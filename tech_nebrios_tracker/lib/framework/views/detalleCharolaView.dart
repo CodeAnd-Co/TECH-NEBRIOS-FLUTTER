@@ -306,7 +306,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                           texto: 'Ancestros',
                                           alPresionar: () async {
                                              final ancestrosVM = HistorialCharolaViewModel(HistorialCharolaRepository());
-                                              // 1) Carga los datos
+                                              // Carga datos
                                               await ancestrosVM.obtenerAncestros(viewModel.charola!.charolaId);
                                               if (ancestrosVM.historialAncestros.isEmpty) {
                                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -314,7 +314,6 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                                 );
                                                 return;
                                               }
-                                              // 2) Muéstralo directamente como popup
                                               showDialog(
                                                 context: context,
                                                 builder: (_) => ChangeNotifierProvider.value(

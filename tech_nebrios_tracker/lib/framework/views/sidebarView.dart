@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:tech_nebrios_tracker/framework/views/charolasDashboardView.dart';
 import 'package:tech_nebrios_tracker/framework/views/reporteView.dart';
 import 'package:tech_nebrios_tracker/framework/views/alimentacionView.dart';
+import './detalleCharolaView.dart';
 
 class SidebarView extends StatefulWidget {
-  final VoidCallback onLogout;
+  final VoidCallback? onLogout;
+  final int initialIndex;
 
-  const SidebarView({Key? key, required this.onLogout}) : super(key: key);
+  const SidebarView({Key? key, this.onLogout, this.initialIndex = 0}) : super(key: key);
 
   @override
   State<SidebarView> createState() => _SidebarViewState();
@@ -14,14 +16,42 @@ class SidebarView extends StatefulWidget {
 
 class _SidebarViewState extends State<SidebarView> {
   int _currentIndex = 0;
+  Widget? _detalleCharolaActual;
 
-  final List<Widget> _views = [
-    const VistaCharolas(),
-    const Placeholder(),
-    const Placeholder(),
-    const AlimentacionScreen(),
-    const VistaTablaCharolas(),
-  ];
+  void _mostrarDetalleCharola(int id) {
+    setState(() {
+      _detalleCharolaActual = PantallaCharola(
+        charolaId: id,
+        onRegresar: _cerrarDetalleCharola,
+      );
+    });
+  }
+
+  void _cerrarDetalleCharola() {
+    setState(() {
+      _detalleCharolaActual = null;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
+
+  List<Widget> get _views {
+    if (_detalleCharolaActual != null) {
+      return [_detalleCharolaActual!];
+    }
+
+    return [
+      VistaCharolas(onVerDetalle: _mostrarDetalleCharola),
+      const Placeholder(),
+      const Placeholder(),
+      const AlimentacionScreen(),
+      const VistaTablaCharolas(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +91,13 @@ class _SidebarViewState extends State<SidebarView> {
                         ),
                       ),
                     ),
+
                     // Fixed logout button
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: IconButton(
                         icon: const Icon(Icons.logout, color: Colors.red),
-                        onPressed: widget.onLogout,
+                        onPressed: widget.onLogout ?? () {}, // ✅ Si no se pasa, no hace nada
                       ),
                     ),
                   ],
@@ -78,8 +109,8 @@ class _SidebarViewState extends State<SidebarView> {
           // Vista activa
           Expanded(
             child: IndexedStack(
-              index: _currentIndex,
-              children: _views,
+              index: 0, // Siempre 0 porque solo hay un widget visible
+              children: [_views[_currentIndex]],
             ),
           ),
         ],
@@ -93,7 +124,7 @@ class _SidebarViewState extends State<SidebarView> {
     required String label,
     required int index,
   }) {
-    final isSelected = _currentIndex == index;
+    final isSelected = _currentIndex == index && _detalleCharolaActual == null;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -105,7 +136,10 @@ class _SidebarViewState extends State<SidebarView> {
         final showLabel = screenWidth > 500;
 
         return InkWell(
-          onTap: () => setState(() => _currentIndex = index),
+          onTap: () => setState(() {
+            _currentIndex = index;
+            _detalleCharolaActual = null; // ✅ Siempre cierra detalle si navegas
+          }),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Column(

@@ -6,12 +6,12 @@ import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 import 'components/atoms/texto.dart';
 import 'components/organisms/pop_up.dart';
-import 'charolasDashboardView.dart';
 
 /// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
   final int charolaId; // ID de la charola que se va a mostrar
-  const PantallaCharola({super.key, required this.charolaId});
+  final VoidCallback onRegresar;
+  const PantallaCharola({super.key, required this.charolaId, required this.onRegresar});
 
   @override
   State<PantallaCharola> createState() => _PantallaCharolaState();
@@ -96,10 +96,13 @@ class _PantallaCharolaState extends State<PantallaCharola> {
         final detalle = viewModel.charola;
         // Si no se encuentra la charola, se muestra un mensaje
         if (detalle == null) {
-          return const Scaffold(
-            body: Center(child: Text('Charola no encontrada')),
-          );
+          // Volver al dashboard si no se encuentra la charola
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.onRegresar(); // <- Llama a la función que cierra el detalle
+          });
+          return const SizedBox.shrink(); // No muestra nada mientras redirige
         }
+
 
         final fechaFormateada = formatearFecha(detalle.fechaCreacion);
 
@@ -117,24 +120,9 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
-                          ),
+                          icon: const Icon(Icons.arrow_back, color: Colors.black),
                           tooltip: 'Regresar',
-                          onPressed: () {
-                            viewModel.cargarCharolas(reset: true);
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (_) => ChangeNotifierProvider.value(
-                                      value: viewModel,
-                                      child: const VistaCharolas(),
-                                    ),
-                              ),
-                            );
-                          },
+                          onPressed: widget.onRegresar, // <--- AQUÍ EL CAMBIO CLAVE
                           iconSize: 55,
                         ),
                       ),
@@ -151,35 +139,6 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                           color: Colors.white,
                           child: Column(
                             children: [
-                              // Parte superior con información de la charola
-                              Padding(
-                                padding: const EdgeInsets.all(30),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Texto.titulo1(
-                                      texto: detalle.nombreCharola,
-                                      bold: true,
-                                      tamanio: 64,
-                                      color: const Color(0xFF22A63A),
-                                    ),
-                                    _crearInfoFila('Estado:', detalle.estado),
-                                    _crearInfoFila('Fecha:', fechaFormateada),
-                                    _crearInfoFila(
-                                      'Peso:',
-                                      '${detalle.pesoCharola}g',
-                                    ),
-                                    _crearInfoFila(
-                                      'Hidratación:',
-                                      '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
-                                    ),
-                                    _crearInfoFila(
-                                      'Alimento:',
-                                      '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
-                                    ),
-                                  ],
-                                ),
-                              ),
                               // Eliminar icono
                               Align(
                                 alignment: Alignment.topRight,
@@ -207,19 +166,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                               await viewModel.cargarCharolas(
                                                 reset: true,
                                               );
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (
-                                                        _,
-                                                      ) => ChangeNotifierProvider.value(
-                                                        value: viewModel,
-                                                        child:
-                                                            const VistaCharolas(),
-                                                      ),
-                                                ),
+                                              widget.onRegresar(); // <- Vuelve al dashboard limpiamente
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(content: Text('Charola eliminada con éxito')),
                                               );
+                                              Navigator.of(context).pop();
                                               ScaffoldMessenger.of(
                                                 context,
                                               ).showSnackBar(
@@ -235,6 +186,35 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                       );
                                     },
                                   ),
+                                ),
+                              ),
+                              // Parte superior con información de la charola
+                              Padding(
+                                padding: const EdgeInsets.all(30),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Texto.titulo1(
+                                      texto: detalle.nombreCharola,
+                                      bold: true,
+                                      tamanio: 64,
+                                      color: const Color(0xFF22A63A),
+                                    ),
+                                    _crearInfoFila('Estado:', detalle.estado),
+                                    _crearInfoFila('Fecha:', fechaFormateada),
+                                    _crearInfoFila(
+                                      'Peso:',
+                                      '${detalle.pesoCharola}g',
+                                    ),
+                                    _crearInfoFila(
+                                      'Hidratación:',
+                                      '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
+                                    ),
+                                    _crearInfoFila(
+                                      'Alimento:',
+                                      '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
+                                    ),
+                                  ],
                                 ),
                               ),
                               // Parte inferior con botones

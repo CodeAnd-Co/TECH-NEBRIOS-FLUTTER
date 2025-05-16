@@ -1,6 +1,5 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
 
-import './detalleCharolaView.dart'; // Ajusta el path si es necesario
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
@@ -95,7 +94,9 @@ class CharolaTarjeta extends StatelessWidget {
 
 /// Vista principal que muestra todas las charolas en un grid paginado.
 class VistaCharolas extends StatelessWidget {
-  const VistaCharolas({super.key});
+  final void Function(int charolaId) onVerDetalle;
+
+  const VistaCharolas({super.key, required this.onVerDetalle});
 
   @override
   Widget build(BuildContext context) {
@@ -258,20 +259,8 @@ class VistaCharolas extends StatelessWidget {
                                   fecha:
                                       "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
                                   nombreCharola: charola.nombreCharola,
-                                  color: obtenerColorPorNombre(
-                                    charola.nombreCharola,
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (_) => PantallaCharola(
-                                              charolaId: charola.charolaId,
-                                            ),
-                                      ),
-                                    );
-                                  },
+                                  color: obtenerColorPorNombre(charola.nombreCharola),
+                                  onTap: () => onVerDetalle(charola.charolaId),
                                 ),
                               );
                             },

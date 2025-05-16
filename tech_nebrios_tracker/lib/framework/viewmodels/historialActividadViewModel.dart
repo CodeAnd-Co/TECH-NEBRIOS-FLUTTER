@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:tech_nebrios_tracker/domain/historialActividadUseCases.dart';
+import 'package:tech_nebrios_tracker/domain/historialActividadUseCase.dart';
+import '../../data/repositories/historialActividadRepository.dart';
 //import '../../domain/tablaUseCases.dart';
 
 class HistorialActividadViewmodel extends ChangeNotifier{
-  final HistorialActividadUseCasesImp Historial;
+  late final HistorialActividadUseCasesImp Historial;
+  final HistorialActividadRepository _Repo = HistorialActividadRepository();
 
-  HistorialActividadViewmodel(this.Historial);
+  HistorialActividadViewmodel(){
+    Historial = HistorialActividadUseCasesImp(repositorio: _Repo);
+  }
 
   String _mensajeError = '';
   bool _error = false;

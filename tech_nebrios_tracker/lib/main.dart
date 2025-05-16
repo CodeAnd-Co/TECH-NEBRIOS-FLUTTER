@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
 import 'dart:io';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import './framework/viewmodels/historialActividadViewmodel.dart';
 import './framework/viewmodels/reporteViewModel.dart';
 import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
@@ -26,7 +26,8 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => CharolaViewModel()),
-        ChangeNotifierProvider(create: (_) => ReporteViewModel())
+        ChangeNotifierProvider(create: (_) => ReporteViewModel()),
+        ChangeNotifierProvider(create: (_) => HistorialActividadViewmodel())
       ],
       child: const MyApp(),
     ),
@@ -46,10 +47,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
       ),
-      home: Router(
-        routerDelegate: AppRouter(),
-        backButtonDispatcher: RootBackButtonDispatcher(),
-      ),
+      builder: (context, child) {
+        return Router(
+          routerDelegate: AppRouter(),
+          backButtonDispatcher: RootBackButtonDispatcher(),
+        );
+      },
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

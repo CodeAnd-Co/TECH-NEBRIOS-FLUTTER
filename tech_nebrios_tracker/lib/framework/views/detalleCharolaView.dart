@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
+import './historialActividadView.dart';
 import 'components/atoms/texto.dart';
 import 'components/organisms/pop_up.dart';
 
@@ -305,7 +306,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                         _crearBotonIcono(
                                           icono: Icons.history,
                                           texto: 'Actividades',
-                                          alPresionar: () {},
+                                          alPresionar: () {mostrarPopUpHistorialActividad(context: context,charolaId: widget.charolaId,);},
                                         ),
                                       ],
                                     )
@@ -326,4 +327,5 @@ class _PantallaCharolaState extends State<PantallaCharola> {
       },
     );
   }
+  
 }

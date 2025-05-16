@@ -7,7 +7,7 @@ import '../services/historialActividadAPIService.dart';
 class HistorialActividadRepository extends HistorialActividadAPIService {
   @override
   Future<HistorialactividadRespuesta> historialActividad(charolaId) async {
-    final url = Uri.parse('${APIRutas.CHAROLA}/historialActividad?charolaId=$charolaId');
+    final url = Uri.parse('${APIRutas.HISTORIAL_CHAROLA}/historialActividad?charolaId=$charolaId');
 
     try {
       final respuesta = await http.get(url);

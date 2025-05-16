@@ -150,6 +150,8 @@ class HistorialAncestrosDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final hasAncestros = data.ancestros.isNotEmpty;
+
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -184,8 +186,18 @@ class HistorialAncestrosDialog extends StatelessWidget {
               ),
             ),
             const Divider(height: 1),
-            // Contenido con la tabla
-            _HistorialAncestrosTable(data: data),
+            // Si no hay ancestros
+            if (!hasAncestros)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'La charola no tiene ancestros',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              )
+            else
+              _HistorialAncestrosTable(data: data),
           ],
         ),
       ),

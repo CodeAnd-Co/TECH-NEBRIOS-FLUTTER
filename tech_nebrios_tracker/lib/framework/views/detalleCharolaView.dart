@@ -170,6 +170,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                               ScaffoldMessenger.of(context).showSnackBar(
                                                 const SnackBar(content: Text('Charola eliminada con éxito')),
                                               );
+                                              Navigator.of(context).pop();
                                               ScaffoldMessenger.of(
                                                 context,
                                               ).showSnackBar(

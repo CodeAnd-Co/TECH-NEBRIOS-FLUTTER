@@ -181,6 +181,7 @@ class HidratacionAsignada {
 class CharolaRegistro {
   final String nombreCharola;
   final DateTime fechaCreacion;
+  final DateTime fechaActualizacion;
   final double densidadLarva;
   final double pesoCharola;
   final List<ComidaAsignada> comidas;
@@ -189,6 +190,7 @@ class CharolaRegistro {
   CharolaRegistro({
     required this.nombreCharola,
     required this.fechaCreacion,
+    required this.fechaActualizacion,
     required this.densidadLarva,
     required this.pesoCharola,
     required this.comidas,
@@ -198,6 +200,7 @@ class CharolaRegistro {
   Map<String, dynamic> toJson() => {
         'nombre': nombreCharola,
         'fechaCreacion': fechaCreacion.toIso8601String(),
+        'fechaActualizacion': fechaActualizacion.toIso8601String(),
         'densidadLarva': densidadLarva,
         'pesoCharola': pesoCharola,
         'comidas': comidas.map((comida) => comida.toJson()).toList(),

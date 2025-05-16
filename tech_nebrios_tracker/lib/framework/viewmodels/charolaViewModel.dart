@@ -101,6 +101,7 @@ class CharolaViewModel extends ChangeNotifier {
       final registro = CharolaRegistro(
         nombreCharola: nombreController.text,
         fechaCreacion: fecha,
+        fechaActualizacion: fecha,
         densidadLarva: double.parse(densidadLarvaController.text),
         pesoCharola: double.parse(pesoController.text),
         comidas: [

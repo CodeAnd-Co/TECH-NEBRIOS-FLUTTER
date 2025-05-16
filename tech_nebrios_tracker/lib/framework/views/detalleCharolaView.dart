@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 import './historialActividadView.dart';
+import './historialAncestrosView.dart';
+import '../../framework/viewmodels/historialCharolaViewModel.dart';
+import '../../data/repositories/historialCharolaRepository.dart';
 import 'components/atoms/texto.dart';
 import 'components/organisms/pop_up.dart';
 
@@ -301,7 +304,26 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                         _crearBotonIcono(
                                           icono: Icons.device_hub,
                                           texto: 'Ancestros',
-                                          alPresionar: () {},
+                                          alPresionar: () async {
+                                             final ancestrosVM = HistorialCharolaViewModel(HistorialCharolaRepository());
+                                              // Carga datos
+                                              await ancestrosVM.obtenerAncestros(viewModel.charola!.charolaId);
+                                              if (ancestrosVM.historialAncestros.isEmpty) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  const SnackBar(content: Text('No hay ancestros disponibles'))
+                                                );
+                                                return;
+                                              }
+                                              showDialog(
+                                                context: context,
+                                                builder: (_) => ChangeNotifierProvider.value(
+                                                  value: ancestrosVM,
+                                                  child: HistorialAncestrosDialog(
+                                                    data: ancestrosVM.historialAncestros.first,
+                                                  ),
+                                                ),
+                                              );
+                                           },
                                         ),
                                         _crearBotonIcono(
                                           icono: Icons.history,

@@ -1,3 +1,7 @@
-// RF3 (Ancestros), RF17 (Eliminar historial múltiple), RF18 (Historial de actividad),RF22 (Cambios pasados) 
+//RF03: Consultar historial de ancestros de una charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF3
 
-// Aquí va la abstract class
+import '../models/historialCharolaModel.dart';
+
+abstract class HistorialActividadAPIService {
+  Future<List<HistorialAncestros>> obtenerAncestros(int idCharola);
+}

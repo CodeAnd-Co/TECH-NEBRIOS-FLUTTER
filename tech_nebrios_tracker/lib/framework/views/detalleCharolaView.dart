@@ -11,7 +11,8 @@ import 'sidebarView.dart';
 /// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
   final int charolaId; // ID de la charola que se va a mostrar
-  const PantallaCharola({super.key, required this.charolaId});
+  final VoidCallback onRegresar;
+  const PantallaCharola({super.key, required this.charolaId, required this.onRegresar});
 
   @override
   State<PantallaCharola> createState() => _PantallaCharolaState();
@@ -112,43 +113,24 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                 child: Column(
                   children: [
                     // Botón arriba a la izquierda
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20, left: 20),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
+                    if (Navigator.canPop(context))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, left: 20),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.black,
+                            ),
+                            tooltip: 'Regresar',
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            iconSize: 55,
                           ),
-                          tooltip: 'Regresar',
-                          onPressed: () {
-                            viewModel.cargarCharolas(reset: true);
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (_) => ChangeNotifierProvider.value(
-                                      value: viewModel,
-                                      child: SidebarView(
-                                        onLogout: () {
-                                          // Aquí pon la lógica para cerrar sesión
-                                          Navigator.popUntil(
-                                            context,
-                                            (route) => route.isFirst,
-                                          );
-                                        },
-                                        initialIndex:
-                                            0, // 0 es la pestaña de Charolas
-                                      ),
-                                    ),
-                              ),
-                            );
-                          },
-                          iconSize: 55,
                         ),
                       ),
-                    ),
                     const SizedBox(height: 20),
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1200),

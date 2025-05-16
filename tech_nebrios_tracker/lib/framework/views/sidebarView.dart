@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tech_nebrios_tracker/framework/views/charolasDashboardView.dart';
 import 'package:tech_nebrios_tracker/framework/views/reporteView.dart';
 import 'package:tech_nebrios_tracker/framework/views/alimentacionView.dart';
+import './detalleCharolaView.dart';
 
 class SidebarView extends StatefulWidget {
   final VoidCallback onLogout;
@@ -16,19 +17,42 @@ class SidebarView extends StatefulWidget {
 class _SidebarViewState extends State<SidebarView> {
   int _currentIndex = 0;
 
+  Widget? _detalleCharolaActual;
+
+  void _mostrarDetalleCharola(int id) {
+    setState(() {
+      _detalleCharolaActual = PantallaCharola(
+        charolaId: id,
+        onRegresar: _cerrarDetalleCharola,
+      );
+    });
+  }
+
+  void _cerrarDetalleCharola() {
+    setState(() {
+      _detalleCharolaActual = null;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
   }
 
-  final List<Widget> _views = [
-    const VistaCharolas(),
-    const Placeholder(),
-    const Placeholder(),
-    const AlimentacionScreen(),
-    const VistaTablaCharolas(),
-  ];
+  List<Widget> get _views {
+    if (_detalleCharolaActual != null) {
+      return [_detalleCharolaActual!];
+    }
+
+    return [
+      VistaCharolas(onVerDetalle: _mostrarDetalleCharola),
+      const Placeholder(),
+      const Placeholder(),
+      const AlimentacionScreen(),
+      const VistaTablaCharolas(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

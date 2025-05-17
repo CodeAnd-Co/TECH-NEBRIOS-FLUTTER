@@ -189,14 +189,12 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                                       reset: true,
                                                     );
                                                     widget.onRegresar(); // <- Vuelve al dashboard limpiamente
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                      const SnackBar(content: Text('Charola eliminada con éxito')),
-                                                    );
                                                     Navigator.of(context).pop();
                                                     ScaffoldMessenger.of(
                                                       context,
                                                     ).showSnackBar(
                                                       const SnackBar(
+                                                        backgroundColor:Colors.green,
                                                         content: Text(
                                                           'Charola eliminada con éxito',
                                                         ),

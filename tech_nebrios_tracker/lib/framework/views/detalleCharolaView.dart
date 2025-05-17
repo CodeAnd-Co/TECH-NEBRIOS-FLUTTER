@@ -10,6 +10,7 @@ import '../../framework/viewmodels/historialCharolaViewModel.dart';
 import '../../data/repositories/historialCharolaRepository.dart';
 import 'components/atoms/texto.dart';
 import 'components/organisms/pop_up.dart';
+import '../viewmodels/alimentacionViewModel.dart';
 
 /// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
@@ -294,7 +295,25 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                         _crearBotonIcono(
                                           icono: Icons.bug_report,
                                           texto: 'Alimentar',
-                                          alPresionar: () {},
+                                          alPresionar: () async {
+                                            final alimentacionVM = context.read<ComidaCharolaViewModel>();
+    await alimentacionVM.registrarAlimentacion(
+      charolaId: 2,
+      comidaId: 2,
+      cantidadOtorgada: 3,
+      fechaOtorgada: DateTime.now().toIso8601String(),
+    );
+
+    if (alimentacionVM.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${alimentacionVM.error}')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Alimentación registrada con éxito')),
+      );
+    }
+  },
                                         ),
                                         _crearBotonIcono(
                                           icono: Icons.water_drop,

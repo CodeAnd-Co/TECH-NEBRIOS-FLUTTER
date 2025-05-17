@@ -1,13 +1,15 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema
 //RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
+//RF26: Registrar la alimentación de la charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF26
 
 import 'package:flutter/foundation.dart';
+import 'package:tech_nebrios_tracker/domain/alimentarCharolaUseCase.dart';
 import '../../data/models/alimentacionModel.dart';
 import '../../data/repositories/alimentacionRepository.dart';
 import '../../domain/editarAlimentacionUseCase.dart';
 import '../../domain/eliminarAlimentacionUseCase.dart';
 import '../../domain/registrarAlimentacionUseCase.dart';
-
+import '../../data/services/alimentacionAPIService.dart';
 
 
 /// ViewModel que controla el estado y la lógica de la pantalla
@@ -190,5 +192,46 @@ class AlimentacionViewModel extends ChangeNotifier {
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
+  }
+}
+
+class ComidaCharolaViewModel extends ChangeNotifier {
+  final AlimentarCharolaUseCase useCase;
+
+  bool isLoading = false;
+  String? error;
+
+  ComidaCharolaViewModel() 
+      : useCase = AlimentarCharolaUseCase(
+          ComidaCharolaRepositoryImpl(
+            ComidaCharolaAPIService(),
+          ),
+        );
+
+  Future<void> registrarAlimentacion({
+    required int charolaId,
+    required int comidaId,
+    required int cantidadOtorgada,
+    required String fechaOtorgada,
+  }) async {
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    final comidaCharola = ComidaCharola(
+      charolaId: charolaId,
+      comidaId: comidaId,
+      cantidadOtorgada: cantidadOtorgada,
+      fechaOtorgada: fechaOtorgada,
+    );
+
+    try {
+      await useCase(comidaCharola);
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

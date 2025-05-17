@@ -1,7 +1,9 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
 import 'package:flutter/material.dart';
 import '../../data/models/alimentacionModel.dart';
+import '../../data/models/hidratacionModel.dart';
 import '../viewmodels/alimentacionViewModel.dart';
+import '../viewmodels/hidratacionViewModel.dart';
 
 /// Pantalla que permite visualizar y gestionar alimentos e hidratación.
 ///
@@ -21,7 +23,8 @@ class AlimentacionScreen extends StatefulWidget {
 /// controladores, eventos de scroll y renderizado dinámico.
 class _AlimentacionScreenState extends State<AlimentacionScreen> {
   /// ViewModel que contiene la lógica de negocios para alimentos.
-  final AlimentacionViewModel vm = AlimentacionViewModel();
+  final AlimentacionViewModel vmAlimentacion = AlimentacionViewModel();
+  final HidratacionViewModel vmHidratacion = HidratacionViewModel();
 
   /// Controlador para manejar el scroll infinito de la lista.
   final ScrollController _scrollController = ScrollController();
@@ -31,18 +34,28 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     super.initState();
 
     // Escucha cambios del ViewModel para actualizar la UI.
-    vm.addListener(() => setState(() {}));
+    vmAlimentacion.addListener(() => setState(() {}));
+    vmHidratacion.addListener(() => setState(() {}));    
 
     // Carga inicial de alimentos
-    vm.cargarAlimentos();
+    vmAlimentacion.cargarAlimentos();
+    vmHidratacion.cargarHidratacion();
+
 
     // Detecta cuando el usuario llega al final del scroll
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent - 200 &&
-          vm.hasMore &&
-          !vm.isLoading) {
-        vm.cargarMas();
+      final pixels = _scrollController.position.pixels;
+      final max    = _scrollController.position.maxScrollExtent - 200;
+
+      if (pixels >= max) {
+        // 1) Carga más alimentos si hace falta
+        if (vmAlimentacion.hasMore && !vmAlimentacion.isLoading) {
+          vmAlimentacion.cargarMas();
+        }
+        // 2) Carga más hidratacion si hace falta
+        if (vmHidratacion.hasMore && !vmHidratacion.isLoading) {
+          vmHidratacion.cargarMas();
+        }
       }
     });
   }
@@ -50,7 +63,8 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
-    vm.removeListener(() {});
+    vmAlimentacion.removeListener(() {});
+    vmHidratacion.removeListener(() {});
     super.dispose();
   }
 
@@ -125,14 +139,14 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
         // Lista dinámica con scroll infinito
         Expanded(
           child:
-              vm.alimentos.isEmpty && vm.isLoading
+              vmAlimentacion.alimentos.isEmpty && vmAlimentacion.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
                     controller: _scrollController,
-                    itemCount: vm.alimentos.length + (vm.hasMore ? 1 : 0),
+                    itemCount: vmAlimentacion.alimentos.length + (vmAlimentacion.hasMore ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (index < vm.alimentos.length) {
-                        return _buildRowAlimento(vm.alimentos[index], index);
+                      if (index < vmAlimentacion.alimentos.length) {
+                        return _buildRowAlimento(vmAlimentacion.alimentos[index], index);
                       }
                       return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8),
@@ -146,8 +160,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
   }
 
   /// Construye la columna de hidratación (datos simulados).
-  Widget _buildColumnSectionHydratacion() {
-    const hidrataciones = ['ejemplo', 'ejemplo', 'ejemplo', 'ejemplo'];
+    Widget _buildColumnSectionHydratacion() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -161,34 +174,39 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Padding(padding: const EdgeInsets.only(top: 8, bottom: 8),
+              child: 
+                Text(
                 'Hidratación',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              IconButton(icon: const Icon(Icons.add), onPressed: () {}),
+              )
+              // IconButton(
+              //   icon: const Icon(Icons.add),
+              //   onPressed: _onAgregarHidratacion,
+              // ),
             ],
           ),
         ),
-        // Lista estática
-        ...hidrataciones.asMap().entries.map((entry) {
-          final text = entry.value;
-          final bg = entry.key.isEven ? Colors.white : Colors.grey.shade200;
-          return Container(
-            color: bg,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            height: 48,
-            child: Row(
-              children: [
-                Expanded(child: Text(text)),
-                IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          );
-        }).toList(),
+        // Lista dinámica con scroll infinito
+        Expanded(
+          child:
+              vmHidratacion.listaHidratacion.isEmpty && vmHidratacion.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                    controller: _scrollController,
+                    itemCount: vmHidratacion.listaHidratacion.length + (vmHidratacion.hasMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index < vmHidratacion.listaHidratacion.length) {
+                        return _buildRowHidratacion(vmHidratacion.listaHidratacion[index], index);
+                      }
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    },
+                  ),
+        ),
       ],
     );
   }
@@ -212,6 +230,25 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       ),
     );
   }
+
+   Widget _buildRowHidratacion(Hidratacion hidratacion, int index) {
+  final bg = index.isEven ? Colors.white : Colors.grey.shade200;
+  return Container(
+    color: bg,
+    padding: const EdgeInsets.symmetric(horizontal: 8),
+    height: 48,
+    child: Row(
+      children: [
+        Expanded(child: Text(hidratacion.nombreHidratacion)),
+        // placeholder para el espacio del icono “editar”
+        const SizedBox(width: 48),
+        // placeholder para el espacio del icono “borrar”
+        const SizedBox(width: 48),
+      ],
+    ),
+  );
+}
+
 
   /// Muestra un formulario emergente para registrar un nuevo alimento.
   void _onAgregarAlimento() {
@@ -260,7 +297,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       final nombre = nombreController.text.trim();
                       final descripcion = descripcionController.text.trim();
 
-                      final resultado = await vm.registrarAlimento(
+                      final resultado = await vmAlimentacion.registrarAlimento(
                         nombre,
                         descripcion,
                       );
@@ -268,7 +305,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
                       if (resultado == null) {
                         Navigator.of(dialogContext).pop();
-                        await vm.cargarAlimentos();
+                        await vmAlimentacion.cargarAlimentos();
                       } else {
                         ScaffoldMessenger.of(
                           dialogContext,
@@ -347,7 +384,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () async {
-                  final resultado = await vm.editarAlimento(
+                  final resultado = await vmAlimentacion.editarAlimento(
                     Alimento(
                       idAlimento: alimento.idAlimento,
                       nombreAlimento: nombreController.text.trim(),
@@ -393,7 +430,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               foregroundColor: Colors.white,
             ),
             onPressed: () async {
-              await vm.eliminarAlimento(idAlimento);
+              await vmAlimentacion.eliminarAlimento(idAlimento);
               Navigator.of(dialogContext).pop();
               ScaffoldMessenger.of(dialogContext).showSnackBar(
                 const SnackBar(content: Text('Alimento eliminado exitosamente')),

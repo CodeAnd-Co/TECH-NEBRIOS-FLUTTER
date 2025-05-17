@@ -260,7 +260,10 @@ class VistaCharolas extends StatelessWidget {
                                       "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
                                   nombreCharola: charola.nombreCharola,
                                   color: obtenerColorPorNombre(charola.nombreCharola),
-                                  onTap: () => onVerDetalle(charola.charolaId),
+                                  onTap: () async { 
+                                    await context.read<CharolaViewModel>().cargarCharola(charola.charolaId);
+                                    onVerDetalle(charola.charolaId);
+                                  },
                                 ),
                               );
                             },

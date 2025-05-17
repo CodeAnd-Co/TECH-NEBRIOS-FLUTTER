@@ -302,6 +302,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                                     context,
                                                   ).showSnackBar(
                                                     const SnackBar(
+                                                      backgroundColor:Colors.green,
                                                       content: Text(
                                                         'Charola eliminada con éxito',
                                                       ),
@@ -427,11 +428,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                           );
                                         },
                                       ),
-                                      _crearBotonIcono(
-                                        icono: Icons.water_drop,
-                                        texto: 'Hidratar',
-                                        alPresionar: () {}, // TODO MBI
-                                      ),
+                                  //    _crearBotonIcono(
+                                  //      icono: Icons.water_drop,
+                                  //      texto: 'Hidratar',
+                                  //      alPresionar: () {}, // TODO MBI
+                                  //    ),
                                       _crearBotonIcono(
                                         icono: Icons.device_hub,
                                         texto: 'Ancestros',

@@ -91,6 +91,92 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     );
   }
 
+  void mostrarDialogoAlimentar(BuildContext context, int charolaId) {
+    final TextEditingController cantidadController = TextEditingController();
+    int comidaIdSeleccionada = 1;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Registrar alimentación'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<int>(
+                value: comidaIdSeleccionada,
+                items: const [
+                  DropdownMenuItem(value: 1, child: Text('Harina')),
+                  DropdownMenuItem(value: 2, child: Text('Avena')),
+                  DropdownMenuItem(value: 3, child: Text('Fruta')),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    comidaIdSeleccionada = value;
+                  }
+                },
+                decoration: const InputDecoration(labelText: 'Tipo de comida'),
+              ),
+              TextField(
+                controller: cantidadController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Cantidad otorgada (g)',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final cantidad = int.tryParse(cantidadController.text);
+                if (cantidad == null || cantidad <= 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Ingresa una cantidad válida'),
+                    ),
+                  );
+                  return;
+                }
+
+                final comidaCharolaVM = Provider.of<ComidaCharolaViewModel>(
+                  context,
+                  listen: false,
+                );
+
+                await comidaCharolaVM.registrarAlimentacion(
+                  charolaId: charolaId,
+                  comidaId: comidaIdSeleccionada,
+                  cantidadOtorgada: cantidad,
+                  fechaOtorgada: DateTime.now().toIso8601String(),
+                );
+
+                Navigator.of(context).pop(); // Cierra el diálogo
+
+                if (comidaCharolaVM.error != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: ${comidaCharolaVM.error}')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Alimentación registrada con éxito'),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Alimentar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CharolaViewModel>(
@@ -334,42 +420,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                       _crearBotonIcono(
                                         icono: Icons.bug_report,
                                         texto: 'Alimentar',
-                                        alPresionar: () async {
-                                          final comidaCharolaVM =
-                                              context
-                                                  .read<
-                                                    ComidaCharolaViewModel
-                                                  >();
-                                          await comidaCharolaVM
-                                              .registrarAlimentacion(
-                                                charolaId: viewModel.charola!.charolaId,
-                                                comidaId: 2, // TODO
-                                                cantidadOtorgada: 3, // TODO
-                                                fechaOtorgada:
-                                                    DateTime.now()
-                                                        .toIso8601String(),
-                                              );
-                                          if (comidaCharolaVM.error != null) {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Error: ${comidaCharolaVM.error}',
-                                                ),
-                                              ),
-                                            );
-                                          } else {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Alimentación registrada con éxito',
-                                                ),
-                                              ),
-                                            );
-                                          }
+                                        alPresionar: () {
+                                          mostrarDialogoAlimentar(
+                                            context,
+                                            viewModel.charola!.charolaId,
+                                          );
                                         },
                                       ),
                                       _crearBotonIcono(

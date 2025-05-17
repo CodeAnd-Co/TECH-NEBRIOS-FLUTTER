@@ -44,11 +44,18 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
     // Detecta cuando el usuario llega al final del scroll
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent - 200 &&
-          vmAlimentacion.hasMore &&
-          !vmAlimentacion.isLoading) {
-        vmAlimentacion.cargarMas();
+      final pixels = _scrollController.position.pixels;
+      final max    = _scrollController.position.maxScrollExtent - 200;
+
+      if (pixels >= max) {
+        // 1) Carga más alimentos si hace falta
+        if (vmAlimentacion.hasMore && !vmAlimentacion.isLoading) {
+          vmAlimentacion.cargarMas();
+        }
+        // 2) Carga más hidratacion si hace falta
+        if (vmHidratacion.hasMore && !vmHidratacion.isLoading) {
+          vmHidratacion.cargarMas();
+        }
       }
     });
   }
@@ -57,6 +64,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
   void dispose() {
     _scrollController.dispose();
     vmAlimentacion.removeListener(() {});
+    vmHidratacion.removeListener(() {});
     super.dispose();
   }
 

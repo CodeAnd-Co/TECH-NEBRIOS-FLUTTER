@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/tamizadoIndividualModel.dart';
 import '../models/tamizadoMultipleModel.dart';
+import '../models/tamizadoRespuestaModel.dart';
 import '../services/tamizadoApiService.dart';
 
-class TamizarCharolaRepository {
+class TamizarCharolaRepository implements TamizadoApiService {
 
-  Future<void> tamizarCharola(TamizadoIndividual tamizadoIndividual) async {
+  @override
+  Future<TamizadoRespuesta?> tamizarCharolaIndividual(TamizadoIndividual tamizadoIndividual) async {
     final url = Uri.parse(
       'http://localhost:3000/charolaTamizado/tamizadoIndividual', // Cambia por tu endpoint
     );
@@ -17,18 +19,12 @@ class TamizarCharolaRepository {
       body: jsonEncode(tamizadoIndividual.toJson()),
     );
 
-    if (respuesta.statusCode == 200) {
-      print('Charola tamizada correctamente');
-    } else if(respuesta.statusCode == 400) {
-      print('Error al tamizar la charola: ${respuesta.statusCode}');
-    } else if (respuesta.statusCode == 500) {
-      print('Error interno del servidor: ${respuesta.statusCode}');
-    } else {
-      print('Error desconocido: ${respuesta.statusCode}');
-    }
+    final decodificado = json.decode(respuesta.body);
+    return TamizadoRespuesta.fromJson(decodificado);
   }
 
-  Future<void> tamizarCharolasMultiples(TamizadoMultiple tamizadoMultiple) async {
+  @override
+  Future<TamizadoRespuesta?> tamizarCharolasMultiples(TamizadoMultiple tamizadoMultiple) async {
     final url = Uri.parse(
       'http://localhost:3000/charolaTamizado/tamizadoMultiple', // Cambia por tu endpoint
     );
@@ -39,17 +35,11 @@ class TamizarCharolaRepository {
       body: jsonEncode(tamizadoMultiple.toJson()),
     );
 
-    if (respuesta.statusCode == 200) {
-      print('Charolas tamizadas correctamente');
-    } else if(respuesta.statusCode == 400) {
-      print('Error al tamizar las charolas: ${respuesta.statusCode}');
-    } else if (respuesta.statusCode == 500) {
-      print('Error interno del servidor: ${respuesta.statusCode}');
-    } else {
-      print('Error desconocido: ${respuesta.statusCode}');
-    }
+    final decodificado = json.decode(respuesta.body);
+    return TamizadoRespuesta.fromJson(decodificado);
   }
 
+  @override
   Future<List<String>> getAlimentos() async {
     final url = Uri.parse(
       'http://localhost:3000/alimentacion', // Cambia por tu endpoint
@@ -74,6 +64,7 @@ class TamizarCharolaRepository {
   }
 
   // Metodo para obtener datos de hidratacion desde el backend
+  @override
   Future<List<String>> getHidratacion() async {
     final url = Uri.parse(
       'http://localhost:3000/hidratacion/', // Cambia por tu endpoint

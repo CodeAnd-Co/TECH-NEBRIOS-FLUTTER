@@ -9,6 +9,7 @@ import '../views/tamizarCharolaIndividualView.dart';
 import '../views/tamizarMultiplesCharolasView.dart';
 import '../../data/models/tamizadoIndividualModel.dart';
 import '../../data/models/tamizadoMultipleModel.dart';
+import '../../data/models/tamizadoRespuestaModel.dart';
 
 /// ViewModel encargado de gestionar los datos de las charolas que se van a tamizar.
 /// Implementa la vista previa de selección de charolas.
@@ -87,7 +88,15 @@ class TamizadoViewModel extends ChangeNotifier {
         fecha: fecha,
       );
 
-      await tamizarCharolaUseCases.tamizarCharola(tamizadoIndividual);
+      TamizadoRespuesta respuesta = await tamizarCharolaUseCases.tamizarCharola(tamizadoIndividual);
+
+      if (respuesta.exito == true) {
+        _hasError = false;
+        _errorMessage = 'Tamizado exitoso';
+      } else {
+        _hasError = true;
+        _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+      }
 
       cargando = false;
       notifyListeners();
@@ -125,7 +134,15 @@ class TamizadoViewModel extends ChangeNotifier {
         fecha: fecha,
       );
 
-      await tamizarCharolaUseCases.tamizarCharolasMultiples(tamizadoMultiple);
+      TamizadoRespuesta respuesta = await tamizarCharolaUseCases.tamizarCharolasMultiples(tamizadoMultiple);
+
+      if (respuesta.exito == true) {
+        _hasError = false;
+        _errorMessage = 'Tamizado exitoso';
+      } else {
+        _hasError = true;
+        _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+      }
 
       cargando = false;
       notifyListeners();

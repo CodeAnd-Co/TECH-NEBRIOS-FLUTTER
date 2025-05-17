@@ -294,11 +294,13 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                           texto: 'Alimentar',
                                           alPresionar: () {},
                                         ),
+                                        /*
                                         _crearBotonIcono(
                                           icono: Icons.water_drop,
                                           texto: 'Hidratar',
                                           alPresionar: () {},
                                         ),
+                                        */
                                         _crearBotonIcono(
                                           icono: Icons.device_hub,
                                           texto: 'Ancestros',

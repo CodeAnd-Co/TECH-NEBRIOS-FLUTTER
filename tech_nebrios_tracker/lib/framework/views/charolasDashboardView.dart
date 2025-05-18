@@ -137,16 +137,22 @@ class VistaCharolas extends StatelessWidget {
                         children: [
                           // Campo de búsqueda expandido
                           Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Buscar',
-                                prefixIcon: const Icon(Icons.search),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                            child: Visibility(
+                              visible: false,
+                              maintainSize: true,
+                              maintainAnimation: true,
+                              maintainState: true,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Buscar',
+                                  prefixIcon: const Icon(Icons.search),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                 ),
                               ),
                             ),

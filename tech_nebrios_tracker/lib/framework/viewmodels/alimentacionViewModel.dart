@@ -136,7 +136,7 @@ class AlimentacionViewModel extends ChangeNotifier {
   required String fechaOtorgada,
 }) async {
   _setLoading(true);
-  _error = null; // ✅ Asegúrate de limpiar el error antes de empezar
+  _error = null;
   try {
     final comidaCharola = ComidaCharola(
       charolaId: charolaId,
@@ -146,7 +146,7 @@ class AlimentacionViewModel extends ChangeNotifier {
     );
     await _alimentarCasoUso(comidaCharola);
   } catch (e) {
-    _error = 'Error al registrar alimentación: ${e.toString()}'; // ✅ Más útil
+    _error = 'Error al registrar alimentación: ${e.toString()}';
   } finally {
     _setLoading(false);
   }

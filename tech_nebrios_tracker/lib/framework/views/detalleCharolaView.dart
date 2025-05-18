@@ -93,7 +93,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
   }
 
   void mostrarDialogoAlimentar(BuildContext context, int charolaId) async {
-    final comidaCharolaVM = Provider.of<ComidaCharolaViewModel>(
+    final comidaCharolaVM = Provider.of<AlimentacionViewModel>(
       context,
       listen: false,
     );
@@ -183,7 +183,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                 }
               },
               child: Texto.texto(
-                texto: 'Alimnetar',
+                texto: 'Alimentar',
                 color: const Color(0xFFE2387B),
                 bold: true,
               ),

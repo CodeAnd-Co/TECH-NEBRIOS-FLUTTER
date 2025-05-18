@@ -105,25 +105,20 @@ class AlimentacionRepository extends AlimentacionService {
       throw Exception('❌ Error desconocido (${response.statusCode}).');
     }
   }
-}
-
-abstract class ComidaCharolaRepository {
-  Future<bool> registrarAlimentacion(ComidaCharola comidaCharola);
-  Future<List<Alimento>> obtenerAlimentos();
-}
-
-class ComidaCharolaRepositoryImpl implements ComidaCharolaRepository {
-  final ComidaCharolaAPIService apiService;
-
-  ComidaCharolaRepositoryImpl(this.apiService);
 
   @override
-  Future<bool> registrarAlimentacion(ComidaCharola comidaCharola) {
-    return apiService.registrarAlimentacion(comidaCharola);
-  }
+  Future<bool> registrarAlimentacion(ComidaCharola comidaCharola) async {
+    final url = Uri.parse('${APIRutas.CHAROLA}/alimentar');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(comidaCharola.toJson()),
+    );
 
-  @override
-  Future<List<Alimento>> obtenerAlimentos() {
-    return apiService.obtenerAlimentos();
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('Error al registrar alimentación: ${response.body}');
+    }
   }
 }

@@ -2,8 +2,6 @@
 //RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
 //RF26: Registrar la alimentación de la charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF26
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import '../models/alimentacionModel.dart';
 
 /// Interfaz que define las operaciones de alimentación.
@@ -35,35 +33,7 @@ abstract class AlimentacionService {
   ///
   /// Lanza excepciones si el backend responde con error (400, 500, etc.).
   Future<void> postDatosComida(String nombre, String descripcion);
-}
 
-class ComidaCharolaAPIService {
-  final String baseUrl = 'http://localhost:3000';
-
-  Future<bool> registrarAlimentacion(ComidaCharola comidaCharola) async {
-    final url = Uri.parse('$baseUrl/charola/alimentar');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(comidaCharola.toJson()),
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception('Error al registrar alimentación: ${response.body}');
-    }
-  }
-  
-  Future<List<Alimento>> obtenerAlimentos() async {
-    final url = Uri.parse('$baseUrl/alimentacion');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonList = jsonDecode(response.body);
-      return jsonList.map((json) => Alimento.fromJson(json)).toList();
-    } else {
-      throw Exception('Error al obtener alimentos: ${response.body}');
-    }
-  }
+  /// Registra una alimentación en la charola.
+  Future<bool> registrarAlimentacion(ComidaCharola comidaCharola);
 }

@@ -1,13 +1,16 @@
-//RF26: Registrar la alimentación de la charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF26
 import '../data/models/alimentacionModel.dart';
 import '../data/repositories/alimentacionRepository.dart';
 
 class AlimentarCharolaUseCase {
-  final ComidaCharolaRepository repository;
+  final AlimentacionRepository repositorio;
 
-  AlimentarCharolaUseCase(this.repository);
+  AlimentarCharolaUseCase({required this.repositorio});
 
   Future<bool> call(ComidaCharola comidaCharola) {
-    return repository.registrarAlimentacion(comidaCharola);
+    return repositorio.registrarAlimentacion(comidaCharola);
+  }
+
+  Future<List<Alimento>> obtenerAlimentos() {
+    return repositorio.obtenerAlimentos();
   }
 }

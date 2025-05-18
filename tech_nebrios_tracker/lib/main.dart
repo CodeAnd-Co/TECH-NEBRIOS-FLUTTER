@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
 import 'dart:io';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import './framework/viewmodels/historialActividadViewmodel.dart';
-import './framework/viewmodels/reporteViewModel.dart';
+import 'framework/viewmodels/historialActividadViewmodel.dart';
+import 'framework/viewmodels/reporteViewModel.dart';
 import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewModel.dart';
@@ -29,7 +29,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => CharolaViewModel()),
         ChangeNotifierProvider(create: (_) => ReporteViewModel()),
         ChangeNotifierProvider(create: (_) => HistorialActividadViewmodel()),
-        ChangeNotifierProvider(create: (_) => ComidaCharolaViewModel()),
+        ChangeNotifierProvider(create: (_) => AlimentacionViewModel()),
       ],
       child: const MyApp(),
     ),

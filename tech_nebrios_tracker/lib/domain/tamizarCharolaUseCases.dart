@@ -4,8 +4,8 @@ import '../data/models/tamizadoMultipleModel.dart';
 import '../data/models/tamizadoRespuestaModel.dart';
 
 abstract class TamizarCharolaUseCases {
-  Future<TamizadoRespuesta> tamizarCharola(TamizadoIndividual tamizadoIndividual);
-  Future<TamizadoRespuesta> tamizarCharolasMultiples(TamizadoMultiple tamizadoMultiple);
+  Future<TamizadoRespuesta?> tamizarCharola(TamizadoIndividual tamizadoIndividual);
+  Future<TamizadoRespuesta?> tamizarCharolasMultiples(TamizadoMultiple tamizadoMultiple);
   Future<List<String>> cargarAlimentos();
   Future<List<String>> cargarHidratacion();
 }

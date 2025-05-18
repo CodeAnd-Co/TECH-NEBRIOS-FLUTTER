@@ -1,10 +1,9 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
 
-import './consultar_charola_view.dart'; // Ajusta el path si es necesario
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/menuCharolasViewmodel.dart';
-import '../../data/models/menuCharolasModel.dart';
+import '../viewmodels/charolaViewModel.dart';
+import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewmodel.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
@@ -103,7 +102,7 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(
-        child: Consumer2<CharolaVistaModelo, TamizadoViewModel>(
+        child: Consumer2<CharolaViewModel, TamizadoViewModel>(
           builder: (context, vm, seleccionVM, _) {
             if (seleccionVM.hasError  && seleccionVM.errorMessage.isNotEmpty) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -186,11 +185,11 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                 const SizedBox(height: 10),
 
                 /// Carga inicial
-                if (vm.cargando && vm.charolas.isEmpty)
+                if (vm.cargandoLista && vm.charolas.isEmpty)
                   const Expanded(child: Center(child: CircularProgressIndicator()))
 
                 /// Mensaje cuando no hay resultados
-                else if (!vm.cargando && vm.charolas.isEmpty)
+                else if (!vm.cargandoLista && vm.charolas.isEmpty)
                   const Expanded(
                     child: Center(
                       child: Text(
@@ -214,7 +213,7 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                           childAspectRatio: 1.3,
                         ),
                         itemBuilder: (context, index) {
-                          final Charola charola = vm.charolas[index];
+                          final modelo.CharolaTarjeta charola = vm.charolas[index];
                           return LayoutBuilder(
                             builder: (context, constraints) {
                               return AspectRatio(

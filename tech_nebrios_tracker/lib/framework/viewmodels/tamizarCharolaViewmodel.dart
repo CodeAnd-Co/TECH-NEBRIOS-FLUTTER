@@ -2,11 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import '../../data/models/menuCharolasModel.dart';
+import '../../data/models/charolaModel.dart' as modelo;
 import '../../data/repositories/tamizarCharolaRepository.dart';
 import '../../domain/tamizarCharolaUseCases.dart';
 import '../views/tamizarCharolaIndividualView.dart';
 import '../views/tamizarMultiplesCharolasView.dart';
+import '../views/sidebarView.dart';
 import '../../data/models/tamizadoIndividualModel.dart';
 import '../../data/models/tamizadoMultipleModel.dart';
 import '../../data/models/tamizadoRespuestaModel.dart';
@@ -33,7 +34,7 @@ class TamizadoViewModel extends ChangeNotifier {
   final hidratacionCantidadController = TextEditingController();
 
   /// Lista de charolas seleccionadas por el usuario.
-  List<Charola> charolasParaTamizar = [];
+  List<modelo.CharolaTarjeta> charolasParaTamizar = [];
 
   /// Lista de nombres de charolas seleccionadas por el usuario.
   List<String> nombresCharolas = [];
@@ -56,9 +57,10 @@ class TamizadoViewModel extends ChangeNotifier {
   TamizadoViewModel() {
     cargarAlimentos();
     cargarHidratacion();
+    limpiarInformacion();
   }
 
-  Future<void> tamizarCharolaIndividual() async {
+  Future<bool> tamizarCharolaIndividual() async {
     try {
       cargando = true;
       _hasError = false;
@@ -88,27 +90,32 @@ class TamizadoViewModel extends ChangeNotifier {
         fecha: fecha,
       );
 
-      TamizadoRespuesta respuesta = await tamizarCharolaUseCases.tamizarCharola(tamizadoIndividual);
+      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases.tamizarCharola(tamizadoIndividual);
 
-      if (respuesta.exito == true) {
+      if (respuesta?.exito == true) {
         _hasError = false;
-        _errorMessage = 'Tamizado exitoso';
+        cargando = false;
+        charolasParaTamizar.clear();
+        notifyListeners();
+        return true;
       } else {
         _hasError = true;
         _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+        cargando = false;
+        notifyListeners();
+        return false;
       }
 
-      cargando = false;
-      notifyListeners();
     } catch (e) {
       _hasError = true;
       _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
       cargando = false;
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> tamizarCharolaMultiple() async {
+  Future<bool> tamizarCharolaMultiple() async {
     try {
       cargando = true;
       _hasError = false;
@@ -134,23 +141,29 @@ class TamizadoViewModel extends ChangeNotifier {
         fecha: fecha,
       );
 
-      TamizadoRespuesta respuesta = await tamizarCharolaUseCases.tamizarCharolasMultiples(tamizadoMultiple);
+      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases.tamizarCharolasMultiples(tamizadoMultiple);
 
-      if (respuesta.exito == true) {
+      if (respuesta?.exito == true) {
         _hasError = false;
-        _errorMessage = 'Tamizado exitoso';
+        cargando = false;
+        charolasParaTamizar.clear();
+        notifyListeners();
+        return true;
       } else {
         _hasError = true;
-        _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+        _errorMessage = 'Error al tamizar las charolas. Inténtalo de nuevo más tarde.';
+        cargando = false;
+        notifyListeners();
+        return false;
+
       }
 
-      cargando = false;
-      notifyListeners();
     } catch (e) {
       _hasError = true;
-      _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+      _errorMessage = 'Error al tamizar las charolas. Inténtalo de nuevo más tarde.';
       cargando = false;
       notifyListeners();
+      return false;
     }
   }
 
@@ -185,20 +198,20 @@ class TamizadoViewModel extends ChangeNotifier {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => VistaTamizadoIndividual(),
+          builder: (_) => SidebarView(initialIndex: 5),
         ),
       );
     }else{
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => VistaTamizadoMultiple(),
+          builder: (_) => SidebarView(initialIndex: 5),
         ),
       );
     }
   }
 
-  void agregarCharola(Charola charola) {
+  void agregarCharola(modelo.CharolaTarjeta charola) {
     if (charolasParaTamizar.length < 5) {
       charolasParaTamizar.add(charola);
       notifyListeners();
@@ -210,7 +223,7 @@ class TamizadoViewModel extends ChangeNotifier {
     }
   }
 
-  void quitarCharola(Charola charola) {
+  void quitarCharola(modelo.CharolaTarjeta charola) {
     charolasParaTamizar.remove(charola);
     _hasError = false;
     notifyListeners();
@@ -298,6 +311,19 @@ class TamizadoViewModel extends ChangeNotifier {
 
   void conseguirNombresCharolas() {
     nombresCharolas = charolasParaTamizar.map((charola) => charola.nombreCharola).toList();
+  }
+
+  void limpiarInformacion() {
+    frasController.clear();
+    pupaController.clear();
+    alimentoCantidadController.clear();
+    hidratacionCantidadController.clear();
+    seleccionAlimentacion = null;
+    seleccionHidratacion = null;
+    charolasParaTamizar.clear();
+    nombresCharolas.clear();
+    _hasError = false;
+    notifyListeners();
   }
 
 }

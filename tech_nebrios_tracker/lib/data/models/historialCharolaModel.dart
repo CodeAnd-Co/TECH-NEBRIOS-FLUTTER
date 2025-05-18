@@ -1,0 +1,52 @@
+//RF03: Consultar historial de ancestros de una charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF3
+
+class Ancestro {
+  final int charolaAncestro;
+  final String nombreCharola;
+
+  Ancestro({
+    required this.charolaAncestro,
+    required this.nombreCharola,
+  });
+
+  factory Ancestro.fromJson(Map<String, dynamic> json) {
+    return Ancestro(
+      charolaAncestro: json['charolaAncestro'] as int,
+      nombreCharola: json['nombreCharola'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'charolaAncestro': charolaAncestro,
+      'nombreCharola': nombreCharola,
+    };
+  }
+}
+
+
+class HistorialAncestros {
+  final DateTime fechaCreacion;
+  final List<Ancestro> ancestros;
+
+  HistorialAncestros({
+    required this.fechaCreacion,
+    required this.ancestros,
+  });
+
+  factory HistorialAncestros.fromJson(Map<String, dynamic> json) {
+    return HistorialAncestros(
+      fechaCreacion: DateTime.parse(json['fechaCreacion'] as String),
+      ancestros: (json['ancestros'] as List<dynamic>)
+          .map((e) => Ancestro.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'fechaCreacion': fechaCreacion.toIso8601String(),
+      'ancestros': ancestros.map((e) => e.toJson()).toList(),
+    };
+  }
+}

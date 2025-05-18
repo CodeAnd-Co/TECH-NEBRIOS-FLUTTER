@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/menuCharolasViewmodel.dart';
-import '../../data/models/menuCharolasModel.dart';
+import 'package:tech_nebrios_tracker/framework/views/seleccionarTamizadoView.dart';
+import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewmodel.dart';
+import '../views/sidebarView.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
@@ -100,8 +101,8 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(
-        child: Consumer2<CharolaVistaModelo, TamizadoViewModel>(
-          builder: (context, vm, seleccionVM, _) {
+        child: Consumer<TamizadoViewModel>(
+          builder: (context, seleccionVM, _) {
             if (seleccionVM.hasError  && seleccionVM.errorMessage.isNotEmpty) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -138,8 +139,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                           // Botón responsivo
                           ElevatedButton.icon(
                             onPressed: () {
-                              // TODO: Define esta navegación o acción para registrar una nueva charola
-                              // Navigator.push(context, MaterialPageRoute(builder: (_) => PantallaRegistroCharola()));
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => SidebarView(initialIndex: 1)));
                             },
                             icon: Icon(Icons.arrow_back, size: iconSize.clamp(20, 30)),
                             label: Text(
@@ -191,7 +191,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                           childAspectRatio: 1.3,
                         ),
                         itemBuilder: (context, index) {
-                          final Charola charola = seleccionVM.charolasParaTamizar[index];
+                          final modelo.CharolaTarjeta charola = seleccionVM.charolasParaTamizar[index];
                           return LayoutBuilder(
                             builder: (context, constraints) {
                               return AspectRatio(
@@ -343,8 +343,17 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton.icon(
-                          onPressed: () {
-                            // Acción al finalizar
+                          onPressed: () async {
+                            bool exito = await seleccionVM.tamizarCharolaIndividual();
+
+                            if (exito){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SidebarView(mensajeExito: 'Tamizado exitoso'),
+                                ),
+                              );
+                            }
                           },
                           icon: Icon(Icons.done, size: 24), // Usa tamaño fijo o responsivo si deseas
                           label: Text(

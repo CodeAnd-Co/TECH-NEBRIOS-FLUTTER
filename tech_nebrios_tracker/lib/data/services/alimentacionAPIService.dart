@@ -54,4 +54,16 @@ class ComidaCharolaAPIService {
       throw Exception('Error al registrar alimentación: ${response.body}');
     }
   }
+  
+  Future<List<Alimento>> obtenerAlimentos() async {
+    final url = Uri.parse('$baseUrl/alimentacion');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => Alimento.fromJson(json)).toList();
+    } else {
+      throw Exception('Error al obtener alimentos: ${response.body}');
+    }
+  }
 }

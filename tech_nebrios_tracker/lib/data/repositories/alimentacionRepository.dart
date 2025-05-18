@@ -109,6 +109,7 @@ class AlimentacionRepository extends AlimentacionService {
 
 abstract class ComidaCharolaRepository {
   Future<bool> registrarAlimentacion(ComidaCharola comidaCharola);
+  Future<List<Alimento>> obtenerAlimentos();
 }
 
 class ComidaCharolaRepositoryImpl implements ComidaCharolaRepository {
@@ -120,5 +121,9 @@ class ComidaCharolaRepositoryImpl implements ComidaCharolaRepository {
   Future<bool> registrarAlimentacion(ComidaCharola comidaCharola) {
     return apiService.registrarAlimentacion(comidaCharola);
   }
-}
 
+  @override
+  Future<List<Alimento>> obtenerAlimentos() {
+    return apiService.obtenerAlimentos();
+  }
+}

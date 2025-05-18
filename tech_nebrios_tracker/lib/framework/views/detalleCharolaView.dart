@@ -91,91 +91,91 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     );
   }
 
-  void mostrarDialogoAlimentar(BuildContext context, int charolaId) {
-    final TextEditingController cantidadController = TextEditingController();
-    int comidaIdSeleccionada = 1;
+  void mostrarDialogoAlimentar(BuildContext context, int charolaId) async {
+  final comidaCharolaVM = Provider.of<ComidaCharolaViewModel>(
+    context,
+    listen: false,
+  );
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Registrar alimentación'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField<int>(
-                value: comidaIdSeleccionada,
-                items: const [
-                  DropdownMenuItem(value: 1, child: Text('Harina')),
-                  DropdownMenuItem(value: 2, child: Text('Avena')),
-                  DropdownMenuItem(value: 3, child: Text('Fruta')),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    comidaIdSeleccionada = value;
-                  }
-                },
-                decoration: const InputDecoration(labelText: 'Tipo de comida'),
-              ),
-              TextField(
-                controller: cantidadController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Cantidad otorgada (g)',
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final cantidad = int.tryParse(cantidadController.text);
-                if (cantidad == null || cantidad <= 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Ingresa una cantidad válida'),
-                    ),
-                  );
-                  return;
-                }
+  await comidaCharolaVM.cargarAlimentos();
 
-                final comidaCharolaVM = Provider.of<ComidaCharolaViewModel>(
-                  context,
-                  listen: false,
+  int? comidaIdSeleccionada;
+  final TextEditingController cantidadController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Registrar alimentación'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DropdownButtonFormField<int>(
+              value: comidaIdSeleccionada,
+              items: comidaCharolaVM.alimentos.map((alimento) {
+                return DropdownMenuItem<int>(
+                  value: alimento.idAlimento,
+                  child: Text(alimento.nombreAlimento),
                 );
-
-                await comidaCharolaVM.registrarAlimentacion(
-                  charolaId: charolaId,
-                  comidaId: comidaIdSeleccionada,
-                  cantidadOtorgada: cantidad,
-                  fechaOtorgada: DateTime.now().toIso8601String(),
-                );
-
-                Navigator.of(context).pop(); // Cierra el diálogo
-
-                if (comidaCharolaVM.error != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: ${comidaCharolaVM.error}')),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Alimentación registrada con éxito'),
-                    ),
-                  );
-                }
+              }).toList(),
+              onChanged: (value) {
+                comidaIdSeleccionada = value;
               },
-              child: const Text('Alimentar'),
+              decoration: const InputDecoration(labelText: 'Tipo de comida'),
+            ),
+            TextField(
+              controller: cantidadController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Cantidad otorgada (g)',
+              ),
             ),
           ],
-        );
-      },
-    );
-  }
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Texto.texto(texto: 'Cancelar', color: const Color(0xFFE2387B),bold: true,),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final cantidad = int.tryParse(cantidadController.text);
+              if (cantidad == null || cantidad <= 0 || comidaIdSeleccionada == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Ingresa todos los campos correctamente'),
+                  ),
+                );
+                return;
+              }
+
+              await comidaCharolaVM.registrarAlimentacion(
+                charolaId: charolaId,
+                comidaId: comidaIdSeleccionada!,
+                cantidadOtorgada: cantidad,
+                fechaOtorgada: DateTime.now().toIso8601String(),
+              );
+
+              Navigator.of(context).pop();
+
+              if (comidaCharolaVM.error != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: ${comidaCharolaVM.error}')),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Alimentación registrada con éxito')),
+                );
+              }
+            },
+            child: Texto.texto(texto: 'Alimnetar', color: const Color(0xFFE2387B), bold: true,),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {

@@ -234,4 +234,16 @@ class ComidaCharolaViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  List<Alimento> alimentos = [];
+
+  Future<void> cargarAlimentos() async {
+    try {
+      alimentos = await useCase.repository.obtenerAlimentos();
+      notifyListeners();
+    } catch (e) {
+      error = 'Error al cargar alimentos';
+      notifyListeners();
+    }
+  }
 }

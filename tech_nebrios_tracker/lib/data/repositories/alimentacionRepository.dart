@@ -1,5 +1,6 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
 //RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
+//RF26: Registrar la alimentación de la charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF26
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/alimentacionModel.dart';
@@ -102,6 +103,22 @@ class AlimentacionRepository extends AlimentacionService {
       throw Exception('❌ Error del servidor.');
     } else if (response.statusCode != 200) {
       throw Exception('❌ Error desconocido (${response.statusCode}).');
+    }
+  }
+
+  @override
+  Future<bool> registrarAlimentacion(ComidaCharola comidaCharola) async {
+    final url = Uri.parse('${APIRutas.CHAROLA}/alimentar');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(comidaCharola.toJson()),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('Error al registrar alimentación: ${response.body}');
     }
   }
 }

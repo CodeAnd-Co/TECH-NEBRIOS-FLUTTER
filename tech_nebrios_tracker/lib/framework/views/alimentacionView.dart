@@ -22,49 +22,64 @@ class AlimentacionScreen extends StatefulWidget {
 /// Maneja el estado interno de la vista, incluyendo
 /// controladores, eventos de scroll y renderizado dinámico.
 class _AlimentacionScreenState extends State<AlimentacionScreen> {
-  /// ViewModel que contiene la lógica de negocios para alimentos.
-  final AlimentacionViewModel vmAlimentacion = AlimentacionViewModel();
-  final HidratacionViewModel vmHidratacion = HidratacionViewModel();
+  final vmAlimentacion = AlimentacionViewModel();
+  final vmHidratacion = HidratacionViewModel();
 
-  /// Controlador para manejar el scroll infinito de la lista.
-  final ScrollController _scrollController = ScrollController();
+  final _alimScrollController = ScrollController();
+  final _hidrScrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    // Llamada única a setState cuando cambie cualquiera de los VMs
+    vmAlimentacion.addListener(_onVmChanged);
+    vmHidratacion.addListener(_onVmChanged);
 
-    // Escucha cambios del ViewModel para actualizar la UI.
-    vmAlimentacion.addListener(() => setState(() {}));
-    vmHidratacion.addListener(() => setState(() {}));    
-
-    // Carga inicial de alimentos
+    // Carga inicial
     vmAlimentacion.cargarAlimentos();
     vmHidratacion.cargarHidratacion();
 
+    // Scroll infinito por separado
+    _alimScrollController.addListener(_onScrollAlimentos);
+    _hidrScrollController.addListener(_onScrollHidratacion);
+  }
 
-    // Detecta cuando el usuario llega al final del scroll
-    _scrollController.addListener(() {
-      final pixels = _scrollController.position.pixels;
-      final max    = _scrollController.position.maxScrollExtent - 200;
+  void _onVmChanged() {
+    if (mounted) setState(() {});
+  }
 
-      if (pixels >= max) {
-        // 1) Carga más alimentos si hace falta
-        if (vmAlimentacion.hasMore && !vmAlimentacion.isLoading) {
-          vmAlimentacion.cargarMas();
-        }
-        // 2) Carga más hidratacion si hace falta
-        if (vmHidratacion.hasMore && !vmHidratacion.isLoading) {
-          vmHidratacion.cargarMas();
-        }
-      }
-    });
+  void _onScrollAlimentos() {
+    if (_alimScrollController.position.pixels >=
+            _alimScrollController.position.maxScrollExtent - 200 &&
+        vmAlimentacion.hasMore &&
+        !vmAlimentacion.isLoading) {
+      vmAlimentacion.cargarMas();
+    }
+  }
+
+  void _onScrollHidratacion() {
+    if (_hidrScrollController.position.pixels >=
+            _hidrScrollController.position.maxScrollExtent - 200 &&
+        vmHidratacion.hasMore &&
+        !vmHidratacion.isLoading) {
+      vmHidratacion.cargarMas();
+    }
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
-    vmAlimentacion.removeListener(() {});
-    vmHidratacion.removeListener(() {});
+    // Limpia controladores de scroll
+    _alimScrollController
+      ..removeListener(_onScrollAlimentos)
+      ..dispose();
+    _hidrScrollController
+      ..removeListener(_onScrollHidratacion)
+      ..dispose();
+
+    // Limpia listeners de los ViewModels
+    vmAlimentacion.removeListener(_onVmChanged);
+    vmHidratacion.removeListener(_onVmChanged);
+
     super.dispose();
   }
 
@@ -100,7 +115,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                 children: [
                   Expanded(child: _buildColumnSectionAlimentos()),
                   const SizedBox(width: 16),
-                  Expanded(child: _buildColumnSectionHydratacion()),
+                  Expanded(child: _buildColumnSectionHidratacion()),
                 ],
               ),
             ),
@@ -142,11 +157,16 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               vmAlimentacion.alimentos.isEmpty && vmAlimentacion.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
-                    controller: _scrollController,
-                    itemCount: vmAlimentacion.alimentos.length + (vmAlimentacion.hasMore ? 1 : 0),
+                    controller: _alimScrollController,
+                    itemCount:
+                        vmAlimentacion.alimentos.length +
+                        (vmAlimentacion.hasMore ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index < vmAlimentacion.alimentos.length) {
-                        return _buildRowAlimento(vmAlimentacion.alimentos[index], index);
+                        return _buildRowAlimento(
+                          vmAlimentacion.alimentos[index],
+                          index,
+                        );
                       }
                       return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8),
@@ -160,7 +180,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
   }
 
   /// Construye la columna de hidratación (datos simulados).
-    Widget _buildColumnSectionHydratacion() {
+  Widget _buildColumnSectionHidratacion() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -174,13 +194,13 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(padding: const EdgeInsets.only(top: 8, bottom: 8),
-              child: 
-                Text(
-                'Hidratación',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 8),
+                child: Text(
+                  'Hidratación',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
-              )
               // IconButton(
               //   icon: const Icon(Icons.add),
               //   onPressed: _onAgregarHidratacion,
@@ -189,16 +209,22 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           ),
         ),
         // Lista dinámica con scroll infinito
+        // Lista dinámica con scroll infinito
         Expanded(
           child:
               vmHidratacion.listaHidratacion.isEmpty && vmHidratacion.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
-                    controller: _scrollController,
-                    itemCount: vmHidratacion.listaHidratacion.length + (vmHidratacion.hasMore ? 1 : 0),
+                    controller: _hidrScrollController,
+                    itemCount:
+                        vmHidratacion.listaHidratacion.length +
+                        (vmHidratacion.hasMore ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index < vmHidratacion.listaHidratacion.length) {
-                        return _buildRowHidratacion(vmHidratacion.listaHidratacion[index], index);
+                        return _buildRowHidratacion(
+                          vmHidratacion.listaHidratacion[index],
+                          index,
+                        );
                       }
                       return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8),
@@ -225,30 +251,32 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
             icon: const Icon(Icons.edit),
             onPressed: () => _onEditarAlimento(alimento),
           ),
-          IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => _onEliminarAlimento(alimento.idAlimento)),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () => _onEliminarAlimento(alimento.idAlimento),
+          ),
         ],
       ),
     );
   }
 
-   Widget _buildRowHidratacion(Hidratacion hidratacion, int index) {
-  final bg = index.isEven ? Colors.white : Colors.grey.shade200;
-  return Container(
-    color: bg,
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    height: 48,
-    child: Row(
-      children: [
-        Expanded(child: Text(hidratacion.nombreHidratacion)),
-        // placeholder para el espacio del icono “editar”
-        const SizedBox(width: 48),
-        // placeholder para el espacio del icono “borrar”
-        const SizedBox(width: 48),
-      ],
-    ),
-  );
-}
-
+  Widget _buildRowHidratacion(Hidratacion hidratacion, int index) {
+    final bg = index.isEven ? Colors.white : Colors.grey.shade200;
+    return Container(
+      color: bg,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      height: 48,
+      child: Row(
+        children: [
+          Expanded(child: Text(hidratacion.nombreHidratacion)),
+          // placeholder para el espacio del icono “editar”
+          const SizedBox(width: 48),
+          // placeholder para el espacio del icono “borrar”
+          const SizedBox(width: 48),
+        ],
+      ),
+    );
+  }
 
   /// Muestra un formulario emergente para registrar un nuevo alimento.
   void _onAgregarAlimento() {
@@ -419,35 +447,38 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
   void _onEliminarAlimento(int idAlimento) {
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        backgroundColor: const Color(0xFFF8F1F1),
-        title: const Text('Eliminar Alimento'),
-        content: const Text('¿Estás seguro de eliminar este alimento?'),
-        actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: () async {
-              await vmAlimentacion.eliminarAlimento(idAlimento);
-              Navigator.of(dialogContext).pop();
-              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                const SnackBar(content: Text('Alimento eliminado exitosamente')),
-              );
-            },
-            child: const Text('Eliminar'),
+      builder:
+          (BuildContext dialogContext) => AlertDialog(
+            backgroundColor: const Color(0xFFF8F1F1),
+            title: const Text('Eliminar Alimento'),
+            content: const Text('¿Estás seguro de eliminar este alimento?'),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () async {
+                  await vmAlimentacion.eliminarAlimento(idAlimento);
+                  Navigator.of(dialogContext).pop();
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    const SnackBar(
+                      content: Text('Alimento eliminado exitosamente'),
+                    ),
+                  );
+                },
+                child: const Text('Eliminar'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancelar'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancelar'),
-          ),
-        ],
-      ),
     );
   }
 }

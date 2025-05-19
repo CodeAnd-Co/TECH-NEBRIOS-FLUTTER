@@ -205,7 +205,7 @@ class TamizadoViewModel extends ChangeNotifier {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => SidebarView(initialIndex: 5),
+          builder: (_) => SidebarView(initialIndex: 6),
         ),
       );
     }

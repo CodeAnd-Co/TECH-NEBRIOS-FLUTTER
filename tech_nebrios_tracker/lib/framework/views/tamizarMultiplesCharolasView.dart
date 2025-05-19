@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_nebrios_tracker/framework/views/sidebarView.dart';
 import '../../data/models/charolaModel.dart' as modelo;
@@ -240,12 +241,16 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                             Expanded(
                               flex: 1,
                               child: TextField(
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                                  LengthLimitingTextInputFormatter(8),
+                                ],
                                 controller:seleccionVM.frasController,
                                 decoration: InputDecoration(
                                   labelText: 'Fras (g)',
                                   border: OutlineInputBorder(),
                                 ),
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -253,12 +258,16 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                             Expanded(
                               flex: 1,
                               child: TextField(
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                                  LengthLimitingTextInputFormatter(8),
+                                ],
                                 controller:seleccionVM.pupaController,
                                 decoration: InputDecoration(
                                   labelText: 'Pupa (g)',
                                   border: OutlineInputBorder(),
                                 ),
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
                               ),
                             ),
                           ],

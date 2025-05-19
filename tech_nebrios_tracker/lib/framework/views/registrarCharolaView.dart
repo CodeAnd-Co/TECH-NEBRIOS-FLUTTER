@@ -65,7 +65,11 @@ class RegistrarCharolaView extends StatelessWidget {
                     _buildTextFormField(
                       label: 'Nombre *',
                       controller: vm.nombreController,
-                      validator: (v) => v == null || v.isEmpty ? 'Nombre obligatorio' : null,
+                      validator:
+                          (v) =>
+                              v == null || v.isEmpty
+                                  ? 'Nombre obligatorio'
+                                  : null,
                       maxLength: 20,
                     ),
                     _buildTextFormField(
@@ -76,22 +80,33 @@ class RegistrarCharolaView extends StatelessWidget {
                         FilteringTextInputFormatter.digitsOnly,
                         PositiveNumberFormatter(),
                       ],
-                      validator: (v) => v == null || v.isEmpty ? 'Ingresa densidad' : null,
+                      validator:
+                          (v) =>
+                              v == null || v.isEmpty
+                                  ? 'Ingresa densidad'
+                                  : null,
                     ),
                     _buildDateFormField(
                       label: 'Fecha (dd/mm/yyyy) *',
                       controller: vm.fechaController,
                       context: context,
-                      validator: (v) => v == null || v.isEmpty ? 'Selecciona fecha' : null,
+                      validator:
+                          (v) =>
+                              v == null || v.isEmpty
+                                  ? 'Selecciona fecha'
+                                  : null,
                     ),
                     _buildDropdownFormField<Alimento>(
                       label: 'Alimentación *',
                       items: vm.alimentos.map((a) => a.nombreAlimento).toList(),
                       value: vm.selectedAlimentacion?.nombreAlimento,
                       onChanged: (value) {
-                        vm.selectedAlimentacion = vm.alimentos.firstWhere((a) => a.nombreAlimento == value);
+                        vm.selectedAlimentacion = vm.alimentos.firstWhere(
+                          (a) => a.nombreAlimento == value,
+                        );
                       },
-                      validator: (v) => v == null ? 'Selecciona alimento' : null,
+                      validator:
+                          (v) => v == null ? 'Selecciona alimento' : null,
                     ),
                     _buildTextFormField(
                       label: 'Cantidad de alimento (Kg) *',
@@ -101,7 +116,11 @@ class RegistrarCharolaView extends StatelessWidget {
                         FilteringTextInputFormatter.digitsOnly,
                         PositiveNumberFormatter(),
                       ],
-                      validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
+                      validator:
+                          (v) =>
+                              v == null || v.isEmpty
+                                  ? 'Ingresa cantidad'
+                                  : null,
                     ),
                     _buildTextFormField(
                       label: 'Peso (kg) *',
@@ -111,16 +130,23 @@ class RegistrarCharolaView extends StatelessWidget {
                         FilteringTextInputFormatter.digitsOnly,
                         PositiveNumberFormatter(),
                       ],
-                      validator: (v) => v == null || v.isEmpty ? 'Ingresa peso' : null,
+                      validator:
+                          (v) => v == null || v.isEmpty ? 'Ingresa peso' : null,
                     ),
                     _buildDropdownFormField<Hidratacion>(
                       label: 'Hidratación *',
-                      items: vm.hidrataciones.map((h) => h.nombreHidratacion).toList(),
+                      items:
+                          vm.hidrataciones
+                              .map((h) => h.nombreHidratacion)
+                              .toList(),
                       value: vm.selectedHidratacion?.nombreHidratacion,
                       onChanged: (value) {
-                        vm.selectedHidratacion = vm.hidrataciones.firstWhere((h) => h.nombreHidratacion == value);
+                        vm.selectedHidratacion = vm.hidrataciones.firstWhere(
+                          (h) => h.nombreHidratacion == value,
+                        );
                       },
-                      validator: (v) => v == null ? 'Selecciona hidratación' : null,
+                      validator:
+                          (v) => v == null ? 'Selecciona hidratación' : null,
                     ),
                     _buildTextFormField(
                       label: 'Cantidad de hidratación (Kg) *',
@@ -130,7 +156,11 @@ class RegistrarCharolaView extends StatelessWidget {
                         FilteringTextInputFormatter.digitsOnly,
                         PositiveNumberFormatter(),
                       ],
-                      validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
+                      validator:
+                          (v) =>
+                              v == null || v.isEmpty
+                                  ? 'Ingresa cantidad'
+                                  : null,
                     ),
                   ],
                 ),
@@ -139,16 +169,12 @@ class RegistrarCharolaView extends StatelessWidget {
                   onPressed: () async {
                     if (vm.formKey.currentState!.validate()) {
                       try {
-                        await vm.registrarCharola();
+                        // Registrar y obtener la nueva CharolaTarjeta
+                        final nuevaTarjeta = await vm.registrarCharola();
                         vm.resetForm();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Charola registrada exitosamente'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                      Navigator.pop(context);
-                      vm.cargarCharolas();
+                        await vm.cargarCharolas();
+                        // Salir de esta pantalla devolviendo la tarjeta creada
+                        Navigator.pop(context, nuevaTarjeta);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -234,7 +260,8 @@ class RegistrarCharolaView extends StatelessWidget {
               lastDate: DateTime.now(),
             );
             if (pickedDate != null) {
-              controller.text = '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
+              controller.text =
+                  '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
             }
           },
         ),
@@ -259,7 +286,12 @@ class RegistrarCharolaView extends StatelessWidget {
             labelText: label,
             border: const OutlineInputBorder(),
           ),
-          items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+          items:
+              items
+                  .map(
+                    (item) => DropdownMenuItem(value: item, child: Text(item)),
+                  )
+                  .toList(),
           onChanged: onChanged,
           validator: validator,
         ),

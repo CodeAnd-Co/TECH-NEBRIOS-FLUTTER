@@ -190,25 +190,17 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   void siguienteInterfaz(BuildContext context) {
-    if(charolasParaTamizar.isEmpty) {
+    if (charolasParaTamizar.isEmpty) {
       _hasError = true;
       _errorMessage = 'No hay charolas seleccionadas para tamizar.';
       notifyListeners();
-    } else if(charolasParaTamizar.length == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => SidebarView(initialIndex: 5),
-        ),
-      );
-    }else{
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => SidebarView(initialIndex: 5),
-        ),
-      );
+      return;
     }
+    // Llevo directamente a la vista de tamizado individual
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const VistaTamizadoIndividual()),
+    );
   }
 
   void agregarCharola(modelo.CharolaTarjeta charola) {

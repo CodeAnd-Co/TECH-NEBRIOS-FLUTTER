@@ -116,7 +116,7 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
   }
 
   /// Registra una nueva charola.
-  Future<void> registrarCharola(CharolaRegistro charola) async {
+  Future<Map<String, dynamic>> registrarCharola(CharolaRegistro charola) async {
     final token = await _userUseCases.obtenerTokenActual();
     final uri = Uri.parse('${APIRutas.CHAROLA}/registrarCharola');
 
@@ -132,7 +132,7 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
 
       // Verifica el código de estado HTTP
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return;
+        return json.decode(response.body)['data'] as Map<String, dynamic>;
       }
       if (response.statusCode == 401) {
         throw Exception('No autorizado. Por favor, inicie sesión.');

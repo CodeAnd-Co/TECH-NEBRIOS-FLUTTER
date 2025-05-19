@@ -5,7 +5,7 @@ abstract class RegistrarCharolaUseCase {
   /// Registra una nueva charola en el sistema.
   ///
   /// Lanza excepción si el repositorio falla.
-  Future<void> registrar({required CharolaRegistro charola});
+  Future<Map<String, dynamic>> registrar({required CharolaRegistro charola});
 }
 
 class RegistrarCharolaUseCaseImpl implements RegistrarCharolaUseCase {
@@ -16,7 +16,7 @@ class RegistrarCharolaUseCaseImpl implements RegistrarCharolaUseCase {
     : repositorio = repositorio ?? CharolaRepository();
 
   @override
-  Future<void> registrar({required CharolaRegistro charola}) {
+  Future<Map<String, dynamic>> registrar({required CharolaRegistro charola}) {
     return repositorio.registrarCharola(charola);
   }
 }

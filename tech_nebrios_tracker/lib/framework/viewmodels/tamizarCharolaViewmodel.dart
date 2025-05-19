@@ -17,7 +17,8 @@ import '../../data/models/tamizadoRespuestaModel.dart';
 class TamizadoViewModel extends ChangeNotifier {
   final Logger _logger = Logger();
   final TamizarCharolaRepository repository = TamizarCharolaRepository();
-  final TamizarCharolaUseCases tamizarCharolaUseCases = TamizarCharolaUseCasesImpl();
+  final TamizarCharolaUseCases tamizarCharolaUseCases =
+      TamizarCharolaUseCasesImpl();
 
   List<String> alimentos = [];
   String? seleccionAlimentacion;
@@ -50,7 +51,7 @@ class TamizadoViewModel extends ChangeNotifier {
 
   String _errorMessage = '';
   bool _hasError = false;
-  
+
   String get errorMessage => _errorMessage;
   bool get hasError => _hasError;
 
@@ -76,7 +77,11 @@ class TamizadoViewModel extends ChangeNotifier {
       convertirCampos();
 
       ///Se obtiene la fecha actual sin la hora
-      DateTime fecha = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      DateTime fecha = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      );
 
       /// Se construye el objeto de tamizado individual
       TamizadoIndividual tamizadoIndividual = TamizadoIndividual(
@@ -90,7 +95,8 @@ class TamizadoViewModel extends ChangeNotifier {
         fecha: fecha,
       );
 
-      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases.tamizarCharola(tamizadoIndividual);
+      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases
+          .tamizarCharola(tamizadoIndividual);
 
       if (respuesta?.exito == true) {
         _hasError = false;
@@ -100,15 +106,16 @@ class TamizadoViewModel extends ChangeNotifier {
         return true;
       } else {
         _hasError = true;
-        _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+        _errorMessage =
+            'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
         cargando = false;
         notifyListeners();
         return false;
       }
-
     } catch (e) {
       _hasError = true;
-      _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+      _errorMessage =
+          'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
       cargando = false;
       notifyListeners();
       return false;
@@ -131,7 +138,11 @@ class TamizadoViewModel extends ChangeNotifier {
       convertirCampos();
 
       ///Se obtiene la fecha actual sin la hora
-      DateTime fecha = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      DateTime fecha = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      );
 
       /// Se construye el objeto de tamizado múltiple
       TamizadoMultiple tamizadoMultiple = TamizadoMultiple(
@@ -141,7 +152,8 @@ class TamizadoViewModel extends ChangeNotifier {
         fecha: fecha,
       );
 
-      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases.tamizarCharolasMultiples(tamizadoMultiple);
+      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases
+          .tamizarCharolasMultiples(tamizadoMultiple);
 
       if (respuesta?.exito == true) {
         _hasError = false;
@@ -151,16 +163,16 @@ class TamizadoViewModel extends ChangeNotifier {
         return true;
       } else {
         _hasError = true;
-        _errorMessage = 'Error al tamizar las charolas. Inténtalo de nuevo más tarde.';
+        _errorMessage =
+            'Error al tamizar las charolas. Inténtalo de nuevo más tarde.';
         cargando = false;
         notifyListeners();
         return false;
-
       }
-
     } catch (e) {
       _hasError = true;
-      _errorMessage = 'Error al tamizar las charolas. Inténtalo de nuevo más tarde.';
+      _errorMessage =
+          'Error al tamizar las charolas. Inténtalo de nuevo más tarde.';
       cargando = false;
       notifyListeners();
       return false;
@@ -207,8 +219,7 @@ class TamizadoViewModel extends ChangeNotifier {
     if (charolasParaTamizar.length < 5) {
       charolasParaTamizar.add(charola);
       notifyListeners();
-    }
-    else {
+    } else {
       _hasError = true;
       _errorMessage = 'No se pueden tamizar más de 5 charolas.';
       notifyListeners();
@@ -221,34 +232,34 @@ class TamizadoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void verificacionDeCampos(){
-    if(charolasParaTamizar.length == 1){
+  void verificacionDeCampos() {
+    if (charolasParaTamizar.length == 1) {
       revisarCampoFras();
       revisarCampoPupa();
       revisarCampoAlimentoCantidad();
       revisarCampoHidratacionCantidad();
       revisarSeleccionAlimentacion();
       revisarSeleccionHidratacion();
-    }else{
+    } else {
       revisarCampoFras();
       revisarCampoPupa();
     }
   }
 
-  void convertirCampos(){
-    if(charolasParaTamizar.length == 1){
+  void convertirCampos() {
+    if (charolasParaTamizar.length == 1) {
       frasCantidad = double.parse(frasController.text);
       pupaCantidad = double.parse(pupaController.text);
       alimentoCantidad = double.parse(alimentoCantidadController.text);
       hidratacionCantidad = double.parse(hidratacionCantidadController.text);
-    }else{
+    } else {
       frasCantidad = double.parse(frasController.text);
       pupaCantidad = double.parse(pupaController.text);
     }
   }
 
-  void revisarCampoFras(){
-    if(frasController.text.isEmpty){
+  void revisarCampoFras() {
+    if (frasController.text.isEmpty) {
       _hasError = true;
       _errorMessage = 'El campo de Fras no puede estar vacío.';
     }
@@ -256,8 +267,8 @@ class TamizadoViewModel extends ChangeNotifier {
     return;
   }
 
-  void revisarCampoPupa(){
-    if(pupaController.text.isEmpty){
+  void revisarCampoPupa() {
+    if (pupaController.text.isEmpty) {
       _hasError = true;
       _errorMessage = 'El campo de Pupa no puede estar vacío.';
     }
@@ -265,8 +276,8 @@ class TamizadoViewModel extends ChangeNotifier {
     return;
   }
 
-  void revisarCampoAlimentoCantidad(){
-    if(alimentoCantidadController.text.isEmpty){
+  void revisarCampoAlimentoCantidad() {
+    if (alimentoCantidadController.text.isEmpty) {
       _hasError = true;
       _errorMessage = 'El campo de Cantidad de Alimento no puede estar vacío.';
     }
@@ -274,17 +285,18 @@ class TamizadoViewModel extends ChangeNotifier {
     return;
   }
 
-  void revisarCampoHidratacionCantidad(){
-    if(hidratacionCantidadController.text.isEmpty){
+  void revisarCampoHidratacionCantidad() {
+    if (hidratacionCantidadController.text.isEmpty) {
       _hasError = true;
-      _errorMessage = 'El campo de Cantidad de Hidratación no puede estar vacío.';
+      _errorMessage =
+          'El campo de Cantidad de Hidratación no puede estar vacío.';
     }
     notifyListeners();
     return;
   }
 
-  void revisarSeleccionAlimentacion(){
-    if(seleccionAlimentacion == null){
+  void revisarSeleccionAlimentacion() {
+    if (seleccionAlimentacion == null) {
       _hasError = true;
       _errorMessage = 'Por favor, selecciona un alimento.';
     }
@@ -292,8 +304,8 @@ class TamizadoViewModel extends ChangeNotifier {
     return;
   }
 
-  void revisarSeleccionHidratacion(){
-    if(seleccionHidratacion == null){
+  void revisarSeleccionHidratacion() {
+    if (seleccionHidratacion == null) {
       _hasError = true;
       _errorMessage = 'Por favor, selecciona una hidratación.';
     }
@@ -302,7 +314,8 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   void conseguirNombresCharolas() {
-    nombresCharolas = charolasParaTamizar.map((charola) => charola.nombreCharola).toList();
+    nombresCharolas =
+        charolasParaTamizar.map((charola) => charola.nombreCharola).toList();
   }
 
   void limpiarInformacion() {
@@ -318,5 +331,12 @@ class TamizadoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> asignarAncestros({
+    required int charolaHijaId,
+    required List<int> ancestrosIds,
+  }) async {
+    print('🔄 [VM] Llamando a asignarAncestros en repo...');
+    await repository.asignarAncestros(charolaHijaId, ancestrosIds);
+    print('✅ [VM] Ancestros asignados correctamente.');
+  }
 }
-

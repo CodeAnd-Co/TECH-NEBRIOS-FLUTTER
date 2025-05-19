@@ -8,6 +8,7 @@ abstract class TamizarCharolaUseCases {
   Future<TamizadoRespuesta?> tamizarCharolasMultiples(TamizadoMultiple tamizadoMultiple);
   Future<List<String>> cargarAlimentos();
   Future<List<String>> cargarHidratacion();
+  Future<void> asignarAncestros(int charolaId, List<int> charolasAncestroIds);
 }
 
 class TamizarCharolaUseCasesImpl implements TamizarCharolaUseCases {
@@ -33,5 +34,10 @@ class TamizarCharolaUseCasesImpl implements TamizarCharolaUseCases {
   @override
   Future<TamizadoRespuesta?> tamizarCharolasMultiples(tamizadoMultiple) async {
     return await repository.tamizarCharolasMultiples(tamizadoMultiple);
+  }
+
+  @override
+  Future<void> asignarAncestros(int charolaId, List<int> charolasAncestroIds) async {
+    await repository.asignarAncestros(charolaId, charolasAncestroIds);
   }
 }

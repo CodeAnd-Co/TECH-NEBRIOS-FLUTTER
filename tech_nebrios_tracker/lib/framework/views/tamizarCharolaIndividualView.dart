@@ -374,6 +374,20 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                           setState(() {
                             nuevasCharolas.add(nueva);
                           });
+                          final ancestrosSeleccionados =
+                              seleccionVM.charolasParaTamizar
+                                  .map((c) => c.charolaId)
+                                  .toList();
+                          print(
+                            '🔖 Asignando ancestros a charola hija ${nueva.charolaId}: $ancestrosSeleccionados',
+                          );
+                          await seleccionVM.asignarAncestros(
+                            charolaHijaId: nueva.charolaId,
+                            ancestrosIds: ancestrosSeleccionados,
+                          );
+                          print(
+                            '✅ Ancestros actualizados correctamente para charola ${nueva.charolaId}',
+                          );
                         }
                       },
                       icon: const Icon(Icons.add, size: 24),

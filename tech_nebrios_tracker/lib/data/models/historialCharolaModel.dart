@@ -11,14 +11,14 @@ class Ancestro {
 
   factory Ancestro.fromJson(Map<String, dynamic> json) {
     return Ancestro(
-      charolaAncestro: json['charolaAncestro'] as int,
+      charolaAncestro: json['charolaHija'] as int,
       nombreCharola: json['nombreCharola'] as String,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'charolaAncestro': charolaAncestro,
+      'charolaHija': charolaAncestro,
       'nombreCharola': nombreCharola,
     };
   }

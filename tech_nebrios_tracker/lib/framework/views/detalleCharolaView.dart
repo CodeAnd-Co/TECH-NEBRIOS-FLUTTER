@@ -92,7 +92,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     );
   }
 
-  void mostrarDialogoAlimentar(BuildContext context, int charolaId) async {
+  void mostrarDialogoAlimentar(BuildContext context, int charolaId, CharolaViewModel charolaViewModel) async {
     final comidaCharolaVM = Provider.of<AlimentacionViewModel>(
       context,
       listen: false,
@@ -129,8 +129,8 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                 controller: cantidadController,
                 keyboardType: TextInputType.number,
                 inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,         // Solo dígitos
-                    LengthLimitingTextInputFormatter(4),             // Máximo 3 caracteres
+                    FilteringTextInputFormatter.digitsOnly,           // Solo dígitos
+                    LengthLimitingTextInputFormatter(4),              // Máximo 3 caracteres
                   ],
                 decoration: const InputDecoration(
                   labelText: 'Cantidad otorgada (g)',
@@ -181,6 +181,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                     ),
                   );
                 }
+                await charolaViewModel.cargarCharola(charolaId);
               },
               child: Texto.texto(
                 texto: 'Alimentar',
@@ -443,6 +444,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                           mostrarDialogoAlimentar(
                                             context,
                                             viewModel.charola!.charolaId,
+                                            Provider.of<CharolaViewModel>(context, listen: false)
                                           );
                                         },
                                       ),

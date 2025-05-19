@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../views/loginView.dart';
-import '../views/sidebarView.dart';// El contenedor con el Drawer
+import '../views/sidebarView.dart'; // El contenedor con el Drawer
 
 import '../../domain/cerrarSesionUseCase.dart';
 import '../../data/repositories/usuarioRepository.dart';
+import '../viewmodels/loginViewModel.dart';
 
 final localStorage = UserRepository();
 final cerrarSesionUseCase = CerrarSesionUseCaseImpl(localStorage);
@@ -15,7 +17,6 @@ enum AppRoute {
 
 class AppRouter extends RouterDelegate<AppRoute>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<AppRoute> {
-
   @override
   final GlobalKey<NavigatorState> navigatorKey;
 
@@ -58,10 +59,13 @@ class AppRouter extends RouterDelegate<AppRoute>
             child: SidebarView(
               onLogout: () async {
                 await cerrarSesionUseCase.call();
-
+                Provider.of<LoginViewModel>(
+                  context,
+                  listen: false,
+                ).limpiarCampos();
                 navigateToLogin();
               },
-              ),
+            ),
           ),
       ],
       onPopPage: (route, result) => route.didPop(result),

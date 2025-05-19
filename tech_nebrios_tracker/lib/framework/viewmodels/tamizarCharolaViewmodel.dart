@@ -335,8 +335,6 @@ class TamizadoViewModel extends ChangeNotifier {
     required int charolaHijaId,
     required List<int> ancestrosIds,
   }) async {
-    print('🔄 [VM] Llamando a asignarAncestros en repo...');
     await repository.asignarAncestros(charolaHijaId, ancestrosIds);
-    print('✅ [VM] Ancestros asignados correctamente.');
   }
 }

@@ -11,12 +11,18 @@ import '../../framework/viewmodels/historialCharolaViewModel.dart';
 import '../../data/repositories/historialCharolaRepository.dart';
 import 'components/atoms/texto.dart';
 import 'components/organisms/pop_up.dart';
+import '../viewmodels/alimentacionViewModel.dart';
+import 'package:flutter/services.dart';
 
 /// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
   final int charolaId; // ID de la charola que se va a mostrar
   final VoidCallback onRegresar;
-  const PantallaCharola({super.key, required this.charolaId, required this.onRegresar});
+  const PantallaCharola({
+    super.key,
+    required this.charolaId,
+    required this.onRegresar,
+  });
 
   @override
   State<PantallaCharola> createState() => _PantallaCharolaState();
@@ -87,10 +93,112 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     );
   }
 
+  void mostrarDialogoAlimentar(BuildContext context, int charolaId, CharolaViewModel charolaViewModel) async {
+    final comidaCharolaVM = Provider.of<AlimentacionViewModel>(
+      context,
+      listen: false,
+    );
+
+    await comidaCharolaVM.cargarAlimentos();
+
+    int? comidaIdSeleccionada;
+    final TextEditingController cantidadController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Registrar alimentación'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<int>(
+                value: comidaIdSeleccionada,
+                items:
+                    comidaCharolaVM.alimentos.map((alimento) {
+                      return DropdownMenuItem<int>(
+                        value: alimento.idAlimento,
+                        child: Text(alimento.nombreAlimento),
+                      );
+                    }).toList(),
+                onChanged: (value) {
+                  comidaIdSeleccionada = value;
+                },
+                decoration: const InputDecoration(labelText: 'Tipo de comida'),
+              ),
+              TextField(
+                controller: cantidadController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,           // Solo dígitos
+                    LengthLimitingTextInputFormatter(4),              // Máximo 3 caracteres
+                  ],
+                decoration: const InputDecoration(
+                  labelText: 'Cantidad otorgada (g)',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Texto.texto(
+                texto: 'Cancelar',
+                color: const Color(0xFFE2387B),
+                bold: true,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final cantidad = int.tryParse(cantidadController.text);
+                if (cantidad == null ||
+                    cantidad <= 0 ||
+                    comidaIdSeleccionada == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Ingresa todos los campos correctamente'),
+                    ),
+                  );
+                  return;
+                }
+
+                await comidaCharolaVM.registrarAlimentacion(
+                  charolaId: charolaId,
+                  comidaId: comidaIdSeleccionada!,
+                  cantidadOtorgada: cantidad,
+                  fechaOtorgada: DateTime.now().toIso8601String(),
+                );
+
+                Navigator.of(context).pop();
+
+                if (comidaCharolaVM.error != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: ${comidaCharolaVM.error}')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Alimentación registrada con éxito'),
+                    ),
+                  );
+                }
+                await charolaViewModel.cargarCharola(charolaId);
+              },
+              child: Texto.texto(
+                texto: 'Alimentar',
+                color: const Color(0xFFE2387B),
+                bold: true,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CharolaViewModel>(
-      
       builder: (context, viewModel, _) {
         // Muestra indicador de carga mientras se obtiene el detalle
         if (viewModel.cargandoCharola) {
@@ -108,7 +216,6 @@ class _PantallaCharolaState extends State<PantallaCharola> {
           });
           return const SizedBox.shrink(); // No muestra nada mientras redirige
         }
-
 
         final fechaFormateada = formatearFecha(detalle.fechaCreacion);
 
@@ -130,7 +237,10 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                             Align(
                               alignment: Alignment.centerLeft,
                               child: IconButton(
-                                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                                icon: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.black,
+                                ),
                                 tooltip: 'Regresar',
                                 onPressed: widget.onRegresar,
                                 iconSize: 35,
@@ -151,193 +261,261 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                     const SizedBox(height: 20),
                     Container(
                       child: IntrinsicHeight(
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Texto.titulo1(
-                                      texto: detalle.nombreCharola,
-                                      bold: true,
-                                      tamanio: 50,
-                                      color:Color(0xFF22A63A),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(right: 20),
-                                        child: IconButton(
-                                          icon: const Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                            size: 40,
-                                          ),
-                                          tooltip: 'Eliminar',
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return OrganismoPopUpConfirmacion(
-                                                  onCancelar:
-                                                      () =>
-                                                          Navigator.of(context).pop(),
-                                                  onConfirmar: () async {
-                                                    await viewModel.eliminarCharola(
-                                                      viewModel.charola!.charolaId,
-                                                    );
-                                                    await viewModel.cargarCharolas(
-                                                      reset: true,
-                                                    );
-                                                    widget.onRegresar(); // <- Vuelve al dashboard limpiamente
-                                                    Navigator.of(context).pop();
-                                                    ScaffoldMessenger.of(
-                                                      context,
-                                                    ).showSnackBar(
-                                                      const SnackBar(
-                                                        backgroundColor:Colors.green,
-                                                        content: Text(
-                                                          'Charola eliminada con éxito',
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            );
-                                          },
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Texto.titulo1(
+                                    texto: detalle.nombreCharola,
+                                    bold: true,
+                                    tamanio: 50,
+                                    color: Color(0xFF22A63A),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 20),
+                                      child: IconButton(
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                          size: 40,
                                         ),
+                                        tooltip: 'Eliminar',
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return OrganismoPopUpConfirmacion(
+                                                onCancelar:
+                                                    () =>
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop(),
+                                                onConfirmar: () async {
+                                                  await viewModel
+                                                      .eliminarCharola(
+                                                        viewModel
+                                                            .charola!
+                                                            .charolaId,
+                                                      );
+                                                  await viewModel
+                                                      .cargarCharolas(
+                                                        reset: true,
+                                                      );
+                                                  widget
+                                                      .onRegresar(); // <- Vuelve al dashboard limpiamente
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                        'Charola eliminada con éxito',
+                                                      ),
+                                                    ),
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    const SnackBar(
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      content: Text(
+                                                        'Charola eliminada con éxito',
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
                                       ),
                                     ),
-                                  ]
-                                )
+                                  ),
+                                ],
                               ),
-                              
-                              const SizedBox(height: 40),
-
-                              Center(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                            ),
+                            const SizedBox(height: 40),
+                            Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
-                                          Text("Estado actual: ", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
-                                          Text(detalle.estado, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: detalle.estado == 'activa' ? Colors.green : Colors.red),),
-                                      ],),
-                                      _crearInfoFila('Fecha de creación:', fechaFormateada),
+                                          Text(
+                                            "Estado actual: ",
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            detalle.estado,
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  detalle.estado == 'activa'
+                                                      ? Colors.green
+                                                      : Colors.red,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      _crearInfoFila(
+                                        'Fecha de creación:',
+                                        fechaFormateada,
+                                      ),
                                       _crearInfoFila(
                                         'Peso:',
                                         '${detalle.pesoCharola}g',
                                       ),
-                                    ]
+                                    ],
                                   ),
                                   const SizedBox(width: 80),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       _crearInfoFila(
-                                      'Hidratación:',
-                                      '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
-                                    ),
-                                    _crearInfoFila(
-                                      'Alimento:',
-                                      '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
-                                    ),
+                                        'Hidratación:',
+                                        '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
+                                      ),
+                                      _crearInfoFila(
+                                        'Alimento:',
+                                        '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
+                                      ),
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
+                            ),
+                            const SizedBox(height: 60),
+                            // Parte inferior con botones
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 40,
+                                vertical: 20,
                               ),
-                              
-                              const SizedBox(height: 60),
-
-                              // Parte inferior con botones
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 40,
-                                  vertical: 20,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFEDEDED),
-                                  borderRadius: BorderRadius.circular(50),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      spreadRadius: 1,
-                                      blurRadius: 10, 
-                                      offset: const Offset(0, 4),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFEDEDED),
+                                borderRadius: BorderRadius.circular(50),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    spreadRadius: 1,
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "Menú de acciones rapidas",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24,
                                     ),
-                                  ],
-                                ),
-                                
-                                child: Column(
-                                  children: [
-                                    Text("Menú de acciones rapidas", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),),
-                                    
-                                    const SizedBox(height: 20),
-
-                                    Wrap(
-                                      alignment: WrapAlignment.spaceAround,
-                                      spacing: 50,
-                                      runSpacing: 10,
-                                      children: [
-                                        _crearBotonIcono(
-                                          icono: Icons.edit,
-                                          texto: 'Editar',
-                                          alPresionar: () {mostrarPopUpEditarCharola(context: context, charolaId: widget.charolaId, nombreCharola: detalle.nombreCharola, fechaCreacion:fechaFormateada, densidadLarva: detalle.densidadLarva, alimento: detalle.comidaNombre, alimentoOtorgado: detalle.comidaOtorgada, hidratacion: detalle.hidratacionNombre, hidratacionOtorgado: detalle.hidratacionOtorgada, peso: detalle.pesoCharola);},
-                                        ),
-                                        _crearBotonIcono(
-                                          icono: Icons.bug_report,
-                                          texto: 'Alimentar',
-                                          alPresionar: () {},
-                                        ),
-                                        _crearBotonIcono(
-                                          icono: Icons.water_drop,
-                                          texto: 'Hidratar',
-                                          alPresionar: () {},
-                                        ),
-                                        _crearBotonIcono(
-                                          icono: Icons.device_hub,
-                                          texto: 'Ancestros',
-                                          alPresionar: () async {
-                                             final ancestrosVM = HistorialCharolaViewModel(HistorialCharolaRepository());
-                                              // Carga datos
-                                              await ancestrosVM.obtenerAncestros(viewModel.charola!.charolaId);
-                                              if (ancestrosVM.historialAncestros.isEmpty) {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  const SnackBar(content: Text('No hay ancestros disponibles'))
-                                                );
-                                                return;
-                                              }
-                                              showDialog(
-                                                context: context,
-                                                builder: (_) => ChangeNotifierProvider.value(
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Wrap(
+                                    alignment: WrapAlignment.spaceAround,
+                                    spacing: 50,
+                                    runSpacing: 10,
+                                    children: [
+                                      _crearBotonIcono(
+                                        icono: Icons.edit,
+                                        texto: 'Editar',
+                                        alPresionar: () {mostrarPopUpEditarCharola(context: context, charolaId: widget.charolaId, nombreCharola: detalle.nombreCharola, fechaCreacion:fechaFormateada, densidadLarva: detalle.densidadLarva, alimento: detalle.comidaNombre, alimentoOtorgado: detalle.comidaOtorgada, hidratacion: detalle.hidratacionNombre, hidratacionOtorgado: detalle.hidratacionOtorgada, peso: detalle.pesoCharola);},
+                                      ),
+                                      _crearBotonIcono(
+                                        icono: Icons.bug_report,
+                                        texto: 'Alimentar',
+                                        alPresionar: () {
+                                          mostrarDialogoAlimentar(
+                                            context,
+                                            viewModel.charola!.charolaId,
+                                            Provider.of<CharolaViewModel>(context, listen: false)
+                                          );
+                                        },
+                                      ),
+                                      //    _crearBotonIcono(
+                                      //      icono: Icons.water_drop,
+                                      //      texto: 'Hidratar',
+                                      //      alPresionar: () {}, // TODO MBI
+                                      //    ),
+                                      _crearBotonIcono(
+                                        icono: Icons.device_hub,
+                                        texto: 'Ancestros',
+                                        alPresionar: () async {
+                                          final ancestrosVM =
+                                              HistorialCharolaViewModel(
+                                                HistorialCharolaRepository(),
+                                              );
+                                          // Carga datos
+                                          await ancestrosVM.obtenerAncestros(
+                                            viewModel.charola!.charolaId,
+                                          );
+                                          if (ancestrosVM
+                                              .historialAncestros
+                                              .isEmpty) {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'No hay ancestros disponibles',
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                          showDialog(
+                                            context: context,
+                                            builder:
+                                                (
+                                                  _,
+                                                ) => ChangeNotifierProvider.value(
                                                   value: ancestrosVM,
                                                   child: HistorialAncestrosDialog(
-                                                    data: ancestrosVM.historialAncestros.first,
+                                                    data:
+                                                        ancestrosVM
+                                                            .historialAncestros
+                                                            .first,
                                                   ),
                                                 ),
-                                              );
-                                           },
-                                        ),
-                                        _crearBotonIcono(
-                                          icono: Icons.history,
-                                          texto: 'Actividades',
-                                          alPresionar: () {mostrarPopUpHistorialActividad(context: context,charolaId: widget.charolaId,);},
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
+                                          );
+                                        },
+                                      ),
+                                      _crearBotonIcono(
+                                        icono: Icons.history,
+                                        texto: 'Actividades',
+                                        alPresionar: () {
+                                          mostrarPopUpHistorialActividad(
+                                            context: context,
+                                            charolaId: widget.charolaId,
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
+                    ),
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -348,5 +526,4 @@ class _PantallaCharolaState extends State<PantallaCharola> {
       },
     );
   }
-  
 }

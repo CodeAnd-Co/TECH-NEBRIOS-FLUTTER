@@ -90,7 +90,8 @@ class CharolaTarjeta extends StatelessWidget {
 
 /// Vista principal que muestra todas las charolas en un grid paginado.
 class VistaTamizadoIndividual extends StatefulWidget {
-  const VistaTamizadoIndividual({super.key});
+  final VoidCallback onRegresar;
+  const VistaTamizadoIndividual({super.key, required this.onRegresar});
 
   @override
   State<VistaTamizadoIndividual> createState() => _VistaTamizadoIndividualState();
@@ -115,6 +116,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                 );
               });
             }
+            
             return Column(
               children: [
                 const SizedBox(height: 16),
@@ -140,7 +142,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                           // Botón responsivo
                           ElevatedButton.icon(
                             onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => SidebarView(initialIndex: 1)));
+                              widget.onRegresar();
                             },
                             icon: Icon(Icons.arrow_back, size: iconSize.clamp(20, 30)),
                             label: Text(
@@ -364,12 +366,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                             bool exito = await seleccionVM.tamizarCharolaIndividual();
 
                             if (exito){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SidebarView(mensajeExito: 'Tamizado exitoso'),
-                                ),
-                              );
+                              widget.onRegresar();
                             }
                           },
                           icon: Icon(Icons.done, size: 24), // Usa tamaño fijo o responsivo si deseas

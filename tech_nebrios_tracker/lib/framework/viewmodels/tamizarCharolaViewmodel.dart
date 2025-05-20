@@ -50,14 +50,18 @@ class TamizadoViewModel extends ChangeNotifier {
 
   String _errorMessage = '';
   bool _hasError = false;
+
+  bool _tamizadoExitoso = false;
+  final _mensajeExitoso = 'Tamizado exitoso';
   
   String get errorMessage => _errorMessage;
   bool get hasError => _hasError;
+  bool get tamizadoExitoso => _tamizadoExitoso;
+  String get mensajeExitoso => _mensajeExitoso;
 
   TamizadoViewModel() {
     cargarAlimentos();
     cargarHidratacion();
-    limpiarInformacion();
   }
 
   Future<bool> tamizarCharolaIndividual() async {
@@ -95,6 +99,7 @@ class TamizadoViewModel extends ChangeNotifier {
       if (respuesta?.exito == true) {
         _hasError = false;
         cargando = false;
+        _tamizadoExitoso = true;
         charolasParaTamizar.clear();
         notifyListeners();
         return true;
@@ -146,6 +151,7 @@ class TamizadoViewModel extends ChangeNotifier {
       if (respuesta?.exito == true) {
         _hasError = false;
         cargando = false;
+        _tamizadoExitoso = true;
         charolasParaTamizar.clear();
         notifyListeners();
         return true;
@@ -190,11 +196,15 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   void siguienteInterfaz(BuildContext context) {
+    _tamizadoExitoso = false;
     if(charolasParaTamizar.isEmpty) {
       _hasError = true;
       _errorMessage = 'No hay charolas seleccionadas para tamizar.';
       notifyListeners();
+      _hasError = false;
+      return;
     } else if(charolasParaTamizar.length == 1) {
+      _hasError = false;
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -202,6 +212,7 @@ class TamizadoViewModel extends ChangeNotifier {
         ),
       );
     }else{
+      _hasError = false;
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -212,6 +223,13 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   void agregarCharola(modelo.CharolaTarjeta charola) {
+    _tamizadoExitoso = false;
+    if(charolasParaTamizar.contains(charola)) {
+      _hasError = true;
+      _errorMessage = 'La charola ya está seleccionada.';
+      notifyListeners();
+      return;
+    }
     if (charolasParaTamizar.length < 5) {
       charolasParaTamizar.add(charola);
       notifyListeners();
@@ -230,6 +248,7 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   void verificacionDeCampos(){
+    print(_alimentosCargados);
     if(charolasParaTamizar.length == 1){
       revisarCampoFras();
       revisarCampoPupa();
@@ -324,6 +343,14 @@ class TamizadoViewModel extends ChangeNotifier {
     nombresCharolas.clear();
     _hasError = false;
     notifyListeners();
+  }
+
+  void limpiarError() {
+    _hasError = false;
+  }
+
+  void limpiarTamizadoExitoso() {
+    _tamizadoExitoso = false;
   }
 
 }

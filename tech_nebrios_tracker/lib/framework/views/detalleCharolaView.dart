@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 import './historialActividadView.dart';
 import './historialAncestrosView.dart';
+import './editarCharolaView.dart';
 import '../../framework/viewmodels/historialCharolaViewModel.dart';
 import '../../data/repositories/historialCharolaRepository.dart';
 import 'components/atoms/texto.dart';
@@ -287,7 +288,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                         _crearBotonIcono(
                                           icono: Icons.edit,
                                           texto: 'Editar',
-                                          alPresionar: () {},
+                                          alPresionar: () {mostrarPopUpEditarCharola(context: context, charolaId: widget.charolaId, nombreCharola: detalle.nombreCharola, fechaCreacion:fechaFormateada, densidadLarva: detalle.densidadLarva, alimento: detalle.comidaNombre, alimentoOtorgado: detalle.comidaOtorgada, hidratacion: detalle.hidratacionNombre, hidratacionOtorgado: detalle.hidratacionOtorgada, peso: detalle.pesoCharola);},
                                         ),
                                         _crearBotonIcono(
                                           icono: Icons.bug_report,

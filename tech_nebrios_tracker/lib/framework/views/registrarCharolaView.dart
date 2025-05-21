@@ -39,8 +39,8 @@ class RegistrarCharolaView extends StatelessWidget {
             child: Column(
               children: [
                 const Divider(
-                  thickness: 2,
-                  color: Colors.black,
+                  thickness: 4,
+                  color: Color.fromRGBO(56, 88, 129, 1),
                 ),
                 const SizedBox(height: 10),
                 const Center(
@@ -94,7 +94,7 @@ class RegistrarCharolaView extends StatelessWidget {
                       validator: (v) => v == null ? 'Selecciona alimento' : null,
                     ),
                     _buildTextFormField(
-                      label: 'Cantidad de alimento (g) *',
+                      label: 'Cantidad de alimento (Kg) *',
                       controller: vm.comidaCicloController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
@@ -104,7 +104,7 @@ class RegistrarCharolaView extends StatelessWidget {
                       validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
                     ),
                     _buildTextFormField(
-                      label: 'Peso (g) *',
+                      label: 'Peso (kg) *',
                       controller: vm.pesoController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
@@ -123,7 +123,7 @@ class RegistrarCharolaView extends StatelessWidget {
                       validator: (v) => v == null ? 'Selecciona hidratación' : null,
                     ),
                     _buildTextFormField(
-                      label: 'Cantidad de hidratación (g) *',
+                      label: 'Cantidad de hidratación (Kg) *',
                       controller: vm.hidratacionCicloController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [

@@ -97,7 +97,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           subtitulo: 'Visualiza tu alimentación',
         ),
         Expanded(
-          child: Padding(  // Padding agregado aquí
+          child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Row(
               children: [

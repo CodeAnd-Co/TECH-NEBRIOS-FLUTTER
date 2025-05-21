@@ -201,10 +201,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
-              // IconButton(
-              //   icon: const Icon(Icons.add),
-              //   onPressed: _onAgregarHidratacion,
-              // ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: _onAgregarHidratacion,
+              ),
             ],
           ),
         ),
@@ -479,6 +479,102 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               ),
             ],
           ),
+    );
+  }
+
+  /// Muestra un formulario emergente para registrar una nueva hidratación.
+  void _onAgregarHidratacion() {
+    final nombreController = TextEditingController();
+    final descripcionController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+          backgroundColor: const Color(0xFFF8F1F1),
+          title: const Center(
+            child: Text(
+              'Nueva Hidratación',
+              style: TextStyle(fontWeight: FontWeight.normal),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nombreController,
+                maxLength: 25,
+                decoration: const InputDecoration(labelText: 'Nombre:'),
+              ),
+              const SizedBox(height: 5),
+              TextField(
+                controller: descripcionController,
+                maxLength: 200,
+                decoration: const InputDecoration(labelText: 'Descripción:'),
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+              ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      final nombre = nombreController.text.trim();
+                      final descripcion = descripcionController.text.trim();
+
+                      final resultado = await vmHidratacion.registrarHidratacion(
+                        nombre,
+                        descripcion,
+                      );
+                      if (!mounted) return;
+
+                      if (resultado == null) {
+                        Navigator.of(dialogContext).pop();
+                        await vmHidratacion.cargarHidratacion();
+                      } else {
+                        ScaffoldMessenger.of(
+                          dialogContext,
+                        ).showSnackBar(SnackBar(content: Text(resultado)));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(120, 48),
+                      textStyle: const TextStyle(fontSize: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: const Text('Guardar'),
+                  ),
+                  const SizedBox(width: 40),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(120, 48),
+                      textStyle: const TextStyle(fontSize: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: const Text('Cancelar'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

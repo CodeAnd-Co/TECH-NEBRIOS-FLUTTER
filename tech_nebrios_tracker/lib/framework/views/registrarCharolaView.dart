@@ -21,7 +21,7 @@ class RegistrarCharolaView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registrar Charola'),
+         title: const Text('Registrar Charola', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         titleTextStyle: const TextStyle(
           fontSize: 35,

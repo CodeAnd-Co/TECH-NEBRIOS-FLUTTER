@@ -114,7 +114,22 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                   ),
                 );
               });
+              seleccionVM.limpiarError();
             }
+
+            if (seleccionVM.tamizadoExitoso) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(seleccionVM.mensajeExitoso),
+                    backgroundColor: Colors.green,
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+              });
+              seleccionVM.limpiarTamizadoExitoso();
+            }
+
             return Column(
               children: [
                 const SizedBox(height: 16),
@@ -161,23 +176,7 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                       final iconSize = screenWidth * 0.015;
 
                       return Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Campo de búsqueda expandido
-                          Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Buscar',
-                                prefixIcon: const Icon(Icons.search),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),                          
-                        ],
+                        
                       );
                     },
                   ),

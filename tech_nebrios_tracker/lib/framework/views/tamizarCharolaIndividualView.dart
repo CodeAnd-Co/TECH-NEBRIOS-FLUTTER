@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_nebrios_tracker/framework/views/seleccionarTamizadoView.dart';
 import '../../data/models/charolaModel.dart' as modelo;
@@ -86,7 +87,8 @@ class CharolaTarjeta extends StatelessWidget {
 
 /// Vista principal que muestra todas las charolas en un ListView.
 class VistaTamizadoIndividual extends StatefulWidget {
-  const VistaTamizadoIndividual({super.key});
+  final VoidCallback onRegresar;
+  const VistaTamizadoIndividual({super.key, required this.onRegresar});
 
   @override
   State<VistaTamizadoIndividual> createState() =>
@@ -142,12 +144,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                       children: [
                         ElevatedButton.icon(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => SidebarView(initialIndex: 1),
-                              ),
-                            );
+                            widget.onRegresar();
                           },
                           icon: Icon(
                             Icons.arrow_back,

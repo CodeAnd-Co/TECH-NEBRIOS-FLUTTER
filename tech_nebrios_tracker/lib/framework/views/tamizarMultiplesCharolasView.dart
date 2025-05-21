@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_nebrios_tracker/framework/views/sidebarView.dart';
 import '../../data/models/charolaModel.dart' as modelo;
@@ -88,7 +89,8 @@ class CharolaTarjeta extends StatelessWidget {
 
 /// Vista principal que muestra todas las charolas en un grid paginado.
 class VistaTamizadoMultiple extends StatefulWidget {
-  const VistaTamizadoMultiple({super.key});
+  final VoidCallback onRegresar;
+  const VistaTamizadoMultiple({super.key, required this.onRegresar});
 
   @override
   State<VistaTamizadoMultiple> createState() => _VistaTamizadoMultipleState();
@@ -113,8 +115,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                 );
               });
             }
-            seleccionVM.cargarAlimentos();
-            seleccionVM.cargarHidratacion();
+           
             return Column(
               children: [
                 const SizedBox(height: 16),
@@ -140,7 +141,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                           // Botón responsivo
                           ElevatedButton.icon(
                             onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => SidebarView(initialIndex: 1)));
+                              widget.onRegresar();
                             },
                             icon: Icon(Icons.arrow_back, size: iconSize.clamp(20, 30)),
                             label: Text(
@@ -240,12 +241,16 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                             Expanded(
                               flex: 1,
                               child: TextField(
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                                  LengthLimitingTextInputFormatter(8),
+                                ],
                                 controller:seleccionVM.frasController,
                                 decoration: InputDecoration(
                                   labelText: 'Fras (g)',
                                   border: OutlineInputBorder(),
                                 ),
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -253,12 +258,16 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                             Expanded(
                               flex: 1,
                               child: TextField(
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                                  LengthLimitingTextInputFormatter(8),
+                                ],
                                 controller:seleccionVM.pupaController,
                                 decoration: InputDecoration(
                                   labelText: 'Pupa (g)',
                                   border: OutlineInputBorder(),
                                 ),
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
                               ),
                             ),
                           ],
@@ -279,13 +288,9 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                             bool exito = await seleccionVM.tamizarCharolaMultiple();
 
                             if (exito){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SidebarView(mensajeExito: 'Tamizado exitoso'),
-                                ),
-                              );
+                              widget.onRegresar();
                             }
+                            
                           },
                           icon: Icon(Icons.done, size: 24), // Usa tamaño fijo o responsivo si deseas
                           label: Text(

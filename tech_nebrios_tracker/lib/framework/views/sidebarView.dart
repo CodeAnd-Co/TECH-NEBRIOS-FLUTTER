@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tech_nebrios_tracker/framework/viewmodels/tamizarCharolaViewmodel.dart';
 import 'package:tech_nebrios_tracker/framework/views/charolasDashboardView.dart';
 import 'package:tech_nebrios_tracker/framework/views/reporteView.dart';
 import 'package:tech_nebrios_tracker/framework/views/alimentacionView.dart';
@@ -43,14 +45,14 @@ class _SidebarViewState extends State<SidebarView> {
   void _mostrarVistaTamizadoIndividual() {
     setState(() {
       _vistaTamizadoIndividual = VistaTamizadoIndividual(
-        //onRegresar: _cerrarVistaTamizado,
+        onRegresar: _cerrarVistaTamizado,
       );
     });
   }
 
   void _cerrarVistaTamizado() {
     setState(() {
-      _vistaTamizadoIndividual = null;
+      _currentIndex = 1;
     });
   }
 
@@ -89,8 +91,8 @@ class _SidebarViewState extends State<SidebarView> {
       const Placeholder(),
       const AlimentacionScreen(),
       const VistaTablaCharolas(),
-      VistaTamizadoIndividual(),
-      VistaTamizadoMultiple(),
+      VistaTamizadoIndividual(onRegresar: _cerrarVistaTamizado),
+      VistaTamizadoMultiple(onRegresar: _cerrarVistaTamizado),
     ];
   }
 
@@ -177,10 +179,16 @@ class _SidebarViewState extends State<SidebarView> {
         final showLabel = screenWidth > 500;
 
         return InkWell(
-          onTap: () => setState(() {
+          onTap: () { setState(() {
             _currentIndex = index;
             _detalleCharolaActual = null; // ✅ Siempre cierra detalle si navegas
-          }),
+          });
+
+          if (index == 1) {
+            final viewModel = Provider.of<TamizadoViewModel>(context, listen: false);
+            viewModel.limpiarInformacion();
+          } 
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Column(

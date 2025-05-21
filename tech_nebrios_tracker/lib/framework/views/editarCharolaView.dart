@@ -16,8 +16,10 @@ void mostrarPopUpEditarCharola({
   required String nombreCharola,
   required String fechaCreacion,
   required int densidadLarva, 
+  required int alimentoId,
   required String alimento, 
   required int alimentoOtorgado, 
+  required int hidratacionId,
   required String hidratacion, 
   required int hidratacionOtorgado,
   required int peso
@@ -37,7 +39,7 @@ void mostrarPopUpEditarCharola({
     context: context,
     builder: (dialogContext) {
       return FutureBuilder(
-        future: editarViewModel.cargarDatos(nombreCharola, fechaCreacion, densidadLarva, alimento, alimentoOtorgado, hidratacion, hidratacionOtorgado, peso),
+        future: editarViewModel.cargarDatos(nombreCharola, fechaCreacion, densidadLarva, alimentoId, alimento, alimentoOtorgado, hidratacionId,  hidratacion, hidratacionOtorgado, peso),
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const AlertDialog(
@@ -50,7 +52,18 @@ void mostrarPopUpEditarCharola({
 
       
       return AlertDialog(
-        title: const Text('Editar informacion de la charola'),
+        title: Stack(
+          alignment: Alignment.center,
+          children: [
+            const Center(
+              child: Text(
+                'Editar información de la charola',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ]
+        ),
         content: SizedBox(
         child: SingleChildScrollView(
           child: Form(
@@ -58,6 +71,8 @@ void mostrarPopUpEditarCharola({
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Divider(height: 1),
+                const SizedBox(height: 30),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -92,6 +107,22 @@ void mostrarPopUpEditarCharola({
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text("Peso(gr):"),
+                        _buildTextFormField(
+                          controller: editarViewModel.pesoController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            PositiveNumberFormatter(),
+                          ],
+                          validator: (v) => v == null || v.isEmpty ? 'Ingresa peso' : null,
+                        ),
+                      ],
+                    ),
+                    /*
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text("Densidad de Larva:"),
                         _buildTextFormField(
                           controller: editarViewModel.densidadLarvaController,
@@ -103,7 +134,7 @@ void mostrarPopUpEditarCharola({
                           validator: (v) => v == null || v.isEmpty ? 'Ingresa densidad' : null,
                         ),
                       ],
-                    ),
+                    ),*/
                   ],
                 ),
                 const SizedBox(height: 30),
@@ -118,9 +149,10 @@ void mostrarPopUpEditarCharola({
                           Text("Tipo de alimento:"),
                           _buildDropdownFormField<Alimento>(
                             items: vm.alimentos.map((a) => a.nombreAlimento).toList(),
-                            value: editarViewModel.selectedAlimentacion.nombreAlimento,
+                            value: editarViewModel.selectedAlimentacion?.nombreAlimento,
                             onChanged: (value) {
-                              editarViewModel.selectedAlimentacion = vm.alimentos.firstWhere((a) => a.nombreAlimento == value);
+                              final alimento = vm.alimentos.firstWhere((a) => a.nombreAlimento == value);
+                              editarViewModel.setAlimentacion = alimento;
                             },
                             validator: (v) => v == null ? 'Selecciona alimento' : null,
                           ),
@@ -145,21 +177,6 @@ void mostrarPopUpEditarCharola({
                         ],
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Peso:"),
-                        _buildTextFormField(
-                          controller: editarViewModel.pesoController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            PositiveNumberFormatter(),
-                          ],
-                          validator: (v) => v == null || v.isEmpty ? 'Ingresa peso' : null,
-                        ),
-                      ],
-                    ),
                   ],
                 ),
                 const SizedBox(height: 30),
@@ -174,9 +191,10 @@ void mostrarPopUpEditarCharola({
                           Text("Tipo de Hidratación:"),
                           _buildDropdownFormField<Hidratacion>(
                             items: vm.hidrataciones.map((h) => h.nombreHidratacion).toList(),
-                            value: editarViewModel.selectedHidratacion,
+                            value: editarViewModel.selectedHidratacion?.nombreHidratacion,
                             onChanged: (value) {
-                              vm.selectedHidratacion = vm.hidrataciones.firstWhere((h) => h.nombreHidratacion == value);
+                              final hidratacion = vm.hidrataciones.firstWhere((h) => h.nombreHidratacion == value);
+                              editarViewModel.setHidratacion = hidratacion;
                             },
                             validator: (v) => v == null ? 'Selecciona hidratación' : null,
                           ),
@@ -205,57 +223,62 @@ void mostrarPopUpEditarCharola({
           ),
         ),
       ),
-
-        actions: [
-          TextButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              minimumSize: const Size(150, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-            child: const Text('Cancelar', style: TextStyle(color: Colors.white, fontSize: 20),),
-            onPressed: () {
-              vm.resetForm();
-              Navigator.of(dialogContext).pop();
-            },
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              minimumSize: const Size(150, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-            child: const Text('Editar información', style: TextStyle(color: Colors.white, fontSize: 20),),
-            onPressed: () async {
-              if (vm.formKey.currentState!.validate()) {
-                try {
-                  await editarViewModel.editarCharola(charolaId);
+      actions: [
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  minimumSize: const Size(150, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                onPressed: () {
                   vm.resetForm();
                   Navigator.of(dialogContext).pop();
-                  /*
-                  vm.cargarCharolas();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Charola registrada exitosamente'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );*/
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(e.toString()),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              }
-            },
+                },
+              ),
+              const SizedBox(width: 20), // Espacio entre botones
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  minimumSize: const Size(150, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                child: const Text(
+                  'Editar información',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                onPressed: () async {
+                  if (vm.formKey.currentState!.validate()) {
+                    await editarViewModel.editarCharola(charolaId);
+                    vm.resetForm();
+                    Navigator.of(dialogContext).pop();
+                    vm.cargarCharola(charolaId);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(editarViewModel.mensaje),
+                        backgroundColor: editarViewModel.error ? Colors.red : Colors.green,
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
           ),
-        ],
+        ),
+      ],
+
       );
     }
     );

@@ -2,7 +2,7 @@
 import '../data/repositories/editarCharolaRepository.dart';
 
 abstract class EditarCharolaUseCase {
-  Future <Map<dynamic,dynamic>> editarCharola(charolaId, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada);
+  Future <Map<dynamic,dynamic>> editarCharola(charolaId, nombreCharola, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada, fechaCreacion);
 }
 
 class EditarCharolaUseCaseImp extends EditarCharolaUseCase{
@@ -11,7 +11,7 @@ class EditarCharolaUseCaseImp extends EditarCharolaUseCase{
   EditarCharolaUseCaseImp({EditarCharolaRepository? repositorio}) : repositorio = repositorio ?? EditarCharolaRepository();
 
   @override
-  Future <Map<dynamic,dynamic>> editarCharola(charolaId, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada){
-    return repositorio.putEditarCharola(charolaId, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada);
+  Future <Map<dynamic,dynamic>> editarCharola(charolaId, nombreCharola, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada, fechaCreacion){
+    return repositorio.putEditarCharola(charolaId, nombreCharola, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada, fechaCreacion);
   }
 }

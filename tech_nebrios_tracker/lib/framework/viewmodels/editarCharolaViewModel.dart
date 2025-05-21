@@ -2,10 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:tech_nebrios_tracker/data/models/alimentacionModel.dart';
-import 'package:tech_nebrios_tracker/data/models/historialActividadModel.dart';
 import 'package:tech_nebrios_tracker/domain/editarCharolaUseCase.dart';
 import '../../data/repositories/editarCharolaRepository.dart';
-import './../../data/models/charolaModel.dart';
+import 'package:tech_nebrios_tracker/data/models/hidratacionModel.dart';
 import 'package:intl/intl.dart';
 
 class EditarCharolaViewModel extends ChangeNotifier{
@@ -19,20 +18,38 @@ class EditarCharolaViewModel extends ChangeNotifier{
   final TextEditingController comidaCicloController = TextEditingController();
   final TextEditingController pesoController = TextEditingController();
   final TextEditingController hidratacionCicloController = TextEditingController();
-  late final Alimento selectedAlimentacion;
-  late final String selectedHidratacion;
+  Alimento? selectedAlimentacion;
+  Hidratacion? selectedHidratacion;
+
+  set setAlimentacion(Alimento value) {
+    selectedAlimentacion = value;
+    notifyListeners();
+  }
+
+  set setHidratacion(Hidratacion value) {
+    selectedHidratacion = value;
+    notifyListeners();
+  }
+
+  String _mensaje = '';
+  bool _error = false;
+
+  String get mensaje => _mensaje;
+  bool get error => _error;
+
+
 
   EditarCharolaViewModel(){
     Editar = EditarCharolaUseCaseImp(repositorio: _Repo);
   }
 
-  Future<void> cargarDatos(nombreCharola, fechaCreacion, densidadLarva, alimento, alimentoOtorgado, hidratacion, hidratacionOtorgado, peso) async{
+  Future<void> cargarDatos(nombreCharola, fechaCreacion, densidadLarva, alimentoId, alimento, alimentoOtorgado, hidratacionId, hidratacion, hidratacionOtorgado, peso) async{
     nombreController.text = nombreCharola;
     fechaController.text = fechaCreacion;
     densidadLarvaController.text = densidadLarva.toString();
-    selectedAlimentacion = Alimento(idAlimento: 1, nombreAlimento: alimento, descripcionAlimento: '');
+    selectedAlimentacion = Alimento(idAlimento: alimentoId, nombreAlimento: alimento, descripcionAlimento: '');
     comidaCicloController.text = alimentoOtorgado.toString();
-    selectedHidratacion = hidratacion;
+    selectedHidratacion = Hidratacion(idHidratacion: hidratacionId, nombreHidratacion: hidratacion, descripcionHidratacion: '');
     hidratacionCicloController.text = hidratacionOtorgado.toString();
     pesoController.text = peso.toString();
   }
@@ -42,10 +59,24 @@ class EditarCharolaViewModel extends ChangeNotifier{
       final hoy = DateTime.now();
       final fechaFormateada = DateFormat('yyyy-MM-dd').format(hoy);
 
-      var respuesta = await Editar.repositorio.putEditarCharola(charolaId, "activa", pesoController.text, selectedAlimentacion, comidaCicloController.text, fechaFormateada, selectedHidratacion, hidratacionCicloController.text);
+      final fechaCreacionFormateada = DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(fechaController.text));
+
+      var respuesta = await Editar.repositorio.putEditarCharola(charolaId, nombreController.text, "activa", pesoController.text, selectedAlimentacion!.idAlimento, comidaCicloController.text, fechaFormateada, selectedHidratacion!.idHidratacion, hidratacionCicloController.text, fechaCreacionFormateada);
+      
+      if (respuesta['codigo'] == 200){
+        _mensaje = 'Se editó la información correctamente.';
+        _error = false;
+        notifyListeners();
+        return;
+      }
+      _mensaje = 'Ocurrió un error al editar la información.';
+      _error = true;
+      notifyListeners();
 
     } catch (error){
-      print("Error al editar charola: $error");
+      _mensaje = 'Ocurrió un error al editar la información.';
+      _error = true;
+      notifyListeners();
     }
   }
 }

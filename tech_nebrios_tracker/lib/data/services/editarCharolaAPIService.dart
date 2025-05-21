@@ -2,5 +2,5 @@
 
 abstract class EditarCharolaAPIService {
 
-  Future<Map<dynamic, dynamic>> putEditarCharola(charolaId, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada);
+  Future<Map<dynamic, dynamic>> putEditarCharola(charolaId, nombreCharola, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada, fechaCreacion);
  }

@@ -9,15 +9,13 @@ import '../services/editarCharolaAPIService.dart';
 
 class EditarCharolaRepository extends EditarCharolaAPIService{
   @override
-  Future<Map<dynamic, dynamic>> putEditarCharola(charolaId, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada) async {
+  Future<Map<dynamic, dynamic>> putEditarCharola(charolaId, nombreCharola, nuevoEstado, nuevoPeso, nuevaAlimentacion, nuevaAlimentacionOtorgada, fechaActualizacion, nuevaHidratacion, nuevaHidratacionOtorgada, fechaCreacion) async {
     // Construir la URL
-    final url = Uri.parse('${APIRutas.CHAROLA}/editarCharola?charolaId=$charolaId&nuevoEstado=$nuevoEstado&nuevoPeso=$nuevoPeso&nuevaAlimentacion=$nuevaAlimentacion&nuevaAlimentacionOtorgada=$nuevaAlimentacionOtorgada&fechaActualizacion=$fechaActualizacion&nuevaHidratacion=$nuevaHidratacion&nuevaHidratacionOtorgada=$nuevaHidratacionOtorgada');
+    final url = Uri.parse('${APIRutas.CHAROLA}/editarCharola?charolaId=$charolaId&nuevoNombre=$nombreCharola&nuevoEstado=$nuevoEstado&nuevoPeso=$nuevoPeso&nuevaAlimentacion=$nuevaAlimentacion&nuevaAlimentacionOtorgada=$nuevaAlimentacionOtorgada&fechaActualizacion=$fechaActualizacion&nuevaHidratacion=$nuevaHidratacion&nuevaHidratacionOtorgada=$nuevaHidratacionOtorgada&fechaCreacion=$fechaCreacion');
 
     try{
       // Esperar la respuesta de la llamada al backend
       final respuesta = await http.put(url);
-
-      print(respuesta.statusCode);
 
       if (respuesta.statusCode == 200){
         return {'codigo': 200, 'mensaje': 'Ok'};

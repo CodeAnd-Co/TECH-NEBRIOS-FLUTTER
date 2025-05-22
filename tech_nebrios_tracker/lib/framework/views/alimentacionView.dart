@@ -275,31 +275,39 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          backgroundColor: const Color(0xFFF8F1F1),
           title: const Center(
             child: Text(
               'Nuevo Alimento',
-              style: TextStyle(fontWeight: FontWeight.normal),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nombreController,
-                maxLength: 25,
-                decoration: const InputDecoration(labelText: 'Nombre:'),
-              ),
-              const SizedBox(height: 5),
-              TextField(
-                controller: descripcionController,
-                maxLength: 200,
-                decoration: const InputDecoration(labelText: 'Descripción:'),
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Divider(height: 1),
+                const SizedBox(height: 30),
+                TextField(
+                  controller: nombreController,
+                  maxLength: 25,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre:',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: descripcionController,
+                  maxLength: 200,
+                  decoration: const InputDecoration(
+                    labelText: 'Descripción:',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                ),
+              ],
+            ),
           ),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
@@ -308,6 +316,21 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      minimumSize: const Size(150, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text(
+                      'Cancelar',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
                   ElevatedButton(
                     onPressed: () async {
                       final nombre = nombreController.text.trim();
@@ -330,28 +353,15 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(120, 48),
-                      textStyle: const TextStyle(fontSize: 16),
+                      minimumSize: const Size(150, 50),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(5),
                       ),
                     ),
-                    child: const Text('Guardar'),
-                  ),
-                  const SizedBox(width: 40),
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(120, 48),
-                      textStyle: const TextStyle(fontSize: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
+                    child: const Text(
+                      'Guardar',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    child: const Text('Cancelar'),
                   ),
                 ],
               ),
@@ -375,56 +385,94 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       context: context,
       builder:
           (BuildContext dialogContext) => AlertDialog(
-            backgroundColor: const Color(0xFFF8F1F1),
-            title: const Text('Modificar Alimento'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nombreController,
-                  decoration: const InputDecoration(labelText: 'Nombre:'),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: descripcionController,
-                  decoration: const InputDecoration(labelText: 'Descripción:'),
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ],
+            title: const Center(
+              child: Text(
+                'Modificar Alimento',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
-            actions: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () async {
-                  final resultado = await vmAlimentacion.editarAlimento(
-                    Alimento(
-                      idAlimento: alimento.idAlimento,
-                      nombreAlimento: nombreController.text.trim(),
-                      descripcionAlimento: descripcionController.text.trim(),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Divider(height: 1),
+                  const SizedBox(height: 30),
+                  TextField(
+                    controller: nombreController,
+                    maxLength: 25,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre:',
+                      border: OutlineInputBorder(),
                     ),
-                  );
-                  if (resultado == null) {
-                    Navigator.of(dialogContext).pop();
-                  } else {
-                    ScaffoldMessenger.of(
-                      dialogContext,
-                    ).showSnackBar(SnackBar(content: Text(resultado)));
-                  }
-                },
-                child: const Text('Guardar'),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: descripcionController,
+                    maxLength: 200,
+                    decoration: const InputDecoration(
+                      labelText: 'Descripción:',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ],
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        minimumSize: const Size(150, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      minimumSize: const Size(150, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                      onPressed: () async {
+                        final resultado = await vmAlimentacion.editarAlimento(
+                          Alimento(
+                            idAlimento: alimento.idAlimento,
+                            nombreAlimento: nombreController.text.trim(),
+                            descripcionAlimento: descripcionController.text.trim(),
+                          ),
+                        );
+                        if (resultado == null) {
+                          Navigator.of(dialogContext).pop();
+                        } else {
+                          ScaffoldMessenger.of(
+                            dialogContext,
+                          ).showSnackBar(SnackBar(content: Text(resultado)));
+                        }
+                      },
+                      child: const Text(
+                        'Guardar',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
+                  ],
                 ),
-                onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancelar'),
-              ),
+              )
             ],
           ),
     );
@@ -437,34 +485,70 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       context: context,
       builder:
           (BuildContext dialogContext) => AlertDialog(
-            backgroundColor: const Color(0xFFF8F1F1),
-            title: const Text('Eliminar Alimento'),
-            content: const Text('¿Estás seguro de eliminar este alimento?'),
+            title: const Center(
+              child: Text(
+                'Eliminar Alimento',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Divider(height: 1),
+                SizedBox(height: 30),
+                Text(
+                  '¿Estás seguro de eliminar este alimento?',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SizedBox(height: 20),
+              ]
+            ),
+            actionsAlignment: MainAxisAlignment.center,
             actions: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () async {
-                  await vmAlimentacion.eliminarAlimento(idAlimento);
-                  Navigator.of(dialogContext).pop();
-                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                    const SnackBar(
-                      content: Text('Alimento eliminado exitosamente'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Row(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        minimumSize: const Size(150, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
-                  );
-                },
-                child: const Text('Eliminar'),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancelar'),
-              ),
+                    const SizedBox(width: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        minimumSize: const Size(150, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      onPressed: () async {
+                        await vmAlimentacion.eliminarAlimento(idAlimento);
+                        Navigator.of(dialogContext).pop();
+                        ScaffoldMessenger.of(dialogContext).showSnackBar(
+                          const SnackBar(
+                            content: Text('Alimento eliminado exitosamente'),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Eliminar',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
+                  ]
+                )
+              )
             ],
           ),
     );

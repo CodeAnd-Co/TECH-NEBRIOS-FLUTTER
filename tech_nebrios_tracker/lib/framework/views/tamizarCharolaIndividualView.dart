@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_nebrios_tracker/framework/views/seleccionarTamizadoView.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewmodel.dart';
 import '../views/sidebarView.dart';
@@ -143,7 +142,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                           // Botón responsivo
                           ElevatedButton.icon(
                             onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => SidebarView(initialIndex: 1)));
+                              Navigator.pop(context);
                             },
                             icon: Icon(Icons.arrow_back, size: iconSize.clamp(20, 30)),
                             label: Text(
@@ -438,15 +437,9 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                             await seleccionVM.tamizarCharolaIndividual();
 
                         for (final nueva in nuevasCharolas) {
-                          print(
-                            '🔄 Asignando ancestros a hija ${nueva.charolaId}',
-                          );
                           await seleccionVM.asignarAncestros(
                             charolaHijaId: nueva.charolaId,
                             ancestrosIds: ancestrosIds,
-                          );
-                          print(
-                            '✅ Ancestros asignados para hija ${nueva.charolaId}',
                           );
                         }
                         if (exito) {

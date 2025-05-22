@@ -144,7 +144,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                           // Botón responsivo
                           ElevatedButton.icon(
                             onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => SidebarView(initialIndex: 1)));
+                              Navigator.pop(context);
                             },
                             icon: Icon(Icons.arrow_back, size: iconSize.clamp(20, 30)),
                             label: Text(
@@ -330,7 +330,6 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                         if (nueva != null) {
                           setState(() {
                             nuevasCharolas.add(nueva);
-                            print('Charola agregada ${nueva.nombreCharola}');
                           });
                         }
                       },
@@ -363,15 +362,9 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                             await seleccionVM.tamizarCharolaIndividual();
 
                         for (final nueva in nuevasCharolas) {
-                          print(
-                            '🔄 Asignando ancestros a hija ${nueva.charolaId}',
-                          );
                           await seleccionVM.asignarAncestros(
                             charolaHijaId: nueva.charolaId,
                             ancestrosIds: ancestrosIds,
-                          );
-                          print(
-                            '✅ Ancestros asignados para hija ${nueva.charolaId}',
                           );
                         }
                         if (exito) {

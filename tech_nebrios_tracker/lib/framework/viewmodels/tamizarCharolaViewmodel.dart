@@ -172,7 +172,7 @@ class TamizadoViewModel extends ChangeNotifier {
       _alimentosCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
-      print('Error al cargar los alimentos: $e');
+      _logger.e('Error al cargar los alimentos: $e');
     }
   }
 
@@ -183,7 +183,7 @@ class TamizadoViewModel extends ChangeNotifier {
       _hidratacionCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
-      print('Error al cargar la hidratación: $e');
+      _logger.e('Error al cargar la hidratación: $e');
     }
   }
 

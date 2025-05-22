@@ -18,8 +18,10 @@ class CharolaDetalle {
   final int densidadLarva;
   final String fechaCreacion;
   final int pesoCharola;
+  final int comidaId;
   final String comidaNombre;
   final String comidaDesc;
+  final int hidratacionId;
   final String hidratacionNombre;
   final String hidratacionDesc;
 
@@ -36,8 +38,10 @@ class CharolaDetalle {
     required this.densidadLarva,
     required this.fechaCreacion,
     required this.pesoCharola,
+    required this.comidaId,
     required this.comidaNombre,
     required this.comidaDesc,
+    required this.hidratacionId,
     required this.hidratacionNombre,
     required this.hidratacionDesc,
   });
@@ -45,12 +49,44 @@ class CharolaDetalle {
   /// Método para construir una instancia desde un JSON.
   factory CharolaDetalle.fromJson(Map<String, dynamic> json) {
     final charolaData = json['charola'];
-    final comidaRelacion = json['relacionComida'];
-    final hidratacionRelacion = json['relacionHidratacion'];
-    final comidaData = json['comida'] ?? {}; // Previene errores si es null
-    final hidratacionData = json['hidratacion'] ?? {};
+    final comidas = (charolaData['CHAROLA_COMIDA'] as List?) ?? [];
+    final hidrataciones = (charolaData['CHAROLA_HIDRATACION'] as List?) ?? [];
 
-    /// Función auxiliar para parsear valores a entero, con manejo de nulos.
+    // Función para parsear fechas
+    DateTime parseFecha(String fecha) =>
+        DateTime.tryParse(fecha) ?? DateTime(2000);
+
+    // Obtener la comida más reciente
+    final ultimaComida =
+        comidas.isNotEmpty
+            ? comidas.reduce(
+              (a, b) =>
+                  parseFecha(
+                        a['fechaOtorgada'],
+                      ).isAfter(parseFecha(b['fechaOtorgada']))
+                      ? a
+                      : b,
+            )
+            : null;
+
+    final comidaData = ultimaComida?['COMIDA'] ?? {};
+
+    // Obtener la hidratación más reciente
+    final ultimaHidratacion =
+        hidrataciones.isNotEmpty
+            ? hidrataciones.reduce(
+              (a, b) =>
+                  parseFecha(
+                        a['fechaOtorgada'],
+                      ).isAfter(parseFecha(b['fechaOtorgada']))
+                      ? a
+                      : b,
+            )
+            : null;
+
+    final hidratacionData = ultimaHidratacion?['HIDRATACION'] ?? {};
+
+    // Conversor a int
     int parseToInt(dynamic value) {
       if (value == null) return 0;
       if (value is int) return value;
@@ -61,8 +97,8 @@ class CharolaDetalle {
     return CharolaDetalle(
       charolaId: charolaData['charolaId'] as int,
       nombreCharola: charolaData['nombreCharola'] as String,
-      comidaOtorgada: parseToInt(comidaRelacion['cantidadOtorgada']),
-      hidratacionOtorgada: parseToInt(hidratacionRelacion['cantidadOtorgada']),
+      comidaOtorgada: parseToInt(ultimaComida?['cantidadOtorgada']),
+      hidratacionOtorgada: parseToInt(ultimaHidratacion?['cantidadOtorgada']),
       comidaCiclo: parseToInt(charolaData['comidaCiclo']),
       hidratacionCiclo: parseToInt(charolaData['hidratacionCiclo']),
       fechaActualizacion:
@@ -71,8 +107,11 @@ class CharolaDetalle {
       densidadLarva: parseToInt(charolaData['densidadLarva']),
       fechaCreacion: (charolaData['fechaCreacion'] as String?) ?? 'desconocido',
       pesoCharola: parseToInt(charolaData['pesoCharola']),
+      comidaId: (parseToInt(comidaData['comidaId'])),
       comidaNombre: (comidaData['nombre'] as String?) ?? 'desconocido',
       comidaDesc: (comidaData['descripcion'] as String?) ?? 'desconocido',
+      hidratacionId:
+        (parseToInt(hidratacionData['hidratacionId'])),
       hidratacionNombre:
           (hidratacionData['nombre'] as String?) ?? 'desconocido',
       hidratacionDesc:
@@ -144,9 +183,10 @@ class CharolaDashboard {
       pag: json['page'],
       limite: json['limit'],
       totalPags: json['totalPages'],
-      data: (json['data'] as List)
-          .map((item) => CharolaTarjeta.fromJson(item))
-          .toList(),
+      data:
+          (json['data'] as List)
+              .map((item) => CharolaTarjeta.fromJson(item))
+              .toList(),
     );
   }
 }
@@ -159,21 +199,24 @@ class ComidaAsignada {
   ComidaAsignada({required this.comidaId, required this.cantidadOtorgada});
 
   Map<String, dynamic> toJson() => {
-        'comidaId': comidaId,
-        'cantidadOtorgada': cantidadOtorgada,
-      };
+    'comidaId': comidaId,
+    'cantidadOtorgada': cantidadOtorgada,
+  };
 }
 
 class HidratacionAsignada {
   final int hidratacionId;
   double cantidadOtorgada;
 
-  HidratacionAsignada({required this.hidratacionId, required this.cantidadOtorgada});
+  HidratacionAsignada({
+    required this.hidratacionId,
+    required this.cantidadOtorgada,
+  });
 
   Map<String, dynamic> toJson() => {
-        'hidratacionId': hidratacionId,
-        'cantidadOtorgada': cantidadOtorgada,
-      };
+    'hidratacionId': hidratacionId,
+    'cantidadOtorgada': cantidadOtorgada,
+  };
 }
 
 /// Modelo que representa el registro de una nueva charola.
@@ -198,13 +241,13 @@ class CharolaRegistro {
   });
 
   Map<String, dynamic> toJson() => {
-        'nombre': nombreCharola,
-        'fechaCreacion': fechaCreacion.toIso8601String(),
-        'fechaActualizacion': fechaActualizacion.toIso8601String(),
-        'densidadLarva': densidadLarva,
-        'pesoCharola': pesoCharola,
-        'comidas': comidas.map((comida) => comida.toJson()).toList(),
-        'hidrataciones':
-            hidrataciones.map((hidratacion) => hidratacion.toJson()).toList(),
-      };
+    'nombre': nombreCharola,
+    'fechaCreacion': fechaCreacion.toIso8601String(),
+    'fechaActualizacion': fechaActualizacion.toIso8601String(),
+    'densidadLarva': densidadLarva,
+    'pesoCharola': pesoCharola,
+    'comidas': comidas.map((comida) => comida.toJson()).toList(),
+    'hidrataciones':
+        hidrataciones.map((hidratacion) => hidratacion.toJson()).toList(),
+  };
 }

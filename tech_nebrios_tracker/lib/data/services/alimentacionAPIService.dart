@@ -1,5 +1,6 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
 //RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
+//RF26: Registrar la alimentación de la charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF26
 
 import '../models/alimentacionModel.dart';
 
@@ -32,4 +33,7 @@ abstract class AlimentacionService {
   ///
   /// Lanza excepciones si el backend responde con error (400, 500, etc.).
   Future<void> postDatosComida(String nombre, String descripcion);
+
+  /// Registra una alimentación en la charola.
+  Future<bool> registrarAlimentacion(ComidaCharola comidaCharola);
 }

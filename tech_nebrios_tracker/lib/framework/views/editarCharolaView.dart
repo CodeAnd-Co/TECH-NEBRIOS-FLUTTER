@@ -245,7 +245,7 @@ void mostrarPopUpEditarCharola({
                   Navigator.of(dialogContext).pop();
                 },
               ),
-              const SizedBox(width: 20), // Espacio entre botones
+              const SizedBox(width: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,

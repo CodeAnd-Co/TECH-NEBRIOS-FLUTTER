@@ -11,8 +11,7 @@ import '../../framework/viewmodels/historialCharolaViewModel.dart';
 import '../../data/repositories/historialCharolaRepository.dart';
 import 'components/atoms/texto.dart';
 import 'components/organisms/pop_up.dart';
-import '../viewmodels/alimentacionViewModel.dart';
-import 'package:flutter/services.dart';
+import '../views/alimentarCharolaView.dart';
 
 /// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
@@ -93,108 +92,6 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     );
   }
 
-  void mostrarDialogoAlimentar(BuildContext context, int charolaId, CharolaViewModel charolaViewModel) async {
-    final comidaCharolaVM = Provider.of<AlimentacionViewModel>(
-      context,
-      listen: false,
-    );
-
-    await comidaCharolaVM.cargarAlimentos();
-
-    int? comidaIdSeleccionada;
-    final TextEditingController cantidadController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Registrar alimentación'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField<int>(
-                value: comidaIdSeleccionada,
-                items:
-                    comidaCharolaVM.alimentos.map((alimento) {
-                      return DropdownMenuItem<int>(
-                        value: alimento.idAlimento,
-                        child: Text(alimento.nombreAlimento),
-                      );
-                    }).toList(),
-                onChanged: (value) {
-                  comidaIdSeleccionada = value;
-                },
-                decoration: const InputDecoration(labelText: 'Tipo de comida'),
-              ),
-              TextField(
-                controller: cantidadController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,           // Solo dígitos
-                    LengthLimitingTextInputFormatter(4),              // Máximo 3 caracteres
-                  ],
-                decoration: const InputDecoration(
-                  labelText: 'Cantidad otorgada (g)',
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Texto.texto(
-                texto: 'Cancelar',
-                color: const Color(0xFFE2387B),
-                bold: true,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final cantidad = int.tryParse(cantidadController.text);
-                if (cantidad == null ||
-                    cantidad <= 0 ||
-                    comidaIdSeleccionada == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Ingresa todos los campos correctamente'),
-                    ),
-                  );
-                  return;
-                }
-
-                await comidaCharolaVM.registrarAlimentacion(
-                  charolaId: charolaId,
-                  comidaId: comidaIdSeleccionada!,
-                  cantidadOtorgada: cantidad,
-                  fechaOtorgada: DateTime.now().toIso8601String(),
-                );
-
-                Navigator.of(context).pop();
-
-                if (comidaCharolaVM.error != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: ${comidaCharolaVM.error}')),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Alimentación registrada con éxito'),
-                    ),
-                  );
-                }
-                await charolaViewModel.cargarCharola(charolaId);
-              },
-              child: Texto.texto(
-                texto: 'Alimentar',
-                color: const Color(0xFFE2387B),
-                bold: true,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,6 +121,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
           backgroundColor: const Color(0xFFF5F7FA),
           body: SafeArea(
             child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child: Center(
                 child: Column(
                   children: [
@@ -340,7 +238,9 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                               ),
                             ),
                             const SizedBox(height: 40),
-                            Center(
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,

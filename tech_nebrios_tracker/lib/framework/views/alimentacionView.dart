@@ -5,6 +5,8 @@ import '../../data/models/hidratacionModel.dart';
 import '../viewmodels/alimentacionViewModel.dart';
 import '../viewmodels/hidratacionViewModel.dart';
 
+import 'components/header.dart';
+
 /// Pantalla que permite visualizar y gestionar alimentos e hidratación.
 ///
 /// Incluye scroll infinito en la sección de alimentos,
@@ -86,44 +88,30 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
   /// Construye la UI general de la pantalla.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7FBFA),
-      body: Column(
-        children: [
-          const SizedBox(height: 40),
-          const Text(
-            "Alimentación",
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(top: 4.0),
-            child: Divider(
-              color: Color.fromARGB(255, 0, 0, 0),
-              thickness: 3,
-              height: 20,
+  return Scaffold(
+    backgroundColor: const Color(0xFFF5F7FA),
+    body: Column(
+      children: [
+        const Header(
+          titulo: 'Nutrición',
+          subtitulo: 'Visualiza tu alimentación',
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Row(
+              children: [
+                Expanded(child: _buildColumnSectionAlimentos()),
+                const SizedBox(width: 16),
+                Expanded(child: _buildColumnSectionHidratacion()),
+              ],
             ),
           ),
-          const Text(
-            'Vizualiza tu alimentación',
-            style: TextStyle(fontSize: 18, color: Colors.black),
-          ),
-          const SizedBox(height: 24),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Row(
-                children: [
-                  Expanded(child: _buildColumnSectionAlimentos()),
-                  const SizedBox(width: 16),
-                  Expanded(child: _buildColumnSectionHidratacion()),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   /// Construye la columna que contiene la lista de alimentos.
   Widget _buildColumnSectionAlimentos() {

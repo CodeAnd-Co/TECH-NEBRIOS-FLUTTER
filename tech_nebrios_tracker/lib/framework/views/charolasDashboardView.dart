@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import './registrarCharolaView.dart';
+import './components/header.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
@@ -98,29 +99,20 @@ class VistaCharolas extends StatelessWidget {
 
   const VistaCharolas({super.key, required this.onVerDetalle});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        title: const Text(
-          'Charolas',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: const Color(0xFFF5F7FA),
-      ),
-      body: SafeArea(
-        child: Consumer<CharolaViewModel>(
-          builder: (context, vm, _) {
-            return Column(
-              children: [
-                const Divider(color: Color(0xFF000000), thickness: 3),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color(0xFFF5F7FA),
+    body: SafeArea(
+      child: Consumer<CharolaViewModel>(
+        builder: (context, vm, _) {
+          return Column(
+            children: [
+              const Header(
+                titulo: 'Charolas',
+                showDivider: true,
+                subtitulo: null, // No usas subtítulo en esta pantalla
+              ),
                 // const SizedBox(height: 4),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),

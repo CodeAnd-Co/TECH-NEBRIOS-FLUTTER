@@ -6,6 +6,7 @@ import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/alimentacionModel.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../utils/positive_number_formatter.dart';
+import '../views/components/header.dart';
 
 class RegistrarCharolaView extends StatelessWidget {
   const RegistrarCharolaView({super.key});
@@ -20,121 +21,102 @@ class RegistrarCharolaView extends StatelessWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(
-         title: const Text('Registrar Charola', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        titleTextStyle: const TextStyle(
-          fontSize: 35,
-          color: Colors.black,
-          fontWeight: FontWeight.w400,
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
+      body: Form(
           key: vm.formKey,
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const Divider(
-                  thickness: 4,
-                  color: Color.fromRGBO(56, 88, 129, 1),
+                Header(
+                  titulo: 'Registrar charola', 
+                  subtitulo: 'Ingresa una charola nueva', 
+                  showDivider: true,
                 ),
-                const SizedBox(height: 10),
-                const Center(
-                  child: Text(
-                    'Ingresa una charola nueva',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 75),
-                GridView.count(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: 4.5,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _buildTextFormField(
-                      label: 'Nombre *',
-                      controller: vm.nombreController,
-                      validator: (v) => v == null || v.isEmpty ? 'Nombre obligatorio' : null,
-                      maxLength: 20,
-                    ),
-                    _buildTextFormField(
-                      label: 'Densidad de Larva *',
-                      controller: vm.densidadLarvaController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        PositiveNumberFormatter(),
-                      ],
-                      validator: (v) => v == null || v.isEmpty ? 'Ingresa densidad' : null,
-                    ),
-                    _buildDateFormField(
-                      label: 'Fecha (dd/mm/yyyy) *',
-                      controller: vm.fechaController,
-                      context: context,
-                      validator: (v) => v == null || v.isEmpty ? 'Selecciona fecha' : null,
-                    ),
-                    _buildDropdownFormField<Alimento>(
-                      label: 'Alimentación *',
-                      items: vm.alimentos.map((a) => a.nombreAlimento).toList(),
-                      value: vm.selectedAlimentacion?.nombreAlimento,
-                      onChanged: (value) {
-                        vm.selectedAlimentacion = vm.alimentos.firstWhere((a) => a.nombreAlimento == value);
-                      },
-                      validator: (v) => v == null ? 'Selecciona alimento' : null,
-                    ),
-                    _buildTextFormField(
-                      label: 'Cantidad de alimento (Kg) *',
-                      controller: vm.comidaCicloController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        PositiveNumberFormatter(),
-                      ],
-                      validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
-                    ),
-                    _buildTextFormField(
-                      label: 'Peso (kg) *',
-                      controller: vm.pesoController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        PositiveNumberFormatter(),
-                      ],
-                      validator: (v) => v == null || v.isEmpty ? 'Ingresa peso' : null,
-                    ),
-                    _buildDropdownFormField<Hidratacion>(
-                      label: 'Hidratación *',
-                      items: vm.hidrataciones.map((h) => h.nombreHidratacion).toList(),
-                      value: vm.selectedHidratacion?.nombreHidratacion,
-                      onChanged: (value) {
-                        vm.selectedHidratacion = vm.hidrataciones.firstWhere((h) => h.nombreHidratacion == value);
-                      },
-                      validator: (v) => v == null ? 'Selecciona hidratación' : null,
-                    ),
-                    _buildTextFormField(
-                      label: 'Cantidad de hidratación (Kg) *',
-                      controller: vm.hidratacionCicloController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        PositiveNumberFormatter(),
-                      ],
-                      validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
-                    ),
-                  ],
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: GridView.count(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    childAspectRatio: 4.5,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      _buildTextFormField(
+                        label: 'Nombre *',
+                        controller: vm.nombreController,
+                        validator: (v) => v == null || v.isEmpty ? 'Nombre obligatorio' : null,
+                        maxLength: 20,
+                      ),
+                      _buildTextFormField(
+                        label: 'Densidad de Larva *',
+                        controller: vm.densidadLarvaController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          PositiveNumberFormatter(),
+                        ],
+                        validator: (v) => v == null || v.isEmpty ? 'Ingresa densidad' : null,
+                      ),
+                      _buildDateFormField(
+                        label: 'Fecha (dd/mm/yyyy) *',
+                        controller: vm.fechaController,
+                        context: context,
+                        validator: (v) => v == null || v.isEmpty ? 'Selecciona fecha' : null,
+                      ),
+                      _buildDropdownFormField<Alimento>(
+                        label: 'Alimentación *',
+                        items: vm.alimentos.map((a) => a.nombreAlimento).toList(),
+                        value: vm.selectedAlimentacion?.nombreAlimento,
+                        onChanged: (value) {
+                          vm.selectedAlimentacion = vm.alimentos.firstWhere((a) => a.nombreAlimento == value);
+                        },
+                        validator: (v) => v == null ? 'Selecciona alimento' : null,
+                      ),
+                      _buildTextFormField(
+                        label: 'Cantidad de alimento (Kg) *',
+                        controller: vm.comidaCicloController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          PositiveNumberFormatter(),
+                        ],
+                        validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
+                      ),
+                      _buildTextFormField(
+                        label: 'Peso (kg) *',
+                        controller: vm.pesoController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          PositiveNumberFormatter(),
+                        ],
+                        validator: (v) => v == null || v.isEmpty ? 'Ingresa peso' : null,
+                      ),
+                      _buildDropdownFormField<Hidratacion>(
+                        label: 'Hidratación *',
+                        items: vm.hidrataciones.map((h) => h.nombreHidratacion).toList(),
+                        value: vm.selectedHidratacion?.nombreHidratacion,
+                        onChanged: (value) {
+                          vm.selectedHidratacion = vm.hidrataciones.firstWhere((h) => h.nombreHidratacion == value);
+                        },
+                        validator: (v) => v == null ? 'Selecciona hidratación' : null,
+                      ),
+                      _buildTextFormField(
+                        label: 'Cantidad de hidratación (Kg) *',
+                        controller: vm.hidratacionCicloController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          PositiveNumberFormatter(),
+                        ],
+                        validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
+                      ),
+                    ],
+                  )
                 ),
                 const SizedBox(height: 30),
+                vm.cargandoRegistro ? const CircularProgressIndicator() :
                 ElevatedButton(
                   onPressed: () async {
                     if (vm.formKey.currentState!.validate()) {
@@ -175,7 +157,7 @@ class RegistrarCharolaView extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      
     );
   }
 

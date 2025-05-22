@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../../data/models/alimentacionModel.dart';
 import '../../data/repositories/alimentacionRepository.dart';
 import '../../domain/editarAlimentacionUseCase.dart';
@@ -12,6 +13,8 @@ class AlimentacionViewModel extends ChangeNotifier {
   final EliminarAlimentoCasoUso _eliminarCasoUso;
   final RegistrarAlimentoCasoUso _registrarCasoUso;
   final AlimentarCharolaUseCase _alimentarCasoUso;
+
+  final formKey = GlobalKey<FormState>();
 
   static const int _chunkSize = 20;
   List<Alimento> _allAlimentos = [];

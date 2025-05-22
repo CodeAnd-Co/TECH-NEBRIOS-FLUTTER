@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewmodel.dart';
+import 'components/header.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
@@ -117,10 +118,11 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
             }
             return Column(
               children: [
-                const SizedBox(height: 16),
-                const Text('Tamizar', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                const Divider(color: Color(0xFF000000), thickness: 3),
+                const Header(
+                  titulo: 'Tamizar',
+                  showDivider: true,
+                  subtitulo: null,
+                ),
                 const SizedBox(height: 8),
                 if (seleccionVM.charolasParaTamizar.isNotEmpty)
                   Padding(

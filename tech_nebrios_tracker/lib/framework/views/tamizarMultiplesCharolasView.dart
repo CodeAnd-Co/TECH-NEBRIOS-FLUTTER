@@ -5,6 +5,7 @@ import 'package:tech_nebrios_tracker/framework/views/sidebarView.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewmodel.dart';
 import '../views/registrarCharolaView.dart';
+import './components/header.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
@@ -121,11 +122,11 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
             seleccionVM.cargarHidratacion();
             return ListView(
               children: [
-                const SizedBox(height: 16),
-                const Text('Tamizar Charola', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                const Divider(color: Color(0xFF000000), thickness: 3),
-                const SizedBox(height: 8),
+             const Header(
+                  titulo: 'Tamizar Charola',
+                  subtitulo: null,
+                  showDivider: true,
+                ),
                 
                 const SizedBox(height: 10),
                 Padding(

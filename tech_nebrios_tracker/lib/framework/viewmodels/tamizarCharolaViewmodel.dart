@@ -5,8 +5,6 @@ import 'package:logger/logger.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../../data/repositories/tamizarCharolaRepository.dart';
 import '../../domain/tamizarCharolaUseCases.dart';
-import '../views/tamizarCharolaIndividualView.dart';
-import '../views/tamizarMultiplesCharolasView.dart';
 import '../views/sidebarView.dart';
 import '../../data/models/tamizadoIndividualModel.dart';
 import '../../data/models/tamizadoMultipleModel.dart';
@@ -324,6 +322,13 @@ class TamizadoViewModel extends ChangeNotifier {
     nombresCharolas.clear();
     _hasError = false;
     notifyListeners();
+  }
+
+  Future<void> asignarAncestros({
+    required int charolaHijaId,
+    required List<int> ancestrosIds,
+  }) async{ 
+    await repository.asignarAncestros(charolaHijaId, ancestrosIds);
   }
 
 }

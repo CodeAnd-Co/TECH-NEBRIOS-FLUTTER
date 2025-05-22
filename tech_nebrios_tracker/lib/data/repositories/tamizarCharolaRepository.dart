@@ -4,6 +4,7 @@ import '../models/tamizadoIndividualModel.dart';
 import '../models/tamizadoMultipleModel.dart';
 import '../models/tamizadoRespuestaModel.dart';
 import '../services/tamizadoApiService.dart';
+import '../models/constantes.dart';
 
 class TamizarCharolaRepository implements TamizadoApiService {
 
@@ -86,5 +87,30 @@ class TamizarCharolaRepository implements TamizadoApiService {
       print('Error en la solicitud: ${response.statusCode}');
       throw Exception('Error al obtener los alimentos: ${response.statusCode}');
     }
+  }
+
+  @override
+  Future<void> asignarAncestros(
+    int charolaId,
+    List<int> charolasAncestroIds,
+  ) async {
+    final uri = Uri.parse('${APIRutas.HISTORIAL_CHAROLA}/$charolaId/ancestros');
+    final body = jsonEncode({'ancestros': charolasAncestroIds});
+    final resp = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json', 
+      },
+      body: body,
+    );
+    if (resp.statusCode == 200) {
+      return;
+    } else if (resp.statusCode == 400) {
+      throw Exception('Error en la solicitud: ${resp.body}');
+    } else if (resp.statusCode == 401) {
+      throw Exception('No autorizado. Por favor, inicie sesión.');
+    } else {
+      throw Exception('Error al asignar ancestros: ${resp.statusCode}');
+   }
   }
 }

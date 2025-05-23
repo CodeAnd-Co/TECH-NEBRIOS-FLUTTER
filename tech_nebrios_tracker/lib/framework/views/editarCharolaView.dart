@@ -112,7 +112,7 @@ void mostrarPopUpEditarCharola({
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Peso(gr):"),
+                              Text("Peso(g):"),
                               _buildTextFormField(
                                 controller: editarViewModel.pesoController,
                                 keyboardType: TextInputType.number,
@@ -169,7 +169,7 @@ void mostrarPopUpEditarCharola({
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Cantidad de alimento (gr):"),
+                                Text("Cantidad de alimento (g):"),
                                 _buildTextFormField(
                                   controller: editarViewModel.comidaCicloController,
                                   keyboardType: TextInputType.number,
@@ -209,7 +209,7 @@ void mostrarPopUpEditarCharola({
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Cantidad de hidratación (gr):"),
+                              Text("Cantidad de hidratación (g):"),
                               _buildTextFormField(
                                 controller: editarViewModel.hidratacionCicloController,
                                 keyboardType: TextInputType.number,

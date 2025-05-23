@@ -61,7 +61,7 @@ import '../../framework/viewmodels/charolaViewModel.dart';
                               comidaIdSeleccionada = value;
                             },
                             decoration: const InputDecoration(
-                              labelText: 'Tipo de comida*',
+                              labelText: 'Tipo de alimento*',
                               border: OutlineInputBorder(),
                             ),
                             validator: (v) => v == null ? 'Selecciona alimento' : null,

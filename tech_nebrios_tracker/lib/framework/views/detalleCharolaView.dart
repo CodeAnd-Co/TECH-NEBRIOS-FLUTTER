@@ -224,7 +224,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                       ),
                                       _crearInfoFila(
                                         'Peso:',
-                                        '${detalle.pesoCharola}gr',
+                                        '${detalle.pesoCharola} g',
                                       ),
                                     ],
                                   ),
@@ -235,11 +235,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                     children: [
                                       _crearInfoFila(
                                         'Hidratación:',
-                                        '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}gr',
+                                        '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada} g',
                                       ),
                                       _crearInfoFila(
                                         'Alimento:',
-                                        '${detalle.comidaNombre} ${detalle.comidaOtorgada}gr',
+                                        '${detalle.comidaNombre} ${detalle.comidaOtorgada} g',
                                       ),
                                     ],
                                   ),

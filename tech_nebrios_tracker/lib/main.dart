@@ -8,6 +8,7 @@ import 'framework/viewmodels/reporteViewModel.dart';
 import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewModel.dart';
+import 'framework/viewmodels/tamizarCharolaViewModel.dart';
 import 'framework/viewmodels/editarCharolaViewModel.dart';
 import 'framework/viewmodels/alimentacionViewModel.dart';
 
@@ -28,6 +29,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => CharolaViewModel()),
+        ChangeNotifierProvider(create: (_) => TamizadoViewModel()),
         ChangeNotifierProvider(create: (_) => ReporteViewModel()),
         ChangeNotifierProvider(create: (_) => HistorialActividadViewmodel()),
         ChangeNotifierProvider(create: (_) => EditarCharolaViewModel()),

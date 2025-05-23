@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tech_nebrios_tracker/framework/viewmodels/tamizarCharolaViewModel.dart';
 import 'package:tech_nebrios_tracker/framework/views/charolasDashboardView.dart';
 import 'package:tech_nebrios_tracker/framework/views/reporteView.dart';
 import 'package:tech_nebrios_tracker/framework/views/alimentacionView.dart';
+import 'package:tech_nebrios_tracker/framework/views/seleccionarTamizadoView.dart';
 import './detalleCharolaView.dart';
+import './tamizarMultiplesCharolasView.dart';
+import './tamizarCharolaIndividualView.dart';
 
 class SidebarView extends StatefulWidget {
   final VoidCallback? onLogout;
   final int initialIndex;
+  final String? mensajeExito;
 
-  const SidebarView({Key? key, this.onLogout, this.initialIndex = 0}) : super(key: key);
+  const SidebarView({Key? key, this.onLogout, this.initialIndex = 0, this.mensajeExito}) : super(key: key);
 
   @override
   State<SidebarView> createState() => _SidebarViewState();
@@ -16,7 +22,10 @@ class SidebarView extends StatefulWidget {
 
 class _SidebarViewState extends State<SidebarView> {
   int _currentIndex = 0;
+  bool _mensajeMostrado = false;
   Widget? _detalleCharolaActual;
+  Widget? _vistaTamizadoIndividual;
+  Widget? _vistaTamizadoMultiple;
 
   void _mostrarDetalleCharola(int id) {
     setState(() {
@@ -33,9 +42,37 @@ class _SidebarViewState extends State<SidebarView> {
     });
   }
 
+  void _mostrarVistaTamizadoIndividual() {
+    setState(() {
+      _vistaTamizadoIndividual = VistaTamizadoIndividual(
+        onRegresar: _cerrarVistaTamizado,
+      );
+    });
+  }
+
+  void _cerrarVistaTamizado() {
+    setState(() {
+      _currentIndex = 1;
+    });
+  }
+
+
   @override
   void initState() {
     super.initState();
+    if (widget.mensajeExito != null && !_mensajeMostrado) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(widget.mensajeExito!),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            ),
+        );
+      });
+      _mensajeMostrado = true; // Limpiar el mensaje después de mostrarlo
+    }
     _currentIndex = widget.initialIndex;
   }
 
@@ -43,13 +80,19 @@ class _SidebarViewState extends State<SidebarView> {
     if (_detalleCharolaActual != null) {
       return [_detalleCharolaActual!];
     }
+    
+    if (_vistaTamizadoIndividual != null) {
+      return [_vistaTamizadoIndividual!];
+    }
 
     return [
       VistaCharolas(onVerDetalle: _mostrarDetalleCharola),
-      const Placeholder(),
+      VistaSeleccionarTamizado(),
       const Placeholder(),
       const AlimentacionScreen(),
       const VistaTablaCharolas(),
+      VistaTamizadoIndividual(onRegresar: _cerrarVistaTamizado),
+      VistaTamizadoMultiple(onRegresar: _cerrarVistaTamizado),
     ];
   }
 
@@ -136,10 +179,16 @@ class _SidebarViewState extends State<SidebarView> {
         final showLabel = screenWidth > 500;
 
         return InkWell(
-          onTap: () => setState(() {
+          onTap: () { setState(() {
             _currentIndex = index;
             _detalleCharolaActual = null; // ✅ Siempre cierra detalle si navegas
-          }),
+          });
+
+          if (index == 1) {
+            final viewModel = Provider.of<TamizadoViewModel>(context, listen: false);
+            viewModel.limpiarInformacion();
+          } 
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Column(

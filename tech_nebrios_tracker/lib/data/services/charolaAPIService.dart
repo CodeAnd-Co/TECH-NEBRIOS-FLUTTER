@@ -20,5 +20,5 @@ abstract class CharolaAPIService {
   /// Registra una nueva charola en el sistema.
   ///
   /// [charola] es la instancia de [CharolaRegistro] con los datos necesarios.
-  Future<void> registrarCharola(CharolaRegistro charola);
-}
+  Future<Map<String, dynamic>> registrarCharola(CharolaRegistro charola);
+  }

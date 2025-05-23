@@ -92,7 +92,7 @@ class CharolaViewModel extends ChangeNotifier {
 
   /// Valida el formulario y registra la charola si es válido.
   /// Si el formulario no es válido, muestra un mensaje de error.
-  Future<void> registrarCharola() async {
+  Future<CharolaTarjeta> registrarCharola() async {
     try {
       _cargandoRegistro = true;
       notifyListeners();
@@ -121,13 +121,15 @@ class CharolaViewModel extends ChangeNotifier {
           ),
         ],
       );
-      await _registrarUseCase.registrar(charola: registro);
-      _cargandoRegistro = false;
-      notifyListeners();
-      _logger.i('Charola registrada');
-    } catch (e) {
-      _cargandoRegistro = false;
-      notifyListeners();
+    final data = await _registrarUseCase.registrar(charola: registro);
+           final tarjeta = CharolaTarjeta(
+      charolaId: data['charolaId'] as int,
+      nombreCharola: data['nombreCharola'] as String,
+      fechaCreacion: DateTime.parse(data['fechaCreacion'] as String),
+    );
+    _logger.i('Charola registrada: ${tarjeta.nombreCharola}');
+    return tarjeta;
+        } catch (e) {
       _logger.e('Error al registrar charola');
       rethrow;
     }

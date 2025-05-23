@@ -118,19 +118,15 @@ class RegistrarCharolaView extends StatelessWidget {
                 const SizedBox(height: 30),
                 vm.cargandoRegistro ? const CircularProgressIndicator() :
                 ElevatedButton(
-                  onPressed: () async {
+                   onPressed: () async {
                     if (vm.formKey.currentState!.validate()) {
                       try {
-                        await vm.registrarCharola();
+                        // Registrar y obtener la nueva CharolaTarjeta
+                        final nuevaTarjeta = await vm.registrarCharola();
                         vm.resetForm();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Charola registrada exitosamente'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                      Navigator.pop(context);
-                      vm.cargarCharolas();
+                        await vm.cargarCharolas();
+                        // Salir de esta pantalla devolviendo la tarjeta creada
+                        Navigator.pop(context, nuevaTarjeta);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

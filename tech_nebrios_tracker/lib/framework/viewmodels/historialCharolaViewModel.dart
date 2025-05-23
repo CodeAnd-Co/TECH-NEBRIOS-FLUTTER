@@ -3,11 +3,15 @@
 import 'package:flutter/foundation.dart';
 import '../../data/models/historialCharolaModel.dart';
 import '../../data/repositories/historialCharolaRepository.dart';
+import '../../domain/historialAncestrosUseCase.dart';
 
 class HistorialCharolaViewModel extends ChangeNotifier {
-  final HistorialCharolaRepository _repo;
+  late final HistorialActividadUseCasesImp Historial;
+  final HistorialCharolaRepository _repo = HistorialCharolaRepository();
 
-  HistorialCharolaViewModel(this._repo);
+  HistorialCharolaViewModel(){
+    Historial = HistorialActividadUseCasesImp(repositorio: _repo);
+  }
 
   bool _isLoading = false;
   String? _error;
@@ -19,7 +23,6 @@ class HistorialCharolaViewModel extends ChangeNotifier {
       List.unmodifiable(_historialAncestros);
 
   Future<void> obtenerAncestros(int charolaId) async {
-  _setLoading(true);
   try {
     final result = await _repo.obtenerAncestros(charolaId);
     _historialAncestros = result;
@@ -27,8 +30,6 @@ class HistorialCharolaViewModel extends ChangeNotifier {
   } catch (e) {
     _historialAncestros = [];
     _error = 'No pude cargar ancestros';
-  } finally {
-    _setLoading(false);
   }
 }
 

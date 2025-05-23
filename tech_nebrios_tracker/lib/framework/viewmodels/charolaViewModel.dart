@@ -52,6 +52,8 @@ class CharolaViewModel extends ChangeNotifier {
   Hidratacion? selectedHidratacion;
   bool _cargandoDropdowns = false;
   bool get cargandoDropdowns => _cargandoDropdowns;
+  bool _cargandoRegistro = false;
+  bool get cargandoRegistro => _cargandoRegistro;
 
   Future<void> cargarAlimentos() async {
     _cargandoDropdowns = true;
@@ -92,6 +94,8 @@ class CharolaViewModel extends ChangeNotifier {
   /// Si el formulario no es válido, muestra un mensaje de error.
   Future<CharolaTarjeta> registrarCharola() async {
     try {
+      _cargandoRegistro = true;
+      notifyListeners();
       final parts = fechaController.text.split('/');
       final day = int.parse(parts[0]);
       final month = int.parse(parts[1]);

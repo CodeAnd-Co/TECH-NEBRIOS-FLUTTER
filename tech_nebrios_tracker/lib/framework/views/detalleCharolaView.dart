@@ -1,5 +1,4 @@
 // RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
-// RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +7,6 @@ import './historialActividadView.dart';
 import './historialAncestrosView.dart';
 import './editarCharolaView.dart';
 import 'components/atoms/texto.dart';
-import 'components/organisms/pop_up.dart';
 import '../views/alimentarCharolaView.dart';
 
 /// Pantalla que muestra el detalle de una charola específica.
@@ -129,7 +127,6 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            // Flecha alineada a la izquierda
                             Align(
                               alignment: Alignment.centerLeft,
                               child: IconButton(
@@ -180,55 +177,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                           size: 40,
                                         ),
                                         tooltip: 'Eliminar',
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return OrganismoPopUpConfirmacion(
-                                                onCancelar:
-                                                    () =>
-                                                        Navigator.of(
-                                                          context,
-                                                        ).pop(),
-                                                onConfirmar: () async {
-                                                  await viewModel
-                                                      .eliminarCharola(
-                                                        viewModel
-                                                            .charola!
-                                                            .charolaId,
-                                                      );
-                                                  await viewModel
-                                                      .cargarCharolas(
-                                                        reset: true,
-                                                      );
-                                                  widget
-                                                      .onRegresar(); // <- Vuelve al dashboard limpiamente
-                                                  ScaffoldMessenger.of(
-                                                    context,
-                                                  ).showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                        'Charola eliminada con éxito',
-                                                      ),
-                                                    ),
-                                                  );
-                                                  Navigator.of(context).pop();
-                                                  ScaffoldMessenger.of(
-                                                    context,
-                                                  ).showSnackBar(
-                                                    const SnackBar(
-                                                      backgroundColor:
-                                                          Colors.green,
-                                                      content: Text(
-                                                        'Charola eliminada con éxito',
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          );
-                                        },
+                                        onPressed: () {mostrarPopUpEliminarCharola(context: context, charolaId: widget.charolaId);},
                                       ),
                                     ),
                                   ),
@@ -275,7 +224,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                       ),
                                       _crearInfoFila(
                                         'Peso:',
-                                        '${detalle.pesoCharola}g',
+                                        '${detalle.pesoCharola}gr',
                                       ),
                                     ],
                                   ),
@@ -286,11 +235,11 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                     children: [
                                       _crearInfoFila(
                                         'Hidratación:',
-                                        '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}g',
+                                        '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada}gr',
                                       ),
                                       _crearInfoFila(
                                         'Alimento:',
-                                        '${detalle.comidaNombre} ${detalle.comidaOtorgada}g',
+                                        '${detalle.comidaNombre} ${detalle.comidaOtorgada}gr',
                                       ),
                                     ],
                                   ),
@@ -386,4 +335,109 @@ class _PantallaCharolaState extends State<PantallaCharola> {
       },
     );
   }
+  void mostrarPopUpEliminarCharola({
+  required BuildContext context,
+  required int charolaId,
+}) {
+  showDialog(
+    context: context,
+    builder: (dialogContext) {
+      return Consumer<CharolaViewModel>(
+        builder: (context, charolaViewModel, _) {
+          return AlertDialog(
+            title: Stack(
+              alignment: Alignment.center,
+              children: [
+                const Center(
+                  child: Text(
+                    'Eliminar Charola',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.red),
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                  ),
+                ),
+              ],
+            ),
+            content: SizedBox(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    Image.asset(
+                      'assets/images/alert-icon.png',
+                      height: 60,
+                      color: Colors.amber[700],
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      "¿Estás seguro de querer continuar con esta acción?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "(Una vez eliminado, no se puede recuperar.)",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    const SizedBox(height: 30),
+                    charolaViewModel.cargandoCharola
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              minimumSize: const Size(150, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            child: const Text(
+                              'Eliminar',
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () async {
+                              await charolaViewModel.eliminarCharola(charolaId);
+                              if (charolaViewModel.error) {
+                                Navigator.of(dialogContext).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Ocurrió un error al eliminar la charola',
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else {
+                                await charolaViewModel.cargarCharolas(reset: true);
+                                Navigator.of(dialogContext).pop();
+                                widget.onRegresar(); // Usa el callback para volver
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('Charola eliminada con éxito'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+
 }

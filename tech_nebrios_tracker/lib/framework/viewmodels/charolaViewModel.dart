@@ -170,19 +170,26 @@ class CharolaViewModel extends ChangeNotifier {
   }
 
   /// Elimina una charola por ID
+  bool _error = false;
+  bool get error => _error;
+
   Future<void> eliminarCharola(int id) async {
+    _error = false;
     _cargandoCharola = true;
     notifyListeners();
     try {
       await _eliminarUseCase.eliminar(
         id,
-      ); // Llama al caso de uso de eliminación
-      _charola = null; // Limpia el detalle después de eliminar
+      );
+      _charola = null;
+      _cargandoCharola = false;
+      notifyListeners();
     } catch (e) {
-      _logger.e('Error eliminando charola: $e'); // Registra el error
+      _error = true;
+      _cargandoCharola = false;
+      notifyListeners();
+      _logger.e('Error eliminando charola: $e');
     }
-    _cargandoCharola = false;
-    notifyListeners();
   }
 
   // === LISTADO PAGINADO ===

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/charolaModel.dart' as modelo;
-import '../viewmodels/tamizarCharolaViewmodel.dart';
+import '../viewmodels/tamizarCharolaViewModel.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {

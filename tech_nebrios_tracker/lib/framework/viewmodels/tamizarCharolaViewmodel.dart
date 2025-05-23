@@ -248,7 +248,6 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   void verificacionDeCampos(){
-    print(_alimentosCargados);
     if(charolasParaTamizar.length == 1){
       revisarCampoFras();
       revisarCampoPupa();

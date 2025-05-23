@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/tamizadoIndividualModel.dart';
 import '../models/tamizadoMultipleModel.dart';
 import '../models/tamizadoRespuestaModel.dart';
-import '../services/tamizadoApiService.dart';
+import '../services/tamizadoAPIService.dart';
 
 class TamizarCharolaRepository implements TamizadoApiService {
 
@@ -44,7 +44,6 @@ class TamizarCharolaRepository implements TamizadoApiService {
     final url = Uri.parse(
       'http://localhost:3000/alimentacion', // Cambia por tu endpoint
     );
-    print('Realizando la peticion a la API a $url'); // Cambia por tu endpoint
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -69,7 +68,6 @@ class TamizarCharolaRepository implements TamizadoApiService {
     final url = Uri.parse(
       'http://localhost:3000/hidratacion/', // Cambia por tu endpoint
     );
-    print('Realizando la peticion a la API a $url'); // Cambia por tu endpoint
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -83,7 +81,6 @@ class TamizarCharolaRepository implements TamizadoApiService {
 
       throw Exception('Estructura de respuesta inesperada');
     } else {
-      print('Error en la solicitud: ${response.statusCode}');
       throw Exception('Error al obtener los alimentos: ${response.statusCode}');
     }
   }

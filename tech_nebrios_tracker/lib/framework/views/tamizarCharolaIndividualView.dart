@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_nebrios_tracker/framework/views/seleccionarTamizadoView.dart';
 import '../../data/models/charolaModel.dart' as modelo;
-import '../viewmodels/tamizarCharolaViewmodel.dart';
+import '../viewmodels/tamizarCharolaViewModel.dart';
 import '../views/sidebarView.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.

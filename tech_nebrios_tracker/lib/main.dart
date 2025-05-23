@@ -8,7 +8,7 @@ import 'framework/viewmodels/reporteViewModel.dart';
 import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewModel.dart';
-import 'framework/viewmodels/tamizarCharolaViewmodel.dart';
+import 'framework/viewmodels/tamizarCharolaViewModel.dart';
 import 'framework/viewmodels/editarCharolaViewModel.dart';
 import 'framework/viewmodels/alimentacionViewModel.dart';
 

@@ -86,8 +86,8 @@ void mostrarPopUpEditarCharola({
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Nombre de la charola:"),
                                 _buildTextFormField(
+                                  label: 'Nombre *',
                                   controller: editarViewModel.nombreController,
                                   validator: (v) => v == null || v.isEmpty ? 'Nombre obligatorio' : null,
                                   maxLength: 20,
@@ -100,8 +100,8 @@ void mostrarPopUpEditarCharola({
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Fecha de creación:"),
                                 _buildDateFormField(
+                                  label: 'Fecha (dd/mm/yyyy) *',
                                   controller: editarViewModel.fechaController,
                                   context: dialogContext,
                                   validator: (v) => v == null || v.isEmpty ? 'Selecciona fecha' : null,
@@ -112,14 +112,15 @@ void mostrarPopUpEditarCharola({
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Peso(g):"),
                               _buildTextFormField(
+                                label: 'Peso (gr) *',
                                 controller: editarViewModel.pesoController,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   PositiveNumberFormatter(),
                                 ],
+                                maxLength: 4,
                                 validator: (v) => v == null || v.isEmpty ? 'Ingresa peso' : null,
                               ),
                             ],
@@ -151,8 +152,8 @@ void mostrarPopUpEditarCharola({
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Tipo de alimento:"),
                                 _buildDropdownFormField<Alimento>(
+                                  label: 'Alimentación *',
                                   items: vm.alimentos.map((a) => a.nombreAlimento).toList(),
                                   value: editarViewModel.selectedAlimentacion?.nombreAlimento,
                                   onChanged: (value) {
@@ -169,14 +170,15 @@ void mostrarPopUpEditarCharola({
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Cantidad de alimento (g):"),
                                 _buildTextFormField(
+                                  label: 'Cantidad de alimento (gr) *',
                                   controller: editarViewModel.comidaCicloController,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                     PositiveNumberFormatter(),
                                   ],
+                                  maxLength: 4,
                                   validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
                                 ),
                               ],
@@ -193,8 +195,8 @@ void mostrarPopUpEditarCharola({
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Tipo de Hidratación:"),
                                 _buildDropdownFormField<Hidratacion>(
+                                  label: 'Hidratación *',
                                   items: vm.hidrataciones.map((h) => h.nombreHidratacion).toList(),
                                   value: editarViewModel.selectedHidratacion?.nombreHidratacion,
                                   onChanged: (value) {
@@ -209,14 +211,15 @@ void mostrarPopUpEditarCharola({
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Cantidad de hidratación (g):"),
                               _buildTextFormField(
+                                label: 'Cantidad de hidratación (gr) *',
                                 controller: editarViewModel.hidratacionCicloController,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   PositiveNumberFormatter(),
                                 ],
+                                maxLength: 4,
                                 validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
                               ),
                             ],
@@ -289,8 +292,8 @@ void mostrarPopUpEditarCharola({
               ),
             ],
 
-          );
-              }
+            );
+            }
             )
           );
         },
@@ -301,6 +304,7 @@ void mostrarPopUpEditarCharola({
 
 
   Widget _buildTextFormField({
+    required String label,
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
     List<TextInputFormatter>? inputFormatters,
@@ -317,6 +321,7 @@ void mostrarPopUpEditarCharola({
           inputFormatters: inputFormatters,
           maxLength: maxLength,
           decoration: InputDecoration(
+            labelText: label,
             border: const OutlineInputBorder(),
             counterText: '',
           ),
@@ -327,6 +332,7 @@ void mostrarPopUpEditarCharola({
   }
 
 Widget _buildDropdownFormField<T>({
+    required String label,
     required List<String> items,
     required String? value,
     required ValueChanged<String?> onChanged,
@@ -339,6 +345,7 @@ Widget _buildDropdownFormField<T>({
         child: DropdownButtonFormField<String>(
           value: value,
           decoration: InputDecoration(
+            labelText: label,
             border: const OutlineInputBorder(),
           ),
           items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
@@ -349,6 +356,7 @@ Widget _buildDropdownFormField<T>({
     );
   }
   Widget _buildDateFormField({
+    required String label,
     required TextEditingController controller,
     required BuildContext context,
     String? Function(String?)? validator,
@@ -361,6 +369,7 @@ Widget _buildDropdownFormField<T>({
           controller: controller,
           readOnly: true,
           decoration: InputDecoration(
+            labelText: label,
             border: const OutlineInputBorder(),
             suffixIcon: const Icon(Icons.calendar_today),
           ),

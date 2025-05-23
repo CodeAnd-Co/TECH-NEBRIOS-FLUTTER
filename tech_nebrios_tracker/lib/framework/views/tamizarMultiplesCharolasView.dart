@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_nebrios_tracker/framework/views/sidebarView.dart';
 import '../../data/models/charolaModel.dart' as modelo;
-import '../viewmodels/tamizarCharolaViewmodel.dart';
+import '../viewmodels/tamizarCharolaViewModel.dart';
 import '../views/registrarCharolaView.dart';
 import './components/header.dart';
 
@@ -91,7 +91,8 @@ class CharolaTarjeta extends StatelessWidget {
 
 /// Vista principal que muestra todas las charolas en un grid paginado.
 class VistaTamizadoMultiple extends StatefulWidget {
-  const VistaTamizadoMultiple({super.key});
+  final VoidCallback onRegresar;
+  const VistaTamizadoMultiple({super.key, required this.onRegresar});
 
   @override
   State<VistaTamizadoMultiple> createState() => _VistaTamizadoMultipleState();

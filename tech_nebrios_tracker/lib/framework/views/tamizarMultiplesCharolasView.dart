@@ -47,14 +47,18 @@ class CharolaTarjeta extends StatelessWidget {
 
             return Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
                     decoration: BoxDecoration(
                       color: color,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(8),
+                      ),
                     ),
                     padding: EdgeInsets.symmetric(vertical: paddingVertical),
                     child: Text(
@@ -108,7 +112,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
       body: SafeArea(
         child: Consumer<TamizadoViewModel>(
           builder: (context, seleccionVM, _) {
-            if (seleccionVM.hasError  && seleccionVM.errorMessage.isNotEmpty) {
+            if (seleccionVM.hasError && seleccionVM.errorMessage.isNotEmpty) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -123,54 +127,17 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
             seleccionVM.cargarHidratacion();
             return ListView(
               children: [
-             const Header(
+                const Header(
                   titulo: 'Tamizar Charola',
                   subtitulo: null,
                   showDivider: true,
                 ),
-                
+
                 const SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final screenWidth = constraints.maxWidth;
-
-                      // Escalado responsivo
-                      final fontSize = screenWidth * 0.012;
-                      final iconSize = screenWidth * 0.015;
-
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Botón responsivo
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Icon(Icons.arrow_back, size: iconSize.clamp(20, 30)),
-                            label: Text(
-                              'Regresar',
-                              style: TextStyle(
-                                fontSize: fontSize.clamp(15, 22),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
                   ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16), // o solo left: EdgeInsets.only(left: 16)
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -185,104 +152,118 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                 const SizedBox(height: 16),
 
                 /// Grid de charolas
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: seleccionVM.charolasParaTamizar.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: seleccionVM.charolasParaTamizar.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 5,
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
                           childAspectRatio: 1.3,
                         ),
-                        itemBuilder: (context, index) {
-                          final modelo.CharolaTarjeta charola = seleccionVM.charolasParaTamizar[index];
-                          return LayoutBuilder(
-                            builder: (context, constraints) {
-                              return AspectRatio(
-                                aspectRatio: 1.3,
-                                child: CharolaTarjeta(
-                                  fecha: "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
-                                  nombreCharola: charola.nombreCharola,
-                                  color: obtenerColorPorNombre(charola.nombreCharola),
-                                  onTap: () {
-                                    //No pasa nada
-                                  },
-                                ),
-                              );
-                            },
+                    itemBuilder: (context, index) {
+                      final modelo.CharolaTarjeta charola =
+                          seleccionVM.charolasParaTamizar[index];
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          return AspectRatio(
+                            aspectRatio: 1.3,
+                            child: CharolaTarjeta(
+                              fecha:
+                                  "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
+                              nombreCharola: charola.nombreCharola,
+                              color: obtenerColorPorNombre(
+                                charola.nombreCharola,
+                              ),
+                              onTap: () {
+                                //No pasa nada
+                              },
+                            ),
                           );
                         },
-                      ),
-                    ),
-                  
+                      );
+                    },
+                  ),
+                ),
 
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16), // o solo left: EdgeInsets.only(left: 16)
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Datos del Tamizado',
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ), // o solo left: EdgeInsets.only(left: 16)
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Datos del Tamizado',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
+                ),
 
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            // Campo de texto para FRAS
-                            Expanded(
-                              flex: 1,
-                              child: TextField(
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-                                  LengthLimitingTextInputFormatter(8),
-                                ],
-                                controller:seleccionVM.frasController,
-                                decoration: InputDecoration(
-                                  labelText: 'Fras (g)',
-                                  border: OutlineInputBorder(),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          // Campo de texto para FRAS
+                          Expanded(
+                            flex: 1,
+                            child: TextField(
+                              keyboardType: TextInputType.numberWithOptions(
+                                decimal: true,
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}'),
                                 ),
+                                LengthLimitingTextInputFormatter(8),
+                              ],
+                              controller: seleccionVM.frasController,
+                              decoration: InputDecoration(
+                                labelText: 'Fras (g)',
+                                border: OutlineInputBorder(),
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            // Dropdown para FRAS
-                            Expanded(
-                              flex: 1,
-                              child: TextField(
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-                                  LengthLimitingTextInputFormatter(8),
-                                ],
-                                controller:seleccionVM.pupaController,
-                                decoration: InputDecoration(
-                                  labelText: 'Pupa (g)',
-                                  border: OutlineInputBorder(),
+                          ),
+                          const SizedBox(width: 16),
+                          // Dropdown para FRAS
+                          Expanded(
+                            flex: 1,
+                            child: TextField(
+                              keyboardType: TextInputType.numberWithOptions(
+                                decimal: true,
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}'),
                                 ),
+                                LengthLimitingTextInputFormatter(8),
+                              ],
+                              controller: seleccionVM.pupaController,
+                              decoration: InputDecoration(
+                                labelText: 'Pupa (g)',
+                                border: OutlineInputBorder(),
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ),
+                ),
 
-                  if (nuevasCharolas.isNotEmpty) ...[
+                if (nuevasCharolas.isNotEmpty) ...[
                   const SizedBox(height: 24),
                   const Text(
                     'Nuevas charolas',
@@ -316,7 +297,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                   ),
                 ],
 
-                  const SizedBox(height: 24),
+                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -413,14 +394,14 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
 /// Asigna un color al encabezado de la tarjeta basado en el nombre.
 Color obtenerColorPorNombre(String nombre) {
   if (nombre.startsWith('C-')) {
-    return const Color(0xFF22A63A); 
+    return const Color(0xFF22A63A);
   } else if (nombre.startsWith('E-')) {
-    return const Color(0xFFE2387B); 
+    return const Color(0xFFE2387B);
   } else if (nombre.startsWith('T1-') ||
-             nombre.startsWith('T2-') ||
-             nombre.startsWith('T3-') ||
-             nombre.startsWith('T4-')) {
-    return const Color(0xFF22A63A); 
+      nombre.startsWith('T2-') ||
+      nombre.startsWith('T3-') ||
+      nombre.startsWith('T4-')) {
+    return const Color(0xFF22A63A);
   }
   return Colors.grey; // Color por defecto
 }

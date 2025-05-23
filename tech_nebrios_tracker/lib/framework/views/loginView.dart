@@ -40,7 +40,7 @@ class LoginView extends StatelessWidget {
                     child: TextField(
                       controller: viewModel.usuarioController,
                       decoration: InputDecoration(
-                        hintText: 'Ingresa tu nombre de usuario aqui',
+                        hintText: 'Ingresa tu nombre de usuario aquí',
                         prefixIcon: Icon(Icons.people_alt),
                         filled: true,
                         fillColor: Colors.grey[200],
@@ -69,7 +69,7 @@ class LoginView extends StatelessWidget {
                     child: TextField(
                       controller: viewModel.contrasenaController,
                       decoration: InputDecoration(
-                        hintText: 'Ingresa tu contraseña aqui',
+                        hintText: 'Ingresa tu contraseña aquí',
                         prefixIcon: Icon(Icons.lock),
                         filled: true,
                         fillColor: Colors.grey[200],

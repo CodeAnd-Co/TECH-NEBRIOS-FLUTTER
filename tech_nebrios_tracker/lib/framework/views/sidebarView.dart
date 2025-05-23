@@ -127,7 +127,7 @@ class _SidebarViewState extends State<SidebarView> {
                             // const SizedBox(height: 20),
                             // _buildNavItem(icon: Icons.archive, label: 'Frass', index: 2),
                             const SizedBox(height: 20),
-                            _buildNavItem(icon: Icons.edit_note, label: 'Alimento', index: 3),
+                            _buildNavItem(icon: Icons.edit_note, label: 'Nutrición', index: 3),
                             const SizedBox(height: 20),
                             _buildNavItem(icon: Icons.download, label: 'Excel', index: 4),
                           ],

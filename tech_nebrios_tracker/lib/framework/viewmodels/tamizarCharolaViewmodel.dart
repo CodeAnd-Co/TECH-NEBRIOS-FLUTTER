@@ -5,8 +5,6 @@ import 'package:logger/logger.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../../data/repositories/tamizarCharolaRepository.dart';
 import '../../domain/tamizarCharolaUseCases.dart';
-import '../views/tamizarCharolaIndividualView.dart';
-import '../views/tamizarMultiplesCharolasView.dart';
 import '../views/sidebarView.dart';
 import '../../data/models/tamizadoIndividualModel.dart';
 import '../../data/models/tamizadoMultipleModel.dart';
@@ -180,7 +178,7 @@ class TamizadoViewModel extends ChangeNotifier {
       _alimentosCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
-      print('Error al cargar los alimentos: $e');
+      _logger.e('Error al cargar los alimentos: $e');
     }
   }
 
@@ -191,7 +189,7 @@ class TamizadoViewModel extends ChangeNotifier {
       _hidratacionCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
-      print('Error al cargar la hidratación: $e');
+      _logger.e('Error al cargar la hidratación: $e');
     }
   }
 
@@ -344,12 +342,19 @@ class TamizadoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void limpiarError() {
+   void limpiarError() {
     _hasError = false;
   }
 
   void limpiarTamizadoExitoso() {
     _tamizadoExitoso = false;
+  }
+
+  Future<void> asignarAncestros({
+    required int charolaHijaId,
+    required List<int> ancestrosIds,
+  }) async{ 
+    await repository.asignarAncestros(charolaHijaId, ancestrosIds);
   }
 
 }

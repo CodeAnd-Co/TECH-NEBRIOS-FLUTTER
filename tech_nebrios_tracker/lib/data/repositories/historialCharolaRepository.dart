@@ -9,7 +9,7 @@ class HistorialCharolaRepository {
 
 Future<List<HistorialAncestros>> obtenerAncestros(int charolaId) async {
   final uri = Uri.parse('${APIRutas.HISTORIAL_CHAROLA}/$charolaId/ancestros');
-  final resp = await http.get(uri, headers: { /* tus headers */ });
+  final resp = await http.get(uri, headers: {  });
 
   if (resp.statusCode != 200) {
     throw Exception('Error HTTP ${resp.statusCode}');

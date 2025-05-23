@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:tech_nebrios_tracker/framework/views/sidebarView.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewModel.dart';
+import '../views/registrarCharolaView.dart';
+import './components/header.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
@@ -97,6 +99,8 @@ class VistaTamizadoMultiple extends StatefulWidget {
 }
 
 class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
+  final List<modelo.CharolaTarjeta> nuevasCharolas = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,14 +119,15 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                 );
               });
             }
-           
-            return Column(
+            seleccionVM.cargarAlimentos();
+            seleccionVM.cargarHidratacion();
+            return ListView(
               children: [
-                const SizedBox(height: 16),
-                const Text('Tamizar Charola', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                const Divider(color: Color(0xFF000000), thickness: 3),
-                const SizedBox(height: 8),
+             const Header(
+                  titulo: 'Tamizar Charola',
+                  subtitulo: null,
+                  showDivider: true,
+                ),
                 
                 const SizedBox(height: 10),
                 Padding(
@@ -141,7 +146,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                           // Botón responsivo
                           ElevatedButton.icon(
                             onPressed: () {
-                              widget.onRegresar();
+                              Navigator.pop(context);
                             },
                             icon: Icon(Icons.arrow_back, size: iconSize.clamp(20, 30)),
                             label: Text(
@@ -277,42 +282,126 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                     ),
                   ),
 
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            bool exito = await seleccionVM.tamizarCharolaMultiple();
-
-                            if (exito){
-                              widget.onRegresar();
-                            }
-                            
-                          },
-                          icon: Icon(Icons.done, size: 24), // Usa tamaño fijo o responsivo si deseas
-                          label: Text(
-                            'Finalizar Tamizado',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                            backgroundColor: const Color(0xFF0066FF),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
+                  if (nuevasCharolas.isNotEmpty) ...[
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Nuevas charolas',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: nuevasCharolas.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 5,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 1.3,
                         ),
-                      ],
-                    ),
+                    itemBuilder: (context, index) {
+                      final modelo.CharolaTarjeta nueva = nuevasCharolas[index];
+                      return AspectRatio(
+                        aspectRatio: 1.3,
+                        child: CharolaTarjeta(
+                          fecha:
+                              "${nueva.fechaCreacion.day}/${nueva.fechaCreacion.month}/${nueva.fechaCreacion.year}",
+                          nombreCharola: nueva.nombreCharola,
+                          color: obtenerColorPorNombre(nueva.nombreCharola),
+                          onTap: () {},
+                        ),
+                      );
+                    },
                   ),
                 ],
+
+                  const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final nueva =
+                            await Navigator.push<modelo.CharolaTarjeta>(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const RegistrarCharolaView(),
+                              ),
+                            );
+                        if (nueva != null) {
+                          setState(() {
+                            nuevasCharolas.add(nueva);
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.add, size: 24),
+                      label: const Text('Registrar charola'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        backgroundColor: Colors.pink,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final ancestrosIds =
+                            seleccionVM.charolasParaTamizar
+                                .map((c) => c.charolaId)
+                                .toList();
+                        final exito =
+                            await seleccionVM.tamizarCharolaIndividual();
+
+                        for (final nueva in nuevasCharolas) {
+                          await seleccionVM.asignarAncestros(
+                            charolaHijaId: nueva.charolaId,
+                            ancestrosIds: ancestrosIds,
+                          );
+                        }
+                        if (exito) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => SidebarView(
+                                    mensajeExito: 'Tamizado exitoso',
+                                  ),
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.done, size: 24),
+                      label: const Text('Finalizar Tamizado'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        backgroundColor: const Color(0xFF0066FF),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             );
           },
         ),

@@ -18,4 +18,7 @@ abstract class TamizadoApiService {
 
   /// Obtiene la lista de hidratación desde el backend.
   Future<List<String>> getHidratacion();
+
+  /// Asigna charolas ancestros a una charola específica.
+  Future<void> asignarAncestros(int charolaId, List<int> charolasAncestroIds);
 }

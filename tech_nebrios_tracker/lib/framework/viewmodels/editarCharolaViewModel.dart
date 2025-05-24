@@ -31,6 +31,9 @@ class EditarCharolaViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
+  bool _cargandoEditar = false;
+  bool get cargandoEditar => _cargandoEditar;
+
   String _mensaje = '';
   bool _error = false;
 
@@ -56,6 +59,8 @@ class EditarCharolaViewModel extends ChangeNotifier{
 
   Future<void> editarCharola(charolaId) async {
     try{
+      _cargandoEditar = true;
+      notifyListeners();
       final hoy = DateTime.now();
       final fechaFormateada = DateFormat('yyyy-MM-dd').format(hoy);
 
@@ -65,16 +70,19 @@ class EditarCharolaViewModel extends ChangeNotifier{
       
       if (respuesta['codigo'] == 200){
         _mensaje = 'Se editó la información correctamente.';
+        _cargandoEditar = false;
         _error = false;
         notifyListeners();
         return;
       }
       _mensaje = 'Ocurrió un error al editar la información.';
+      _cargandoEditar = false;
       _error = true;
       notifyListeners();
 
     } catch (error){
       _mensaje = 'Ocurrió un error al editar la información.';
+      _cargandoEditar = false;
       _error = true;
       notifyListeners();
     }

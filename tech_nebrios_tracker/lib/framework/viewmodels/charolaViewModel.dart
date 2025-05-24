@@ -121,16 +121,18 @@ class CharolaViewModel extends ChangeNotifier {
           ),
         ],
       );
-    final data = await _registrarUseCase.registrar(charola: registro);
-           final tarjeta = CharolaTarjeta(
-      charolaId: data['charolaId'] as int,
-      nombreCharola: data['nombreCharola'] as String,
-      fechaCreacion: DateTime.parse(data['fechaCreacion'] as String),
-    );
-    _logger.i('Charola registrada: ${tarjeta.nombreCharola}');
-    return tarjeta;
-        } catch (e) {
-      _logger.e('Error al registrar charola');
+      final data = await _registrarUseCase.registrar(charola: registro);
+            final tarjeta = CharolaTarjeta(
+        charolaId: data['charolaId'] as int,
+        nombreCharola: data['nombreCharola'] as String,
+        fechaCreacion: DateTime.parse(data['fechaCreacion'] as String),
+      );
+      _cargandoRegistro = false;
+      notifyListeners();
+      return tarjeta;
+      } catch (e) {
+      _cargandoRegistro = false;
+      notifyListeners();
       rethrow;
     }
   }

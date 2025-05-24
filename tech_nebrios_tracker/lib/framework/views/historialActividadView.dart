@@ -112,7 +112,7 @@ void mostrarPopUpHistorialActividad({
                                       .map(
                                         (a) => DataRow(cells: [
                                           buildDataCell(a.nombre),
-                                          buildDataCell('${a.cantidadOtorgada} gr'),
+                                          buildDataCell('${a.cantidadOtorgada} g'),
                                           buildDataCell(a.fechaOtorgada),
                                         ]),
                                       )
@@ -144,7 +144,7 @@ void mostrarPopUpHistorialActividad({
                                       .map(
                                         (h) => DataRow(cells: [
                                           buildDataCell(h.nombre),
-                                          buildDataCell('${h.cantidadOtorgada} gr'),
+                                          buildDataCell('${h.cantidadOtorgada} g'),
                                           buildDataCell(h.fechaOtorgada),
                                         ]),
                                       )

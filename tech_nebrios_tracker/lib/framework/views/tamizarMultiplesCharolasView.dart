@@ -361,7 +361,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                                 .map((c) => c.charolaId)
                                 .toList();
                         final exito =
-                            await seleccionVM.tamizarCharolaIndividual();
+                            await seleccionVM.tamizarCharolaMultiple();
 
                         for (final nueva in nuevasCharolas) {
                           await seleccionVM.asignarAncestros(

@@ -20,7 +20,7 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
     super.initState();
     Future.microtask(() {
     final vistaModelo = Provider.of<ReporteViewModel>(context, listen: false);
-    vistaModelo.getDatos(); 
+    vistaModelo.getDatos();
   });
 
     _scrollController.addListener(() {

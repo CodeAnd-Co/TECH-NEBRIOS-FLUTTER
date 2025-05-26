@@ -6,7 +6,7 @@ class ReporteModel {
   String estado;
   String densidadLarva;
   DateTime fechaCreacion;
-  double pesoCharola;
+  List<String> charolaAncestros;
 
   ReporteModel({
     required this.nombreCharola,
@@ -16,6 +16,6 @@ class ReporteModel {
     required this.estado,
     required this.densidadLarva,
     required this.fechaCreacion,
-    required this.pesoCharola
+    required this.charolaAncestros
   });
 }

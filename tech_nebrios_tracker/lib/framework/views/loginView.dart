@@ -80,6 +80,22 @@ class LoginView extends StatelessWidget {
                       ),
                       textAlign: TextAlign.center,
                       keyboardType: TextInputType.visiblePassword,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) async {
+                        await viewModel.iniciarSesion();
+                        if (!viewModel.hasError) {
+                          onLogin(); 
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(viewModel.errorMessage),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
                       autocorrect: false,
                       textCapitalization: TextCapitalization.none,
                     ),

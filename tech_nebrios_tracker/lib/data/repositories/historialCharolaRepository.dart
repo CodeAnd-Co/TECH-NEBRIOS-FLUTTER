@@ -4,45 +4,53 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/historialCharolaModel.dart';
 import '../models/constantes.dart';
+import '../../domain/usuarioUseCases.dart';
 
 class HistorialCharolaRepository {
+  final UserUseCases _userUseCases = UserUseCases();
 
-Future<List<HistorialAncestros>> obtenerAncestros(int charolaId) async {
-  final uri = Uri.parse('${APIRutas.HISTORIAL_CHAROLA}/$charolaId/ancestros');
-  final resp = await http.get(uri, headers: {  });
+  Future<List<HistorialAncestros>> obtenerAncestros(int charolaId) async {
+    final uri = Uri.parse('${APIRutas.HISTORIAL_CHAROLA}/$charolaId/ancestros');
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
 
-  if (resp.statusCode != 200) {
-    throw Exception('Error HTTP ${resp.statusCode}');
+    final resp = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (resp.statusCode != 200) {
+      throw Exception('Error HTTP ${resp.statusCode}');
+    }
+
+    // 1) Decodifica todo el cuerpo como Map
+    final decoded = jsonDecode(resp.body) as Map<String, dynamic>;
+
+    // 2) Extrae la lista de ancestros
+    final rawAnc = decoded['ancestros'];
+    if (rawAnc == null || rawAnc is! List) {
+      return [];
+    }
+
+    // 3) Mapea cada objeto JSON a tu submodelo (p.ej. AncestroItem)
+    final items =
+        rawAnc
+            .map((e) => Ancestro.fromJson(e as Map<String, dynamic>))
+            .toList();
+
+    // 4) Parsea la fecha de creación de la charola
+    final fechaCreacionStr = decoded['fechaCreacion'] as String?;
+    final fechaCreacion =
+        fechaCreacionStr != null
+            ? DateTime.parse(fechaCreacionStr)
+            : DateTime.now();
+
+    // 5) Envuelve todo en un HistorialAncestros y regresa en lista
+    return [HistorialAncestros(ancestros: items, fechaCreacion: fechaCreacion)];
   }
-
-  // 1) Decodifica todo el cuerpo como Map
-  final decoded = jsonDecode(resp.body) as Map<String, dynamic>;
-
-  // 2) Extrae la lista de ancestros
-  final rawAnc = decoded['ancestros'];
-  if (rawAnc == null || rawAnc is! List) {
-    return [];
-  }
-
-  // 3) Mapea cada objeto JSON a tu submodelo (p.ej. AncestroItem)
-  final items = rawAnc
-      .map((e) => Ancestro.fromJson(e as Map<String, dynamic>))
-      .toList();
-
-  // 4) Parsea la fecha de creación de la charola
-  final fechaCreacionStr = decoded['fechaCreacion'] as String?;
-  final fechaCreacion = fechaCreacionStr != null
-      ? DateTime.parse(fechaCreacionStr)
-      : DateTime.now();
-
-  // 5) Envuelve todo en un HistorialAncestros y regresa en lista
-  return [
-    HistorialAncestros(
-      ancestros: items,
-      fechaCreacion: fechaCreacion,
-    )
-  ];
 }
-
-
-  }

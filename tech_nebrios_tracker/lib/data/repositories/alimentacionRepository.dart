@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/alimentacionModel.dart';
 import '../models/constantes.dart';
 import '../services/alimentacionAPIService.dart';
+import '../../domain/usuarioUseCases.dart';
 
 /// Repositorio que implementa [AlimentacionService] y realiza
 /// las llamadas HTTP a la API de alimentación.
@@ -15,10 +16,23 @@ import '../services/alimentacionAPIService.dart';
 ///  - Gestionar respuestas y errores HTTP.
 ///  - Convertir JSON a modelos [Hidratacion].
 class AlimentacionRepository extends AlimentacionService {
+  final UserUseCases _userUseCases = UserUseCases();
+
   @override
   Future<List<Alimento>> obtenerAlimentos() async {
     final uri = Uri.parse(APIRutas.ALIMENTACION);
-    final response = await http.get(uri);
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
     // Verifica éxito 200 OK
     if (response.statusCode != 200) {
@@ -37,9 +51,17 @@ class AlimentacionRepository extends AlimentacionService {
     final uri = Uri.parse(
       '${APIRutas.ALIMENTACION}/editar/${alimento.idAlimento}',
     );
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
     final response = await http.put(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode({
         'nombreAlimento': alimento.nombreAlimento,
         'descripcionAlimento': alimento.descripcionAlimento,
@@ -63,7 +85,17 @@ class AlimentacionRepository extends AlimentacionService {
   @override
   Future<void> eliminarAlimento(int idAlimento) async {
     final uri = Uri.parse('${APIRutas.ALIMENTACION}/eliminar/$idAlimento');
-    final response = await http.delete(uri);
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
+    final response = await http.delete(uri,
+    headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
     // Manejo de códigos de error específicos
     if (response.statusCode == 500) {
@@ -89,9 +121,17 @@ class AlimentacionRepository extends AlimentacionService {
   @override
   Future<void> postDatosComida(String nombre, String descripcion) async {
     final uri = Uri.parse('${APIRutas.ALIMENTACION}/agregar');
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
     final response = await http.post(
       uri,
-      headers: {'Content-Type': 'application/json'},
+       headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode({'nombre': nombre, 'descripcion': descripcion}),
     );
 
@@ -109,9 +149,17 @@ class AlimentacionRepository extends AlimentacionService {
   @override
   Future<bool> registrarAlimentacion(ComidaCharola comidaCharola) async {
     final url = Uri.parse('${APIRutas.CHAROLA}/alimentar');
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
+       headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode(comidaCharola.toJson()),
     );
 

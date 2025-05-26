@@ -3,12 +3,26 @@ import 'package:http/http.dart' as http;
 import '../models/hidratacionModel.dart';
 import '../models/constantes.dart';
 import '../services/hidratacionAPIService.dart';
+import '../../domain/usuarioUseCases.dart';
 
 class HidratacionRepository extends HidratacionService {
+  final UserUseCases _userUseCases = UserUseCases();
+
   @override
   Future<List<Hidratacion>> obtenerHidratacion() async {
     final uri = Uri.parse(APIRutas.HIDRATACION);
-    final response = await http.get(uri);
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
     // Verifica éxito 200 OK
     if (response.statusCode != 200) {

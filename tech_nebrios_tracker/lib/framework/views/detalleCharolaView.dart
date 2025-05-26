@@ -176,13 +176,20 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                             50,
                                           ),
                                           boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.2), // Color de la sombra
-        spreadRadius: 1, // Qué tanto se expande
-        blurRadius: 6,   // Qué tan difusa es
-        offset: Offset(2, 3), // Desplazamiento (x, y)
-      ),
-    ],
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(
+                                                0.2,
+                                              ), // Color de la sombra
+                                              spreadRadius:
+                                                  1, // Qué tanto se expande
+                                              blurRadius:
+                                                  6, // Qué tan difusa es
+                                              offset: Offset(
+                                                2,
+                                                3,
+                                              ), // Desplazamiento (x, y)
+                                            ),
+                                          ],
                                         ),
                                         padding: const EdgeInsets.all(8),
                                         child: IconButton(

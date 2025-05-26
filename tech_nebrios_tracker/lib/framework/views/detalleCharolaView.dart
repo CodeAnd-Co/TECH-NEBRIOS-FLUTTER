@@ -56,14 +56,14 @@ class _PantallaCharolaState extends State<PantallaCharola> {
   }
 
   /// Crea una fila de información con un label y un valor
-  Widget _crearInfoFila(String label, String value) {
+  Widget _crearInfoFila(String label, String value, Color color) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Texto.titulo2(texto: '$label ', bold: true),
-          Texto.titulo2(texto: value),
+          Texto.titulo2(texto: value, color: color),
         ],
       ),
     );
@@ -87,7 +87,6 @@ class _PantallaCharolaState extends State<PantallaCharola> {
       ],
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -170,14 +169,36 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                     alignment: Alignment.topRight,
                                     child: Padding(
                                       padding: const EdgeInsets.only(right: 20),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                          size: 40,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          borderRadius: BorderRadius.circular(
+                                            50,
+                                          ),
+                                          boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.2), // Color de la sombra
+        spreadRadius: 1, // Qué tanto se expande
+        blurRadius: 6,   // Qué tan difusa es
+        offset: Offset(2, 3), // Desplazamiento (x, y)
+      ),
+    ],
                                         ),
-                                        tooltip: 'Eliminar',
-                                        onPressed: () {mostrarPopUpEliminarCharola(context: context, charolaId: widget.charolaId);},
+                                        padding: const EdgeInsets.all(8),
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 35,
+                                          ),
+                                          tooltip: 'Eliminar',
+                                          onPressed: () {
+                                            mostrarPopUpEliminarCharola(
+                                              context: context,
+                                              charolaId: widget.charolaId,
+                                            );
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -187,7 +208,9 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                             const SizedBox(height: 40),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,33 +221,29 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                     children: [
                                       Row(
                                         children: [
-                                          Text(
-                                            "Estado actual: ",
-                                            style: TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
+                                          _crearInfoFila(
+                                            'Estado actual:',
                                             detalle.estado,
-                                            style: TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  detalle.estado == 'activa'
-                                                      ? Colors.green
-                                                      : Colors.red,
-                                            ),
+                                            detalle.estado == 'activa'
+                                                ? Colors.green
+                                                : Colors.red,
                                           ),
                                         ],
                                       ),
                                       _crearInfoFila(
                                         'Fecha de creación:',
                                         fechaFormateada,
+                                        Colors.black,
                                       ),
                                       _crearInfoFila(
-                                        'Peso:',
-                                        '${detalle.pesoCharola} g',
+                                        'Ciclo de hidratación:',
+                                        '${detalle.hidratacionCiclo} g',
+                                        Colors.black,
+                                      ),
+                                      _crearInfoFila(
+                                        'Densidad de larva:',
+                                        '${detalle.densidadLarva} g',
+                                        Colors.black,
                                       ),
                                     ],
                                   ),
@@ -236,10 +255,17 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                       _crearInfoFila(
                                         'Hidratación:',
                                         '${detalle.hidratacionNombre} ${detalle.hidratacionOtorgada} g',
+                                        Colors.black,
                                       ),
                                       _crearInfoFila(
                                         'Alimento:',
                                         '${detalle.comidaNombre} ${detalle.comidaOtorgada} g',
+                                        Colors.black,
+                                      ),
+                                      _crearInfoFila(
+                                        'Ciclo de comida:',
+                                        '${detalle.comidaCiclo} g',
+                                        Colors.black,
                                       ),
                                     ],
                                   ),
@@ -283,7 +309,28 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                       _crearBotonIcono(
                                         icono: Icons.edit,
                                         texto: 'Editar',
-                                        alPresionar: () {mostrarPopUpEditarCharola(context: context, charolaId: widget.charolaId, nombreCharola: detalle.nombreCharola, fechaCreacion:fechaFormateada, densidadLarva: detalle.densidadLarva, alimentoId: detalle.comidaId, alimento: detalle.comidaNombre, alimentoOtorgado: detalle.comidaOtorgada, hidratacionId: detalle.hidratacionId, hidratacion: detalle.hidratacionNombre, hidratacionOtorgado: detalle.hidratacionOtorgada, peso: detalle.pesoCharola);},
+                                        alPresionar: () {
+                                          mostrarPopUpEditarCharola(
+                                            context: context,
+                                            charolaId: widget.charolaId,
+                                            nombreCharola:
+                                                detalle.nombreCharola,
+                                            fechaCreacion: fechaFormateada,
+                                            densidadLarva:
+                                                detalle.densidadLarva,
+                                            alimentoId: detalle.comidaId,
+                                            alimento: detalle.comidaNombre,
+                                            alimentoOtorgado:
+                                                detalle.comidaOtorgada,
+                                            hidratacionId:
+                                                detalle.hidratacionId,
+                                            hidratacion:
+                                                detalle.hidratacionNombre,
+                                            hidratacionOtorgado:
+                                                detalle.hidratacionOtorgada,
+                                            peso: detalle.pesoCharola,
+                                          );
+                                        },
                                       ),
                                       _crearBotonIcono(
                                         icono: Icons.bug_report,
@@ -292,7 +339,10 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                           mostrarDialogoAlimentar(
                                             context,
                                             viewModel.charola!.charolaId,
-                                            Provider.of<CharolaViewModel>(context, listen: false)
+                                            Provider.of<CharolaViewModel>(
+                                              context,
+                                              listen: false,
+                                            ),
                                           );
                                         },
                                       ),
@@ -304,7 +354,12 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                       _crearBotonIcono(
                                         icono: Icons.device_hub,
                                         texto: 'Ancestros',
-                                        alPresionar: ()  {mostrarPopUpHistorialAncestros(context: context, charolaId: widget.charolaId);},
+                                        alPresionar: () {
+                                          mostrarPopUpHistorialAncestros(
+                                            context: context,
+                                            charolaId: widget.charolaId,
+                                          );
+                                        },
                                       ),
                                       _crearBotonIcono(
                                         icono: Icons.history,
@@ -335,61 +390,62 @@ class _PantallaCharolaState extends State<PantallaCharola> {
       },
     );
   }
+
   void mostrarPopUpEliminarCharola({
-  required BuildContext context,
-  required int charolaId,
-}) {
-  showDialog(
-    context: context,
-    builder: (dialogContext) {
-      return Consumer<CharolaViewModel>(
-        builder: (context, charolaViewModel, _) {
-          return AlertDialog(
-            title: Stack(
-              alignment: Alignment.center,
-              children: [
-                const Center(
-                  child: Text(
-                    'Eliminar Charola',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Positioned(
-                  left: 0,
-                  child: IconButton(
-                    icon: const Icon(Icons.close, color: Colors.red),
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                  ),
-                ),
-              ],
-            ),
-            content: SizedBox(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    Image.asset(
-                      'assets/images/alert-icon.png',
-                      height: 60,
-                      color: Colors.amber[700],
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      "¿Estás seguro de querer continuar con esta acción?",
+    required BuildContext context,
+    required int charolaId,
+  }) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Consumer<CharolaViewModel>(
+          builder: (context, charolaViewModel, _) {
+            return AlertDialog(
+              title: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Center(
+                    child: Text(
+                      'Eliminar Charola',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20),
                     ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "(Una vez eliminado, no se puede recuperar.)",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15),
+                  ),
+                  Positioned(
+                    left: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      onPressed: () => Navigator.of(dialogContext).pop(),
                     ),
-                    const SizedBox(height: 30),
-                    charolaViewModel.cargandoCharola
-                        ? const CircularProgressIndicator()
-                        : ElevatedButton(
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Image.asset(
+                        'assets/images/alert-icon.png',
+                        height: 60,
+                        color: Colors.amber[700],
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "¿Estás seguro de querer continuar con esta acción?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "(Una vez eliminado, no se puede recuperar.)",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      const SizedBox(height: 30),
+                      charolaViewModel.cargandoCharola
+                          ? const CircularProgressIndicator()
+                          : ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               minimumSize: const Size(150, 50),
@@ -400,7 +456,9 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                             child: const Text(
                               'Eliminar',
                               style: TextStyle(
-                                  color: Colors.white, fontSize: 20),
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                             onPressed: () async {
                               await charolaViewModel.eliminarCharola(charolaId);
@@ -415,29 +473,31 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                   ),
                                 );
                               } else {
-                                await charolaViewModel.cargarCharolas(reset: true);
+                                await charolaViewModel.cargarCharolas(
+                                  reset: true,
+                                );
                                 Navigator.of(dialogContext).pop();
-                                widget.onRegresar(); // Usa el callback para volver
+                                widget
+                                    .onRegresar(); // Usa el callback para volver
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content:
-                                        Text('Charola eliminada con éxito'),
+                                    content: Text(
+                                      'Charola eliminada con éxito',
+                                    ),
                                     backgroundColor: Colors.green,
                                   ),
                                 );
                               }
                             },
                           ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
-
+            );
+          },
+        );
+      },
+    );
+  }
 }

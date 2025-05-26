@@ -18,8 +18,10 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
     final vistaModelo = Provider.of<ReporteViewModel>(context, listen: false);
-    vistaModelo.getDatos();
+    vistaModelo.getDatos(); 
+  });
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
@@ -122,7 +124,7 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
                       _buildHeader('Charola'),
                       _buildHeader('Fecha de creación'),
                       _buildHeader('Ultima actualización'),
-                      _buildHeader('Charolas Ancestros'),
+                      _buildHeader('Ancestros de la charola'),
                       _buildHeader('Comida x Ciclo (g)'),
                       _buildHeader('Hidratación x Ciclo (g)'),
                       _buildHeader('Estado'),

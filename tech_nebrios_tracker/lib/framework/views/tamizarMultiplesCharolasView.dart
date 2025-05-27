@@ -134,7 +134,6 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
-                      // Texto alineado a la izquierda
                       Expanded(
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -147,69 +146,70 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                           ),
                         ),
                       ),
-                      // Botones alineados a la derecha
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          final nueva =
-                              await Navigator.push<modelo.CharolaRegistro>(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const RegistrarCharolaView(postOnSave: false),
-                                ),
-                              );
-                          if (nueva != null) {
-                            setState(() {
-                              nuevasCharolas.add(nueva);
-                            });
-                          }
-                        },
-                        icon: const Icon(Icons.add, size: 24),
-                        label: const Text('Registrar charola'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 18,
-                          ),
-                          backgroundColor: Colors.pink,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          textStyle: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          final exito = await seleccionVM.tamizarCharolaMultiple(nuevasCharolas);
-                          if (exito) {
-                            Navigator.pop(context, 
-                              MaterialPageRoute(
-                                builder:(_) => SidebarView(mensajeExito: 'Tamizado exitoso'),
+                      
+                      seleccionVM.cargando ? CircularProgressIndicator() : 
+                      Row(
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final nueva =
+                                  await Navigator.push<modelo.CharolaRegistro>(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const RegistrarCharolaView(postOnSave: false),
+                                    ),
+                                  );
+                              if (nueva != null) {
+                                setState(() {
+                                  nuevasCharolas.add(nueva);
+                                });
+                              }
+                            },
+                            icon: const Icon(Icons.add, size: 24),
+                            label: const Text('Registrar charola'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 18,
                               ),
-                            );
-                          }
-                        },
-                        icon: const Icon(Icons.done, size: 24),
-                        label: const Text('Finalizar Tamizado'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 18,
+                              backgroundColor: Colors.pink,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                          backgroundColor: const Color(0xFF0066FF),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                          const SizedBox(width: 16),
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final exito = await seleccionVM.tamizarCharolaMultiple(nuevasCharolas);
+                              if (exito) {
+                                Navigator.pop(context, MaterialPageRoute(builder:(_) => SidebarView(mensajeExito: 'Tamizado exitoso')));
+                              }
+                            },
+                            icon: const Icon(Icons.done, size: 24),
+                            label: const Text('Finalizar Tamizado'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 18,
+                              ),
+                              backgroundColor: const Color(0xFF0066FF),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                          textStyle: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        ],
                       ),
                     ],
                   ),

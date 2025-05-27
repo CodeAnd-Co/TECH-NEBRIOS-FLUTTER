@@ -124,13 +124,10 @@ class TamizadoViewModel extends ChangeNotifier {
       _hasError = false;
       notifyListeners();
 
-      ///Se obtiene la fecha actual sin la hora
-      DateTime fecha = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-
       /// Se construye el objeto de tamizado múltiple
       TamizadoMultiple tamizadoMultiple = TamizadoMultiple(
         charolas: charolasNuevas,
-        fecha: fecha,
+        charolasParaTamizar: charolasParaTamizar
       );
 
       TamizadoRespuesta? respuesta = await tamizarCharolaUseCases.tamizarCharolasMultiples(tamizadoMultiple);
@@ -149,7 +146,6 @@ class TamizadoViewModel extends ChangeNotifier {
         cargando = false;
         notifyListeners();
         return false;
-
       }
 
     } catch (e) {

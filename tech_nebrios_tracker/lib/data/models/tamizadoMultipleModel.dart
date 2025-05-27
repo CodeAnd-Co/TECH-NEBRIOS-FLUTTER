@@ -2,17 +2,17 @@ import './charolaModel.dart';
 
 class TamizadoMultiple {
   List<CharolaRegistro> charolas;
-  DateTime fecha;
+  List<CharolaTarjeta> charolasParaTamizar;
 
   TamizadoMultiple({
     required this.charolas,
-    required this.fecha,
+    required this.charolasParaTamizar
   });
 
   Map<String, dynamic> toJson() {
     return {
       'charolas': charolas,
-      'fecha': fecha.toIso8601String(), // Muy importante
+      'charolasParaTamizar': charolasParaTamizar
     };
   }
 }

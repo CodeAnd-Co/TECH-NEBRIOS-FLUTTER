@@ -1,9 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:tech_nebrios_tracker/domain/registrarHidratacionUseCase.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/hidratacionRepository.dart';
-
-
-
 
 /// ViewModel que controla el estado y la lógica de la pantalla
 /// de alimentación (lista, edición, registro y scroll infinito).
@@ -11,7 +9,7 @@ import '../../data/repositories/hidratacionRepository.dart';
 /// Extiende [ChangeNotifier] para notificar a la UI de cambios.
 class HidratacionViewModel extends ChangeNotifier {
   final HidratacionRepository _repo;
-
+  final RegistrarHidratacionCasoUso _registrarCasoUso;
 
   /// Tamaño de cada “chunk” que se mostrará por scroll.
   static const int _chunkSize = 20;
@@ -30,7 +28,13 @@ class HidratacionViewModel extends ChangeNotifier {
 
   HidratacionViewModel({
     HidratacionRepository? repo,
-  })  : _repo = repo ?? HidratacionRepository();
+    RegistrarHidratacionCasoUso? registrarCasoUso,
+  }) : _repo = repo ?? HidratacionRepository(),
+       _registrarCasoUso =
+           registrarCasoUso ??
+           RegistrarHidratacionCasoUsoImpl(
+             repositorio: repo ?? HidratacionRepository(),
+           );
 
   /// Indica si actualmente se está cargando más datos.
   bool get isLoading => _isLoading;
@@ -39,7 +43,8 @@ class HidratacionViewModel extends ChangeNotifier {
   String? get error => _error;
 
   /// Lista inmutable que la UI puede leer.
-  List<Hidratacion> get listaHidratacion => List.unmodifiable(_pagedHidratacion);
+  List<Hidratacion> get listaHidratacion =>
+      List.unmodifiable(_pagedHidratacion);
 
   /// True si quedan más ítems en [_allAlimentos] que no se han mostrado.
   bool get hasMore => _currentIndex < _allHidratacion.length;
@@ -76,7 +81,9 @@ class HidratacionViewModel extends ChangeNotifier {
       0,
       _allHidratacion.length,
     );
-    _pagedHidratacion.addAll(_allHidratacion.getRange(_currentIndex, nextIndex));
+    _pagedHidratacion.addAll(
+      _allHidratacion.getRange(_currentIndex, nextIndex),
+    );
     _currentIndex = nextIndex;
     notifyListeners();
   }
@@ -85,5 +92,38 @@ class HidratacionViewModel extends ChangeNotifier {
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
+  }
+
+  Future<String?> registrarHidratacion(String nombre, String descripcion) async {
+    if (nombre.trim().isEmpty || descripcion.trim().isEmpty) {
+      return 'Nombre y descripción no pueden estar vacíos.';
+    }
+    if (nombre.length > 25) {
+      return 'El nombre no puede tener más de 25 caracteres.';
+    }
+    if (descripcion.length > 200) {
+      return 'La descripción no puede tener más de 200 caracteres.';
+    }
+    if (RegExp(r'[0-9]').hasMatch(nombre)) {
+      return 'El nombre no debe contener números.';
+    }
+
+    _setLoading(true);
+    try {
+      await _registrarCasoUso.registrar(
+        nombre: nombre,
+        descripcion: descripcion,
+      );
+      await cargarHidratacion();
+      return null;
+    } on Exception catch (e) {
+      final msg = e.toString();
+      if (msg.contains('400')) return '❌ Datos no válidos.';
+      if (msg.contains('101')) return '❌ Sin conexión a internet.';
+      if (msg.contains('500')) return '❌ Error del servidor.';
+      return '❌ Error desconocido.';
+    } finally {
+      _setLoading(false);
+    }
   }
 }

@@ -529,10 +529,8 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       final nombre = nombreController.text.trim();
                       final descripcion = descripcionController.text.trim();
 
-                      final resultado = await vmHidratacion.registrarHidratacion(
-                        nombre,
-                        descripcion,
-                      );
+                      final resultado = await vmHidratacion
+                          .registrarHidratacion(nombre, descripcion);
                       if (!mounted) return;
 
                       if (resultado == null) {

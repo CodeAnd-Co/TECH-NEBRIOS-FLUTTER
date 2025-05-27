@@ -7,9 +7,16 @@ import '../../data/models/alimentacionModel.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../utils/positive_number_formatter.dart';
 import '../views/components/header.dart';
+import '../../data/models/charolaModel.dart' as modelo;
 
-class RegistrarCharolaView extends StatelessWidget {
-  const RegistrarCharolaView({super.key});
+class RegistrarCharolaView extends StatefulWidget {
+  final bool postOnSave;
+  const RegistrarCharolaView({super.key, this.postOnSave = true});
+  @override
+  _RegistrarCharolaView createState() => _RegistrarCharolaView();
+}
+
+class _RegistrarCharolaView extends State<RegistrarCharolaView> {
 
   @override
   Widget build(BuildContext context) {
@@ -120,20 +127,39 @@ class RegistrarCharolaView extends StatelessWidget {
                 ElevatedButton(
                    onPressed: () async {
                     if (vm.formKey.currentState!.validate()) {
-                      try {
-                        // Registrar y obtener la nueva CharolaTarjeta
-                        final nuevaTarjeta = await vm.registrarCharola();
-                        vm.resetForm();
-                        await vm.cargarCharolas();
-                        // Salir de esta pantalla devolviendo la tarjeta creada
-                        Navigator.pop(context, nuevaTarjeta);
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(e.toString()),
-                            backgroundColor: Colors.red,
-                          ),
+                      if(widget.postOnSave){
+                        try {
+                          // Registrar y obtener la nueva CharolaTarjeta
+                          final nuevaTarjeta = await vm.registrarCharola();
+                          vm.resetForm();
+                          await vm.cargarCharolas();
+                          // Salir de esta pantalla devolviendo la tarjeta creada
+                          Navigator.pop(context, nuevaTarjeta);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      } else {
+                        final parts = vm.fechaController.text.split('/');
+                        final day = int.parse(parts[0]);
+                        final month = int.parse(parts[1]);
+                        final year = int.parse(parts[2]);
+                        final fecha = DateTime(year, month, day);
+                        final nuevaCharola = modelo.CharolaRegistro(
+                          nombreCharola: vm.nombreController.text,
+                          fechaCreacion: fecha,
+                          fechaActualizacion: fecha,
+                          densidadLarva: double.parse(vm.densidadLarvaController.text),
+                          pesoCharola: double.parse(vm.pesoController.text),
+                          comidas: [modelo.ComidaAsignada(comidaId: vm.selectedAlimentacion!.idAlimento, cantidadOtorgada: double.parse(vm.comidaCicloController.text))],
+                          hidrataciones: [modelo.HidratacionAsignada(hidratacionId: vm.selectedHidratacion!.idHidratacion, cantidadOtorgada: double.parse(vm.hidratacionCicloController.text))]
                         );
+                        vm.resetForm();
+                        Navigator.pop(context, nuevaCharola);
                       }
                     }
                   },

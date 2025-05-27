@@ -118,33 +118,23 @@ class TamizadoViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> tamizarCharolaMultiple() async {
+  Future<bool> tamizarCharolaMultiple(List<modelo.CharolaRegistro> charolasNuevas) async {
     try {
       cargando = true;
       _hasError = false;
       notifyListeners();
-
-      ///Se validan todas las entradas del usuario
-      verificacionDeCampos();
-
-      ///Se extraen solo los nombres de las charolas seleccionadas
-      conseguirNombresCharolas();
-
-      ///Se convierten los campos de texto a números
-      convertirCampos();
 
       ///Se obtiene la fecha actual sin la hora
       DateTime fecha = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
       /// Se construye el objeto de tamizado múltiple
       TamizadoMultiple tamizadoMultiple = TamizadoMultiple(
-        charolas: nombresCharolas,
-        fras: frasCantidad,
-        pupa: pupaCantidad,
+        charolas: charolasNuevas,
         fecha: fecha,
       );
 
       TamizadoRespuesta? respuesta = await tamizarCharolaUseCases.tamizarCharolasMultiples(tamizadoMultiple);
+
 
       if (respuesta?.exito == true) {
         _hasError = false;
@@ -164,7 +154,7 @@ class TamizadoViewModel extends ChangeNotifier {
 
     } catch (e) {
       _hasError = true;
-      _errorMessage = 'Error al tamizar las charolas. Inténtalo de nuevo más tarde.';
+      _errorMessage = 'Error de servidor. Inténtalo de nuevo más tarde.';
       cargando = false;
       notifyListeners();
       return false;

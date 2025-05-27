@@ -16,8 +16,8 @@ class EditarCharolaViewModel extends ChangeNotifier{
   final TextEditingController densidadLarvaController = TextEditingController();
   final TextEditingController fechaController = TextEditingController();
   final TextEditingController comidaCicloController = TextEditingController();
-  final TextEditingController pesoController = TextEditingController();
   final TextEditingController hidratacionCicloController = TextEditingController();
+  final TextEditingController estadoController = TextEditingController();
   Alimento? selectedAlimentacion;
   Hidratacion? selectedHidratacion;
 
@@ -46,7 +46,7 @@ class EditarCharolaViewModel extends ChangeNotifier{
     Editar = EditarCharolaUseCaseImp(repositorio: _Repo);
   }
 
-  Future<void> cargarDatos(nombreCharola, fechaCreacion, densidadLarva, alimentoId, alimento, alimentoOtorgado, hidratacionId, hidratacion, hidratacionOtorgado, peso) async{
+  Future<void> cargarDatos(nombreCharola, fechaCreacion, densidadLarva, alimentoId, alimento, alimentoOtorgado, hidratacionId, hidratacion, hidratacionOtorgado, estado) async{
     nombreController.text = nombreCharola;
     fechaController.text = fechaCreacion;
     densidadLarvaController.text = densidadLarva.toString();
@@ -54,7 +54,7 @@ class EditarCharolaViewModel extends ChangeNotifier{
     comidaCicloController.text = alimentoOtorgado.toString();
     selectedHidratacion = Hidratacion(idHidratacion: hidratacionId, nombreHidratacion: hidratacion, descripcionHidratacion: '');
     hidratacionCicloController.text = hidratacionOtorgado.toString();
-    pesoController.text = peso.toString();
+    estadoController.text = estado;
   }
 
   Future<void> editarCharola(charolaId) async {
@@ -66,7 +66,7 @@ class EditarCharolaViewModel extends ChangeNotifier{
 
       final fechaCreacionFormateada = DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(fechaController.text));
 
-      var respuesta = await Editar.repositorio.putEditarCharola(charolaId, nombreController.text, "activa", pesoController.text, selectedAlimentacion!.idAlimento, comidaCicloController.text, fechaFormateada, selectedHidratacion!.idHidratacion, hidratacionCicloController.text, fechaCreacionFormateada);
+      var respuesta = await Editar.repositorio.putEditarCharola(charolaId, nombreController.text, estadoController.text, densidadLarvaController.text, selectedAlimentacion!.idAlimento, comidaCicloController.text, fechaFormateada, selectedHidratacion!.idHidratacion, hidratacionCicloController.text, fechaCreacionFormateada);
       
       if (respuesta['codigo'] == 200){
         _mensaje = 'Se editó la información correctamente.';

@@ -86,7 +86,6 @@ class CharolaViewModel extends ChangeNotifier {
   final TextEditingController densidadLarvaController = TextEditingController();
   final TextEditingController fechaController = TextEditingController();
   final TextEditingController comidaCicloController = TextEditingController();
-  final TextEditingController pesoController = TextEditingController();
   final TextEditingController hidratacionCicloController =
       TextEditingController();
 
@@ -107,7 +106,6 @@ class CharolaViewModel extends ChangeNotifier {
         fechaCreacion: fecha,
         fechaActualizacion: fecha,
         densidadLarva: double.parse(densidadLarvaController.text),
-        pesoCharola: double.parse(pesoController.text),
         comidas: [
           ComidaAsignada(
             comidaId: selectedAlimentacion!.idAlimento,
@@ -143,7 +141,6 @@ class CharolaViewModel extends ChangeNotifier {
     densidadLarvaController.clear();
     fechaController.clear();
     comidaCicloController.clear();
-    pesoController.clear();
     hidratacionCicloController.clear();
     selectedAlimentacion = null;
     selectedHidratacion = null;

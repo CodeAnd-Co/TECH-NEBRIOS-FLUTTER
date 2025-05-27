@@ -5,17 +5,27 @@ import '../models/tamizadoMultipleModel.dart';
 import '../models/tamizadoRespuestaModel.dart';
 import '../services/tamizadoApiService.dart';
 import '../models/constantes.dart';
+import '../../domain/usuarioUseCases.dart';
 
 class TamizarCharolaRepository implements TamizadoApiService {
+  final UserUseCases _userUseCases = UserUseCases();
+
   @override
   Future<TamizadoRespuesta?> tamizarCharolaIndividual(
     TamizadoIndividual tamizadoIndividual,
   ) async {
     final url = Uri.parse('${APIRutas.CHAROLA_TAMIZADO}/tamizadoIndividual');
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
 
     final respuesta = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode(tamizadoIndividual.toJson()),
     );
 
@@ -28,10 +38,17 @@ class TamizarCharolaRepository implements TamizadoApiService {
     TamizadoMultiple tamizadoMultiple,
   ) async {
     final url = Uri.parse('${APIRutas.CHAROLA_TAMIZADO}/tamizadoMultiple');
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
 
     final respuesta = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode(tamizadoMultiple.toJson()),
     );
 
@@ -42,8 +59,18 @@ class TamizarCharolaRepository implements TamizadoApiService {
   @override
   Future<List<String>> getAlimentos() async {
     final url = Uri.parse(APIRutas.ALIMENTACION);
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
 
-    final response = await http.get(url);
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
     if (response.statusCode == 200) {
       final decodedResponse = json.decode(response.body);
@@ -65,8 +92,18 @@ class TamizarCharolaRepository implements TamizadoApiService {
   @override
   Future<List<String>> getHidratacion() async {
     final url = Uri.parse(APIRutas.HIDRATACION);
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
 
-    final response = await http.get(url);
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
     if (response.statusCode == 200) {
       final decodedResponse = json.decode(response.body);
@@ -90,10 +127,18 @@ class TamizarCharolaRepository implements TamizadoApiService {
     List<int> charolasAncestroIds,
   ) async {
     final uri = Uri.parse('${APIRutas.HISTORIAL_CHAROLA}/$charolaId/ancestros');
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
     final body = jsonEncode({'ancestros': charolasAncestroIds});
     final resp = await http.post(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
       body: body,
     );
     if (resp.statusCode == 200) {

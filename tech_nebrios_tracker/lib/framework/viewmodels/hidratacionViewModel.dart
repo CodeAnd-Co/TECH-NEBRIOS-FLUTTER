@@ -1,9 +1,9 @@
+// RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
+
 import 'package:flutter/foundation.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/hidratacionRepository.dart';
-
-
-
+import '../../domain/eliminarHidratacionUseCase.dart';
 
 /// ViewModel que controla el estado y la lógica de la pantalla
 /// de alimentación (lista, edición, registro y scroll infinito).
@@ -11,7 +11,7 @@ import '../../data/repositories/hidratacionRepository.dart';
 /// Extiende [ChangeNotifier] para notificar a la UI de cambios.
 class HidratacionViewModel extends ChangeNotifier {
   final HidratacionRepository _repo;
-
+  final EliminarHidratacionCasoUso _eliminarCasoUso;
 
   /// Tamaño de cada “chunk” que se mostrará por scroll.
   static const int _chunkSize = 20;
@@ -30,7 +30,9 @@ class HidratacionViewModel extends ChangeNotifier {
 
   HidratacionViewModel({
     HidratacionRepository? repo,
-  })  : _repo = repo ?? HidratacionRepository();
+    EliminarHidratacionCasoUso? eliminarCasoUso,
+  })  : _repo = repo ?? HidratacionRepository(),
+        _eliminarCasoUso = eliminarCasoUso ?? EliminarAlimentoCasoUsoImpl(repositorio: repo ?? HidratacionRepository());
 
   /// Indica si actualmente se está cargando más datos.
   bool get isLoading => _isLoading;
@@ -68,6 +70,20 @@ class HidratacionViewModel extends ChangeNotifier {
       _agregarSiguienteChunk();
       _setLoading(false);
     });
+  }
+
+  Future<void> eliminarHidratacion(int idHidratacion) async {
+    _setLoading(true);
+    try {
+      await _eliminarCasoUso.eliminar(idHidratacion: idHidratacion);
+      await cargarHidratacion();
+    } on Exception catch (e) {
+      final msg = e.toString();
+      if (msg.contains('500')) throw Exception('❌ Error del servidor.');
+      throw Exception('❌ Error desconocido. $e');
+    } finally {
+      _setLoading(false);
+    }
   }
 
   /// Toma el siguiente rango de [_chunkSize] ítems y los añade.

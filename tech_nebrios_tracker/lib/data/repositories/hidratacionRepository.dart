@@ -1,3 +1,5 @@
+// RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/hidratacionModel.dart';
@@ -20,5 +22,21 @@ class HidratacionRepository extends HidratacionService {
     // Decodifica JSON y mapea a objetos Hidratación
     final List<dynamic> data = jsonDecode(response.body);
     return data.map((item) => Hidratacion.fromJson(item)).toList();
+  }
+
+    /// Elimina un hidrato existente en el sistema.
+  ///
+  /// [idHidratacion] es el identificador del alimento a eliminar.
+  @override
+  Future<void> eliminarHidratacion(int idHidratacion) async {
+    final uri = Uri.parse('${APIRutas.HIDRATACION}/eliminar/$idHidratacion');
+    final response = await http.delete(uri);
+
+    // Manejo de códigos de error específicos
+    if (response.statusCode == 500) {
+      throw Exception('❌ Error del servidor.');
+    } else if (response.statusCode != 200) {
+      throw Exception('❌ Error desconocido (${response.statusCode}).');
+    }
   }
 }

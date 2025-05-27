@@ -1,3 +1,4 @@
+// RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
 
 import '../models/hidratacionModel.dart';
 
@@ -9,4 +10,9 @@ abstract class HidratacionService {
   /// Obtiene la lista completa de alimentos desde la fuente de datos.
   ///
   Future<List<Hidratacion>> obtenerHidratacion();
+
+  /// Elimina un alimento existente en el sistema.
+  ///
+  /// [idHidratacion] es el identificador del alimento a eliminar.
+  Future<void> eliminarHidratacion(int idHidratacion);
 }

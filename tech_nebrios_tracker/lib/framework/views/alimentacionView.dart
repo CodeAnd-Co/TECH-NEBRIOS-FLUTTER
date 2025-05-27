@@ -1,4 +1,6 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
+// RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/alimentacionModel.dart';
@@ -249,6 +251,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Construye una fila individual con un [hidratacion] y botones de acción.
   Widget _buildRowHidratacion(Hidratacion hidratacion, int index) {
     final bg = index.isEven ? Colors.white : Colors.grey.shade200;
     return Container(
@@ -260,8 +263,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           Expanded(child: Text(hidratacion.nombreHidratacion)),
           // placeholder para el espacio del icono “editar”
           const SizedBox(width: 48),
-          // placeholder para el espacio del icono “borrar”
-          const SizedBox(width: 48),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () => _onEliminarHidratacion(hidratacion.idHidratacion),
+          ),
         ],
       ),
     );
@@ -578,6 +583,97 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                   ScaffoldMessenger.of(dialogContext).showSnackBar(
                                     const SnackBar(
                                       content: Text('Alimento eliminado exitosamente'),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'Eliminar',
+                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                ),
+                              ),
+                            ]
+                          )
+                        ]
+                      )
+                    )
+                  ],
+                );
+              }
+          )
+        );
+      }
+    );
+  }
+
+    /// Muestra un diálogo de confirmación para eliminar [hidratacion].
+  /// Si se confirma, llama a [vm.eliminarHidratacion].
+  void _onEliminarHidratacion(int idHidratacion) {
+    showDialog(
+      context: context,
+      builder:
+          (BuildContext dialogContext) {
+            return ChangeNotifierProvider.value(
+              value: vmHidratacion,
+              child: Consumer<HidratacionViewModel>(
+                builder: (context, vm, _){
+                  return AlertDialog(
+                  title: const Center(
+                    child: Text(
+                      'Eliminar Alimento',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Divider(height: 1),
+                      SizedBox(height: 30),
+                      Text(
+                        '¿Estás seguro de eliminar este alimento?',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(height: 20),
+                    ]
+                  ),
+                  actionsAlignment: MainAxisAlignment.center,
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          vmAlimentacion.isLoading ? CircularProgressIndicator() :
+                          Row(
+                            children: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  minimumSize: const Size(150, 50),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                onPressed: () => Navigator.of(dialogContext).pop(),
+                                child: const Text(
+                                  'Cancelar',
+                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  minimumSize: const Size(150, 50),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  await vmHidratacion.eliminarHidratacion(idHidratacion);
+                                  Navigator.of(dialogContext).pop();
+                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Hidratación eliminado exitosamente'),
                                     ),
                                   );
                                 },

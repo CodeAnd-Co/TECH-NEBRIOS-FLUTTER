@@ -104,7 +104,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
             ),
           ),
           const Text(
-            'Vizualiza tu alimentación',
+            'Visualiza tu alimentación',
             style: TextStyle(fontSize: 18, color: Colors.black),
           ),
           const SizedBox(height: 24),

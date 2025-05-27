@@ -13,7 +13,7 @@ class EditarCharolaRepository extends EditarCharolaAPIService {
     charolaId,
     nombreCharola,
     nuevoEstado,
-    nuevoPeso,
+    nuevaDensidad,
     nuevaAlimentacion,
     nuevaAlimentacionOtorgada,
     fechaActualizacion,
@@ -23,7 +23,7 @@ class EditarCharolaRepository extends EditarCharolaAPIService {
   ) async {
     // Construir la URL
     final url = Uri.parse(
-      '${APIRutas.CHAROLA}/editarCharola?charolaId=$charolaId&nuevoNombre=$nombreCharola&nuevoEstado=$nuevoEstado&nuevoPeso=$nuevoPeso&nuevaAlimentacion=$nuevaAlimentacion&nuevaAlimentacionOtorgada=$nuevaAlimentacionOtorgada&fechaActualizacion=$fechaActualizacion&nuevaHidratacion=$nuevaHidratacion&nuevaHidratacionOtorgada=$nuevaHidratacionOtorgada&fechaCreacion=$fechaCreacion',
+      '${APIRutas.CHAROLA}/editarCharola?charolaId=$charolaId&nuevoNombre=$nombreCharola&nuevoEstado=$nuevoEstado&nuevaDensidad=$nuevaDensidad&nuevaAlimentacion=$nuevaAlimentacion&nuevaAlimentacionOtorgada=$nuevaAlimentacionOtorgada&fechaActualizacion=$fechaActualizacion&nuevaHidratacion=$nuevaHidratacion&nuevaHidratacionOtorgada=$nuevaHidratacionOtorgada&fechaCreacion=$fechaCreacion',
     );
     final token = await _userUseCases.obtenerTokenActual();
     if (token == null) {

@@ -335,7 +335,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                                 detalle.hidratacionNombre,
                                             hidratacionOtorgado:
                                                 detalle.hidratacionOtorgada,
-                                            peso: detalle.pesoCharola,
+                                            estado: detalle.estado
                                           );
                                         },
                                       ),

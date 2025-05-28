@@ -6,7 +6,6 @@ import 'package:tech_nebrios_tracker/framework/views/reporteView.dart';
 import 'package:tech_nebrios_tracker/framework/views/alimentacionView.dart';
 import 'package:tech_nebrios_tracker/framework/views/seleccionarTamizadoView.dart';
 import './detalleCharolaView.dart';
-import './tamizarMultiplesCharolasView.dart';
 import './tamizarCharolaIndividualView.dart';
 
 class SidebarView extends StatefulWidget {
@@ -25,7 +24,6 @@ class _SidebarViewState extends State<SidebarView> {
   bool _mensajeMostrado = false;
   Widget? _detalleCharolaActual;
   Widget? _vistaTamizadoIndividual;
-  Widget? _vistaTamizadoMultiple;
 
   void _mostrarDetalleCharola(int id) {
     setState(() {
@@ -90,9 +88,7 @@ class _SidebarViewState extends State<SidebarView> {
       VistaSeleccionarTamizado(),
       const Placeholder(),
       const AlimentacionScreen(),
-      const VistaTablaCharolas(),
-      VistaTamizadoIndividual(onRegresar: _cerrarVistaTamizado),
-      VistaTamizadoMultiple(onRegresar: _cerrarVistaTamizado),
+      const VistaTablaCharolas()
     ];
   }
 

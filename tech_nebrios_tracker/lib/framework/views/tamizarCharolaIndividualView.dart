@@ -5,7 +5,7 @@ import './components/FormFields.dart';
 import '../../utils/positive_number_formatter.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewModel.dart';
-import '../views/sidebarView.dart';
+import '../viewmodels/charolaViewModel.dart';
 import '../views/registrarCharolaView.dart';
 import 'components/header.dart';
 
@@ -106,23 +106,15 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
 
   @override
   Widget build(BuildContext context) {
+    final charolaVM = Provider.of<CharolaViewModel>(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(
         child: Consumer<TamizadoViewModel>(
           builder: (context, seleccionVM, _) {
-            if (seleccionVM.hasError  && seleccionVM.errorMessage.isNotEmpty) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(seleccionVM.errorMessage),
-                    backgroundColor: Colors.red,
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              });
-            }
-            return Column(
+            return SingleChildScrollView(
+            child: 
+            Column(
               children: [
                 const Header(
                   titulo: 'Tamizado Individual',
@@ -358,7 +350,21 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                               if(formKey2.currentState!.validate()){
                                 final exito = await seleccionVM.tamizarCharolaIndividual(nuevasCharolas);
                                 if (exito) {
-                                  Navigator.push(context, MaterialPageRoute( builder: (_) => SidebarView(mensajeExito: 'Tamizado exitoso')));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(seleccionVM.mensajeExitoso),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  charolaVM.cargarCharolas();
+                                  widget.onRegresar();
+                                }else{
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(seleccionVM.errorMessage),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
                                 }
                               }
                             },
@@ -433,6 +439,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                   ),
                 ),
               ],
+            )
             );
           },
         ),

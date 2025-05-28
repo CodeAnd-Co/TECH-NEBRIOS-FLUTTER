@@ -64,6 +64,7 @@ class TamizadoViewModel extends ChangeNotifier {
 
   Future<bool> tamizarCharolaIndividual(List<modelo.CharolaRegistro> charolasNuevas) async {
     try {
+      _tamizadoExitoso = false;
       cargando = true;
       _hasError = false;
       notifyListeners();
@@ -102,7 +103,7 @@ class TamizadoViewModel extends ChangeNotifier {
 
     } catch (e) {
       _hasError = true;
-      _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+      _errorMessage = 'Error de servidor. Inténtalo de nuevo más tarde.';
       cargando = false;
       notifyListeners();
       return false;
@@ -111,6 +112,7 @@ class TamizadoViewModel extends ChangeNotifier {
 
   Future<bool> tamizarCharolaMultiple(List<modelo.CharolaRegistro> charolasNuevas) async {
     try {
+      _tamizadoExitoso = false;
       cargando = true;
       _hasError = false;
       notifyListeners();
@@ -219,14 +221,6 @@ class TamizadoViewModel extends ChangeNotifier {
     nombresCharolas.clear();
     _hasError = false;
     notifyListeners();
-  }
-
-   void limpiarError() {
-    _hasError = false;
-  }
-
-  void limpiarTamizadoExitoso() {
-    _tamizadoExitoso = false;
   }
 }
 

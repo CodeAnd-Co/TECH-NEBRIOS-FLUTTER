@@ -11,13 +11,8 @@ import 'components/header.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
-  /// Fecha de creación mostrada en la cabecera.
   final String fecha;
-
-  /// Nombre de la charola.
   final String nombreCharola;
-
-  /// Color de la cabecera de la tarjeta.
   final Color color;
 
   /// Acción a ejecutar cuando se pulsa la tarjeta.
@@ -116,32 +111,6 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
       body: SafeArea(
         child: Consumer2<CharolaViewModel, TamizadoViewModel>(
           builder: (context, vm, seleccionVM, _) {
-            if (seleccionVM.hasError  && seleccionVM.errorMessage.isNotEmpty) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(seleccionVM.errorMessage),
-                    backgroundColor: Colors.red,
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              });
-              seleccionVM.limpiarError();
-            }
-
-            if (seleccionVM.tamizadoExitoso) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(seleccionVM.mensajeExitoso),
-                    backgroundColor: Colors.green,
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              });
-              seleccionVM.limpiarTamizadoExitoso();
-            }
-
             return Column(
               children: [
                 const Header(
@@ -179,7 +148,7 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                     color: obtenerColorPorNombre(charola.nombreCharola),
                                     onTap: () {
                                       seleccionVM.quitarCharola(charola);
-                                    } // No hacer nada al tocar aquí arriba
+                                    }
                                   ),
                                 );
                               },
@@ -192,12 +161,8 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                     
                   ),
                 const SizedBox(height: 10),
-
-                /// Carga inicial
                 if (vm.cargandoLista && vm.charolas.isEmpty)
                   const Expanded(child: Center(child: CircularProgressIndicator()))
-
-                /// Mensaje cuando no hay resultados
                 else if (!vm.cargandoLista && vm.charolas.isEmpty)
                   const Expanded(
                     child: Center(
@@ -265,7 +230,6 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              // Row centrado con los botones de paginación
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -302,8 +266,6 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                   ),
                                 ],
                               ),
-
-                              // Botón alineado a la derecha
                               Positioned(
                                 right: 20,
                                 child: ElevatedButton.icon(
@@ -313,17 +275,24 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                         Navigator.push(
                                           context, 
                                           MaterialPageRoute(
-                                            builder: (_) => VistaTamizadoIndividual(onRegresar: () {Navigator.pop(context);})
+                                            builder: (_) => VistaTamizadoIndividual(onRegresar: () {Navigator.pop(context); seleccionVM.limpiarInformacion();})
                                             )
                                         );
                                       }else {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => VistaTamizadoMultiple(onRegresar: () {Navigator.pop(context);})
+                                            builder: (_) => VistaTamizadoMultiple(onRegresar: () {Navigator.pop(context); seleccionVM.limpiarInformacion();})
                                           )
                                         );
                                       }
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(seleccionVM.errorMessage),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
                                     }
                                   },
                                   icon: Icon(Icons.done, size: iconSize.clamp(20, 30)),

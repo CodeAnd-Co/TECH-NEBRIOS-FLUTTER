@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_nebrios_tracker/framework/views/sidebarView.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewModel.dart';
 import '../views/registrarCharolaView.dart';
 import './components/header.dart';
+import '../viewmodels/charolaViewModel.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
-  /// Fecha de creación mostrada en la cabecera.
   final String fecha;
-
-  /// Nombre de la charola.
   final String nombreCharola;
-
-  /// Color de la cabecera de la tarjeta.
   final Color color;
 
   /// Acción a ejecutar cuando se pulsa la tarjeta.
@@ -103,25 +97,16 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
 
   @override
   Widget build(BuildContext context) {
+    final charolaVM = Provider.of<CharolaViewModel>(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(
         child: Consumer<TamizadoViewModel>(
           builder: (context, seleccionVM, _) {
-            if (seleccionVM.hasError  && seleccionVM.errorMessage.isNotEmpty) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(seleccionVM.errorMessage),
-                    backgroundColor: Colors.red,
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              });
-            }
             seleccionVM.cargarAlimentos();
             seleccionVM.cargarHidratacion();
-            return Column(
+            return SingleChildScrollView(
+              child: Column(
               children: [
                 const Header(
                   titulo: 'Tamizado Multiple',
@@ -226,12 +211,32 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                             const SizedBox(width: 16),
                             ElevatedButton.icon(
                               onPressed: () async {
-                                var exito = false;
-                                if(seleccionVM.siguienteInterfaz(context)){
-                                  exito = await seleccionVM.tamizarCharolaMultiple(nuevasCharolas);
-                                }
-                                if (exito) {
-                                  Navigator.pop(context, MaterialPageRoute(builder:(_) => SidebarView(mensajeExito: 'Tamizado exitoso')));
+                                if(nuevasCharolas.isEmpty){
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Para continuar la tamización, registra nuevas charolas.'),
+                                      backgroundColor: Colors.red
+                                    ),
+                                  );
+                                }else{
+                                  var exito = await seleccionVM.tamizarCharolaMultiple(nuevasCharolas); 
+                                  if (exito) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(seleccionVM.mensajeExitoso),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    charolaVM.cargarCharolas();
+                                    widget.onRegresar();
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(seleccionVM.errorMessage),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
                                 }
                               },
                               icon: const Icon(Icons.done, size: 24),
@@ -305,6 +310,7 @@ class _VistaTamizadoMultipleState extends State<VistaTamizadoMultiple> {
                   )
                 )
               ]
+              )
             );
           },
         ),

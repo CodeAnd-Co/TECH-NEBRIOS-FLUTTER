@@ -56,7 +56,7 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                         maxLength: 20,
                       ),
                       _buildTextFormField(
-                        label: 'Densidad de Larva *',
+                        label: 'Densidad de Larva (g) *',
                         controller: vm.densidadLarvaController,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -81,7 +81,7 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                         validator: (v) => v == null ? 'Selecciona alimento' : null,
                       ),
                       _buildTextFormField(
-                        label: 'Cantidad de alimento (Kg) *',
+                        label: 'Cantidad de alimento (g) *',
                         controller: vm.comidaCicloController,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -90,16 +90,7 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                         ],
                         validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
                       ),
-                      _buildTextFormField(
-                        label: 'Peso (kg) *',
-                        controller: vm.pesoController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          PositiveNumberFormatter(),
-                        ],
-                        validator: (v) => v == null || v.isEmpty ? 'Ingresa peso' : null,
-                      ),
+                      const SizedBox(), // Espacio para alinear con el dropdown
                       _buildDropdownFormField<Hidratacion>(
                         label: 'Hidratación *',
                         items: vm.hidrataciones.map((h) => h.nombreHidratacion).toList(),
@@ -110,7 +101,7 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                         validator: (v) => v == null ? 'Selecciona hidratación' : null,
                       ),
                       _buildTextFormField(
-                        label: 'Cantidad de hidratación (Kg) *',
+                        label: 'Cantidad de hidratación (g) *',
                         controller: vm.hidratacionCicloController,
                         keyboardType: TextInputType.number,
                         inputFormatters: [

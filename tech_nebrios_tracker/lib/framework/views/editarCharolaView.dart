@@ -22,7 +22,7 @@ void mostrarPopUpEditarCharola({
   required int hidratacionId,
   required String hidratacion, 
   required int hidratacionOtorgado,
-  required int peso
+  required String estado
   }) {
   
 
@@ -39,7 +39,7 @@ void mostrarPopUpEditarCharola({
     context: context,
     builder: (dialogContext) {
       return FutureBuilder(
-        future: editarViewModel.cargarDatos(nombreCharola, fechaCreacion, densidadLarva, alimentoId, alimento, alimentoOtorgado, hidratacionId,  hidratacion, hidratacionOtorgado, peso),
+        future: editarViewModel.cargarDatos(nombreCharola, fechaCreacion, densidadLarva, alimentoId, alimento, alimentoOtorgado, hidratacionId,  hidratacion, hidratacionOtorgado, estado),
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const AlertDialog(
@@ -113,24 +113,7 @@ void mostrarPopUpEditarCharola({
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildTextFormField(
-                                label: 'Peso (gr) *',
-                                controller: editarViewModel.pesoController,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  PositiveNumberFormatter(),
-                                ],
-                                maxLength: 4,
-                                validator: (v) => v == null || v.isEmpty ? 'Ingresa peso' : null,
-                              ),
-                            ],
-                          ),
-                          /*
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Densidad de Larva:"),
-                              _buildTextFormField(
+                                label: "Densidad de larva",
                                 controller: editarViewModel.densidadLarvaController,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
@@ -140,7 +123,7 @@ void mostrarPopUpEditarCharola({
                                 validator: (v) => v == null || v.isEmpty ? 'Ingresa densidad' : null,
                               ),
                             ],
-                          ),*/
+                          ),
                         ],
                       ),
                       const SizedBox(height: 30),
@@ -184,6 +167,20 @@ void mostrarPopUpEditarCharola({
                               ],
                             ),
                           ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildDropdownFormField(
+                                label: "Estado", 
+                                items: ["activa", "pasada"], 
+                                value: editarViewModel.estadoController.text, 
+                                onChanged: (value) {
+                                  editarViewModel.estadoController.text = value!;
+                                },
+                                validator: (v) => v == null ? 'Selecciona un estado' : null,
+                              )
+                            ],
+                          )
                         ],
                       ),
                       const SizedBox(height: 30),

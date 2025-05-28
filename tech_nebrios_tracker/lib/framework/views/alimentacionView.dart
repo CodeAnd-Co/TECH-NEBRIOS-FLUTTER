@@ -1,4 +1,5 @@
 //RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
+/// RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/alimentacionModel.dart';
@@ -258,8 +259,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       child: Row(
         children: [
           Expanded(child: Text(hidratacion.nombreHidratacion)),
-          // placeholder para el espacio del icono “editar”
-          const SizedBox(width: 48),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => _onEditarHidratacion(hidratacion),
+          ),
           // placeholder para el espacio del icono “borrar”
           const SizedBox(width: 48),
         ],
@@ -480,6 +483,126 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                     idAlimento: alimento.idAlimento,
                                     nombreAlimento: nombreController.text.trim(),
                                     descripcionAlimento: descripcionController.text.trim(),
+                                  ),
+                                );
+                                if (resultado == null) {
+                                  Navigator.of(dialogContext).pop();
+                                } else {
+                                  ScaffoldMessenger.of(
+                                    dialogContext,
+                                  ).showSnackBar(SnackBar(content: Text(resultado)));
+                                }
+                              },
+                              child: const Text(
+                                'Guardar',
+                                style: TextStyle(color: Colors.white, fontSize: 20),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ]
+                    )
+                  )
+                ],
+              );
+            }
+          )
+        );
+      }
+    );
+  }
+
+  /// Muestra un diálogo para editar [alimento] y guarda cambios.
+  void _onEditarHidratacion(Hidratacion hidratacion) {
+    final nombreController = TextEditingController(
+      text: hidratacion.nombreHidratacion,
+    );
+    final descripcionController = TextEditingController(
+      text: hidratacion.descripcionHidratacion,
+    );
+
+    showDialog(
+      context: context,
+      builder:
+          (BuildContext dialogContext) {
+            return  ChangeNotifierProvider.value(
+              value: vmHidratacion,
+              child: Consumer<HidratacionViewModel>(
+                builder: (context, vm, _) {
+                  return AlertDialog(
+                    title: const Center(
+                      child: Text(
+                        'Nueva Hidratación',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Divider(height: 1),
+                      const SizedBox(height: 30),
+                      TextField(
+                        controller: nombreController,
+                        maxLength: 25,
+                        decoration: const InputDecoration(
+                          labelText: 'Nombre:',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: descripcionController,
+                        maxLength: 200,
+                        decoration: const InputDecoration(
+                          labelText: 'Descripción:',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                      ),
+                    ],
+                  ),
+                ),
+                actionsAlignment: MainAxisAlignment.center,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        vmHidratacion.isLoading ? CircularProgressIndicator() :
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                minimumSize: const Size(150, 50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: () => Navigator.of(dialogContext).pop(),
+                              child: const Text(
+                                'Cancelar',
+                                style: TextStyle(color: Colors.white, fontSize: 20),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              minimumSize: const Size(150, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                              onPressed: () async {
+                                final resultado = await vmHidratacion.editarHidratacion(
+                                  Hidratacion(
+                                    idHidratacion: hidratacion.idHidratacion,
+                                    nombreHidratacion: nombreController.text.trim(),
+                                    descripcionHidratacion: descripcionController.text.trim(),
                                   ),
                                 );
                                 if (resultado == null) {

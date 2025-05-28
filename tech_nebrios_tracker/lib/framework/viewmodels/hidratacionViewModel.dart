@@ -1,8 +1,9 @@
+/// RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/hidratacionRepository.dart';
-
-
+import '../../domain/editarHidratacionUseCase.dart';
 
 
 /// ViewModel que controla el estado y la lógica de la pantalla
@@ -11,6 +12,9 @@ import '../../data/repositories/hidratacionRepository.dart';
 /// Extiende [ChangeNotifier] para notificar a la UI de cambios.
 class HidratacionViewModel extends ChangeNotifier {
   final HidratacionRepository _repo;
+  final EditarHidratacionCasoUso _editarCasoUso;
+
+  final formKey = GlobalKey<FormState>();
 
 
   /// Tamaño de cada “chunk” que se mostrará por scroll.
@@ -30,7 +34,9 @@ class HidratacionViewModel extends ChangeNotifier {
 
   HidratacionViewModel({
     HidratacionRepository? repo,
-  })  : _repo = repo ?? HidratacionRepository();
+    EditarHidratacionCasoUso? editarCasoUso,
+  })  : _repo = repo ?? HidratacionRepository(),
+        _editarCasoUso = editarCasoUso ?? EditarHidratacionCasoUsoImpl(repositorio: repo ?? HidratacionRepository());
 
   /// Indica si actualmente se está cargando más datos.
   bool get isLoading => _isLoading;
@@ -68,6 +74,29 @@ class HidratacionViewModel extends ChangeNotifier {
       _agregarSiguienteChunk();
       _setLoading(false);
     });
+  }
+
+  Future<String?> editarHidratacion(Hidratacion hidratacion) async {
+    if (hidratacion.nombreHidratacion.trim().isEmpty || hidratacion.descripcionHidratacion.trim().isEmpty) {
+      return 'Nombre y descripción no pueden estar vacíos.';
+    }
+    if (RegExp(r'[0-9]').hasMatch(hidratacion.nombreHidratacion)) {
+      return 'El nombre no debe contener números.';
+    }
+
+    _setLoading(true);
+    try {
+      await _editarCasoUso.editar(hidratacion: hidratacion);
+      await cargarHidratacion();
+      return null;
+    } on Exception catch (e) {
+      final msg = e.toString();
+      if (msg.contains('400')) return '❌ Datos no válidos.';
+      if (msg.contains('500')) return '❌ Error del servidor.';
+      return '❌ Error desconocido.';
+    } finally {
+      _setLoading(false);
+    }
   }
 
   /// Toma el siguiente rango de [_chunkSize] ítems y los añade.

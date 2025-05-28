@@ -1,3 +1,4 @@
+//RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
 
 import '../models/hidratacionModel.dart';
 
@@ -9,4 +10,11 @@ abstract class HidratacionService {
   /// Obtiene la lista completa de alimentos desde la fuente de datos.
   ///
   Future<List<Hidratacion>> obtenerHidratacion();
+
+  /// Edita un alimento existente.
+  ///
+  /// [hidratacion] instancia con los datos actualizados.
+  /// Lanza excepción en caso de error (400, 500, etc.).
+  
+  Future<void> editarHidratacion(Hidratacion hidratacion);
 }

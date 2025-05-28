@@ -3,9 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import '../../data/models/charolaModel.dart' as modelo;
+import '../../data/repositories/alimentacionRepository.dart';
+import '../../data/repositories/hidratacionRepository.dart';
+import '../../data/models/alimentacionModel.dart';
+import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/tamizarCharolaRepository.dart';
 import '../../domain/tamizarCharolaUseCases.dart';
-import '../views/sidebarView.dart';
 import '../../data/models/tamizadoIndividualModel.dart';
 import '../../data/models/tamizadoMultipleModel.dart';
 import '../../data/models/tamizadoRespuestaModel.dart';
@@ -17,12 +20,15 @@ class TamizadoViewModel extends ChangeNotifier {
   final TamizarCharolaRepository repository = TamizarCharolaRepository();
   final TamizarCharolaUseCases tamizarCharolaUseCases = TamizarCharolaUseCasesImpl();
 
-  List<String> alimentos = [];
-  String? seleccionAlimentacion;
+  final AlimentacionRepository _alimentoRepo = AlimentacionRepository();
+  final HidratacionRepository _hidratacionRepo = HidratacionRepository();
+
+  List<Alimento> alimentos = [];
+  Alimento? seleccionAlimentacion;
   bool _alimentosCargados = false;
 
-  List<String> hidratacion = [];
-  String? seleccionHidratacion;
+  List<Hidratacion> hidratacion = [];
+  Hidratacion? seleccionHidratacion;
   bool _hidratacionCargados = false;
 
   /// Se definen controladores para el texto
@@ -36,12 +42,6 @@ class TamizadoViewModel extends ChangeNotifier {
 
   /// Lista de nombres de charolas seleccionadas por el usuario.
   List<String> nombresCharolas = [];
-
-  /// Se definen variables para convertir de texto a número
-  double frasCantidad = 0;
-  double pupaCantidad = 0;
-  double alimentoCantidad = 0;
-  double hidratacionCantidad = 0;
 
   /// Estado de carga actual.
   bool cargando = false;
@@ -62,33 +62,24 @@ class TamizadoViewModel extends ChangeNotifier {
     cargarHidratacion();
   }
 
-  Future<bool> tamizarCharolaIndividual() async {
+  Future<bool> tamizarCharolaIndividual(List<modelo.CharolaRegistro> charolasNuevas) async {
     try {
       cargando = true;
       _hasError = false;
       notifyListeners();
 
-      ///Se validan todas las entradas del usuario
-      verificacionDeCampos();
-
-      ///Se extraen solo los nombres de las charolas seleccionadas
-      conseguirNombresCharolas();
-
-      ///Se convierten los campos de texto a números
-      convertirCampos();
-
-      ///Se obtiene la fecha actual sin la hora
       DateTime fecha = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
       /// Se construye el objeto de tamizado individual
       TamizadoIndividual tamizadoIndividual = TamizadoIndividual(
-        charolas: nombresCharolas,
-        alimento: seleccionAlimentacion!,
-        hidratacion: seleccionHidratacion!,
-        fras: frasCantidad,
-        pupa: pupaCantidad,
-        alimentoCantidad: alimentoCantidad,
-        hidratacionCantidad: hidratacionCantidad,
+        charolasNuevas: charolasNuevas,
+        charolasParaTamizar: charolasParaTamizar,
+        alimento: seleccionAlimentacion!.idAlimento,
+        hidratacion: seleccionHidratacion!.idHidratacion,
+        fras: double.parse(frasController.text),
+        pupa: double.parse(pupaController.text),
+        alimentoCantidad: double.parse(alimentoCantidadController.text),
+        hidratacionCantidad: double.parse(hidratacionCantidadController.text),
         fecha: fecha,
       );
 
@@ -160,7 +151,7 @@ class TamizadoViewModel extends ChangeNotifier {
   Future<void> cargarAlimentos() async {
     if (_alimentosCargados) return; // Evita cargar los datos más de una vez
     try {
-      alimentos = await tamizarCharolaUseCases.cargarAlimentos();
+      alimentos = await _alimentoRepo.obtenerAlimentos();
       _alimentosCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
@@ -171,7 +162,7 @@ class TamizadoViewModel extends ChangeNotifier {
   Future<void> cargarHidratacion() async {
     if (_hidratacionCargados) return; // Evita cargar los datos más de una vez
     try {
-      hidratacion = await tamizarCharolaUseCases.cargarHidratacion();
+      hidratacion = await _hidratacionRepo.obtenerHidratacion();
       _hidratacionCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
@@ -179,31 +170,17 @@ class TamizadoViewModel extends ChangeNotifier {
     }
   }
 
-  void siguienteInterfaz(BuildContext context) {
+  bool siguienteInterfaz(BuildContext context) {
+    _hasError = false;
     _tamizadoExitoso = false;
     if(charolasParaTamizar.isEmpty) {
       _hasError = true;
       _errorMessage = 'No hay charolas seleccionadas para tamizar.';
       notifyListeners();
-      _hasError = false;
-      return;
-    } else if(charolasParaTamizar.length == 1) {
-      _hasError = false;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => SidebarView(initialIndex: 5),
-        ),
-      );
-    }else{
-      _hasError = false;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => SidebarView(initialIndex: 6),
-        ),
-      );
-    }
+      return false;
+    } 
+    return true;
+    
   }
 
   void agregarCharola(modelo.CharolaTarjeta charola) {
@@ -231,90 +208,6 @@ class TamizadoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void verificacionDeCampos(){
-    if(charolasParaTamizar.length == 1){
-      revisarCampoFras();
-      revisarCampoPupa();
-      revisarCampoAlimentoCantidad();
-      revisarCampoHidratacionCantidad();
-      revisarSeleccionAlimentacion();
-      revisarSeleccionHidratacion();
-    }else{
-      revisarCampoFras();
-      revisarCampoPupa();
-    }
-  }
-
-  void convertirCampos(){
-    if(charolasParaTamizar.length == 1){
-      frasCantidad = double.parse(frasController.text);
-      pupaCantidad = double.parse(pupaController.text);
-      alimentoCantidad = double.parse(alimentoCantidadController.text);
-      hidratacionCantidad = double.parse(hidratacionCantidadController.text);
-    }else{
-      frasCantidad = double.parse(frasController.text);
-      pupaCantidad = double.parse(pupaController.text);
-    }
-  }
-
-  void revisarCampoFras(){
-    if(frasController.text.isEmpty){
-      _hasError = true;
-      _errorMessage = 'El campo de Fras no puede estar vacío.';
-    }
-    notifyListeners();
-    return;
-  }
-
-  void revisarCampoPupa(){
-    if(pupaController.text.isEmpty){
-      _hasError = true;
-      _errorMessage = 'El campo de Pupa no puede estar vacío.';
-    }
-    notifyListeners();
-    return;
-  }
-
-  void revisarCampoAlimentoCantidad(){
-    if(alimentoCantidadController.text.isEmpty){
-      _hasError = true;
-      _errorMessage = 'El campo de Cantidad de Alimento no puede estar vacío.';
-    }
-    notifyListeners();
-    return;
-  }
-
-  void revisarCampoHidratacionCantidad(){
-    if(hidratacionCantidadController.text.isEmpty){
-      _hasError = true;
-      _errorMessage = 'El campo de Cantidad de Hidratación no puede estar vacío.';
-    }
-    notifyListeners();
-    return;
-  }
-
-  void revisarSeleccionAlimentacion(){
-    if(seleccionAlimentacion == null){
-      _hasError = true;
-      _errorMessage = 'Por favor, selecciona un alimento.';
-    }
-    notifyListeners();
-    return;
-  }
-
-  void revisarSeleccionHidratacion(){
-    if(seleccionHidratacion == null){
-      _hasError = true;
-      _errorMessage = 'Por favor, selecciona una hidratación.';
-    }
-    notifyListeners();
-    return;
-  }
-
-  void conseguirNombresCharolas() {
-    nombresCharolas = charolasParaTamizar.map((charola) => charola.nombreCharola).toList();
-  }
-
   void limpiarInformacion() {
     frasController.clear();
     pupaController.clear();
@@ -335,13 +228,5 @@ class TamizadoViewModel extends ChangeNotifier {
   void limpiarTamizadoExitoso() {
     _tamizadoExitoso = false;
   }
-
-  Future<void> asignarAncestros({
-    required int charolaHijaId,
-    required List<int> ancestrosIds,
-  }) async{ 
-    await repository.asignarAncestros(charolaHijaId, ancestrosIds);
-  }
-
 }
 

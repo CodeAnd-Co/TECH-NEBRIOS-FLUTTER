@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tech_nebrios_tracker/framework/views/tamizarCharolaIndividualView.dart';
+import 'package:tech_nebrios_tracker/framework/views/tamizarMultiplesCharolasView.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewModel.dart';
@@ -99,6 +101,15 @@ class VistaSeleccionarTamizado extends StatefulWidget {
 
 class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final vm = Provider.of<CharolaViewModel>(context, listen: false);
+      vm.cambiarEstado('activa'); 
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -142,47 +153,44 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                 if (seleccionVM.charolasParaTamizar.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: SizedBox(
-                      height: 120,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: seleccionVM.charolasParaTamizar.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 12),
-                        itemBuilder: (context, index) {
-                          final charola = seleccionVM.charolasParaTamizar[index];
-                          return SizedBox(
-                            width: 180,
-                            child: CharolaTarjeta(
-                              fecha: "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
-                              nombreCharola: charola.nombreCharola,
-                              color: obtenerColorPorNombre(charola.nombreCharola),
-                              onTap: () {
-                                seleccionVM.quitarCharola(charola);
-                              } // No hacer nada al tocar aquí arriba
+                    child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: const Text(
+                              'Charolas seleccionadas',
+                              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                          SizedBox(height: 10),
+                          SizedBox(
+                            height: 120,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: seleccionVM.charolasParaTamizar.length,
+                              separatorBuilder: (_, __) => const SizedBox(width: 12),
+                              itemBuilder: (context, index) {
+                                final charola = seleccionVM.charolasParaTamizar[index];
+                                return SizedBox(
+                                  width: 180,
+                                  child: CharolaTarjeta(
+                                    fecha: "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
+                                    nombreCharola: charola.nombreCharola,
+                                    color: obtenerColorPorNombre(charola.nombreCharola),
+                                    onTap: () {
+                                      seleccionVM.quitarCharola(charola);
+                                    } // No hacer nada al tocar aquí arriba
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Divider(height: 1, thickness: 2,)
+                        ]
                     ),
+                    
                   ),
-
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final screenWidth = constraints.maxWidth;
-
-                      // Escalado responsivo
-                      final fontSize = screenWidth * 0.012;
-                      final iconSize = screenWidth * 0.015;
-
-                      return Row(
-                        
-                      );
-                    },
-                  ),
-                ),
                 const SizedBox(height: 10),
 
                 /// Carga inicial
@@ -300,7 +308,23 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                 right: 20,
                                 child: ElevatedButton.icon(
                                   onPressed: () {
-                                    seleccionVM.siguienteInterfaz(context);
+                                    if(seleccionVM.siguienteInterfaz(context)){
+                                      if(seleccionVM.charolasParaTamizar.length == 1){
+                                        Navigator.push(
+                                          context, 
+                                          MaterialPageRoute(
+                                            builder: (_) => VistaTamizadoIndividual(onRegresar: () {Navigator.pop(context);})
+                                            )
+                                        );
+                                      }else {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => VistaTamizadoMultiple(onRegresar: () {Navigator.pop(context);})
+                                          )
+                                        );
+                                      }
+                                    }
                                   },
                                   icon: Icon(Icons.done, size: iconSize.clamp(20, 30)),
                                   label: Text(

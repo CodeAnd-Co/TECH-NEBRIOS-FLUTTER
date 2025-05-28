@@ -145,7 +145,6 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                           fechaCreacion: fecha,
                           fechaActualizacion: fecha,
                           densidadLarva: double.parse(vm.densidadLarvaController.text),
-                          pesoCharola: double.parse(vm.pesoController.text),
                           comidas: [modelo.ComidaAsignada(comidaId: vm.selectedAlimentacion!.idAlimento, cantidadOtorgada: double.parse(vm.comidaCicloController.text))],
                           hidrataciones: [modelo.HidratacionAsignada(hidratacionId: vm.selectedHidratacion!.idHidratacion, cantidadOtorgada: double.parse(vm.hidratacionCicloController.text))]
                         );

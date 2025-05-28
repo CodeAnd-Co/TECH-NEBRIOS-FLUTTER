@@ -226,7 +226,6 @@ class CharolaRegistro {
   final DateTime fechaCreacion;
   final DateTime fechaActualizacion;
   final double densidadLarva;
-  final double pesoCharola;
   final List<ComidaAsignada> comidas;
   final List<HidratacionAsignada> hidrataciones;
 
@@ -235,7 +234,6 @@ class CharolaRegistro {
     required this.fechaCreacion,
     required this.fechaActualizacion,
     required this.densidadLarva,
-    required this.pesoCharola,
     required this.comidas,
     required this.hidrataciones,
   });
@@ -245,7 +243,6 @@ class CharolaRegistro {
     'fechaCreacion': fechaCreacion.toIso8601String(),
     'fechaActualizacion': fechaActualizacion.toIso8601String(),
     'densidadLarva': densidadLarva,
-    'pesoCharola': pesoCharola,
     'comidas': comidas.map((comida) => comida.toJson()).toList(),
     'hidrataciones':
         hidrataciones.map((hidratacion) => hidratacion.toJson()).toList(),

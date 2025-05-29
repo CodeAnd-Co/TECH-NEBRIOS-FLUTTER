@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tech_nebrios_tracker/domain/usuarioUseCases.dart';
+import 'package:zuustento_tracker/domain/usuarioUseCases.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
 class LoginViewModel extends ChangeNotifier {

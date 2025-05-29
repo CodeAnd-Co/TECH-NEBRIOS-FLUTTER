@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_nebrios_tracker/framework/views/tamizarCharolaIndividualView.dart';
-import 'package:tech_nebrios_tracker/framework/views/tamizarMultiplesCharolasView.dart';
+import 'package:zuustento_tracker/framework/views/tamizarCharolaIndividualView.dart';
+import 'package:zuustento_tracker/framework/views/tamizarMultiplesCharolasView.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 import '../viewmodels/tamizarCharolaViewModel.dart';

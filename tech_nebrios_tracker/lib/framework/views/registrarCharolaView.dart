@@ -1,41 +1,55 @@
-// RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/alimentacionModel.dart';
 import '../../data/models/hidratacionModel.dart';
-import '../../utils/positive_number_formatter.dart';
 import '../views/components/header.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 
 class RegistrarCharolaView extends StatefulWidget {
   final bool postOnSave;
   const RegistrarCharolaView({super.key, this.postOnSave = true});
+
   @override
   _RegistrarCharolaView createState() => _RegistrarCharolaView();
 }
 
 class _RegistrarCharolaView extends State<RegistrarCharolaView> {
+  @override
+  void initState() {
+    super.initState();
+    // Al iniciar, ponemos la fecha de hoy en el campo
+    final vm = Provider.of<CharolaViewModel>(context, listen: false);
+    final today = DateTime.now();
+    vm.fechaController.text = '${today.day}/${today.month}/${today.year}';
+  }
 
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<CharolaViewModel>(context);
+
     // Carga dropdowns una única vez tras el primer frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (vm.alimentos.isEmpty) vm.cargarAlimentos();
       if (vm.hidrataciones.isEmpty) vm.cargarHidratacion();
     });
 
-    return Scaffold(
-      body: Form(
+    return WillPopScope(
+      onWillPop: () async {
+        // Al pulsar atrás, resetea el formulario
+        vm.resetForm();
+        return true;
+      },
+      child: Scaffold(
+        body: Form(
           key: vm.formKey,
           child: SingleChildScrollView(
             child: Column(
               children: [
                 Header(
-                  titulo: 'Registrar charola', 
-                  subtitulo: 'Ingresa una charola nueva', 
+                  titulo: 'Registrar charola',
+                  subtitulo: 'Ingresa una charola nueva',
                   showDivider: true,
                 ),
                 const SizedBox(height: 20),
@@ -52,124 +66,176 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                       _buildTextFormField(
                         label: 'Nombre *',
                         controller: vm.nombreController,
-                        validator: (v) => v == null || v.isEmpty ? 'Nombre obligatorio' : null,
+                        validator:
+                            (v) =>
+                                v == null || v.isEmpty
+                                    ? 'Nombre obligatorio'
+                                    : null,
                         maxLength: 20,
                       ),
                       _buildTextFormField(
                         label: 'Densidad de Larva (g) *',
                         controller: vm.densidadLarvaController,
-                        keyboardType: TextInputType.number,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          PositiveNumberFormatter(),
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                         ],
-                        validator: (v) => v == null || v.isEmpty ? 'Ingresa densidad' : null,
+                        validator:
+                            (v) =>
+                                v == null || v.isEmpty
+                                    ? 'Ingresa densidad'
+                                    : null,
+                        maxLength: 8,
                       ),
                       _buildDateFormField(
                         label: 'Fecha (dd/mm/yyyy) *',
                         controller: vm.fechaController,
                         context: context,
-                        validator: (v) => v == null || v.isEmpty ? 'Selecciona fecha' : null,
+                        validator:
+                            (v) =>
+                                v == null || v.isEmpty
+                                    ? 'Selecciona fecha'
+                                    : null,
                       ),
                       _buildDropdownFormField<Alimento>(
                         label: 'Alimentación *',
-                        items: vm.alimentos.map((a) => a.nombreAlimento).toList(),
+                        items:
+                            vm.alimentos.map((a) => a.nombreAlimento).toList(),
                         value: vm.selectedAlimentacion?.nombreAlimento,
                         onChanged: (value) {
-                          vm.selectedAlimentacion = vm.alimentos.firstWhere((a) => a.nombreAlimento == value);
+                          vm.selectedAlimentacion = vm.alimentos.firstWhere(
+                            (a) => a.nombreAlimento == value,
+                          );
                         },
-                        validator: (v) => v == null ? 'Selecciona alimento' : null,
+                        validator:
+                            (v) => v == null ? 'Selecciona alimento' : null,
                       ),
                       _buildTextFormField(
                         label: 'Cantidad de alimento (g) *',
                         controller: vm.comidaCicloController,
-                        keyboardType: TextInputType.number,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          PositiveNumberFormatter(),
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                         ],
-                        validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
+                        validator:
+                            (v) =>
+                                v == null || v.isEmpty
+                                    ? 'Ingresa cantidad'
+                                    : null,
+                        maxLength: 8,
                       ),
                       const SizedBox(), // Espacio para alinear con el dropdown
                       _buildDropdownFormField<Hidratacion>(
                         label: 'Hidratación *',
-                        items: vm.hidrataciones.map((h) => h.nombreHidratacion).toList(),
+                        items:
+                            vm.hidrataciones
+                                .map((h) => h.nombreHidratacion)
+                                .toList(),
                         value: vm.selectedHidratacion?.nombreHidratacion,
                         onChanged: (value) {
-                          vm.selectedHidratacion = vm.hidrataciones.firstWhere((h) => h.nombreHidratacion == value);
+                          vm.selectedHidratacion = vm.hidrataciones.firstWhere(
+                            (h) => h.nombreHidratacion == value,
+                          );
                         },
-                        validator: (v) => v == null ? 'Selecciona hidratación' : null,
+                        validator:
+                            (v) => v == null ? 'Selecciona hidratación' : null,
                       ),
                       _buildTextFormField(
                         label: 'Cantidad de hidratación (g) *',
                         controller: vm.hidratacionCicloController,
-                        keyboardType: TextInputType.number,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          PositiveNumberFormatter(),
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                         ],
-                        validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
+                        validator:
+                            (v) =>
+                                v == null || v.isEmpty
+                                    ? 'Ingresa cantidad'
+                                    : null,
+                        maxLength: 8,
                       ),
                     ],
-                  )
+                  ),
                 ),
                 const SizedBox(height: 30),
-                vm.cargandoRegistro ? const CircularProgressIndicator() :
-                ElevatedButton(
-                   onPressed: () async {
-                    if (vm.formKey.currentState!.validate()) {
-                      if(widget.postOnSave){
-                        try {
-                          // Registrar y obtener la nueva CharolaTarjeta
-                          final nuevaTarjeta = await vm.registrarCharola();
-                          vm.resetForm();
-                          await vm.cargarCharolas();
-                          // Salir de esta pantalla devolviendo la tarjeta creada
-                          Navigator.pop(context, nuevaTarjeta);
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(e.toString()),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
+                vm.cargandoRegistro
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                      onPressed: () async {
+                        if (vm.formKey.currentState!.validate()) {
+                          if (widget.postOnSave) {
+                            try {
+                              final nuevaTarjeta = await vm.registrarCharola();
+                              vm.resetForm();
+                              await vm.cargarCharolas();
+                              Navigator.pop(context, nuevaTarjeta);
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(e.toString()),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          } else {
+                            final parts = vm.fechaController.text.split('/');
+                            final day = int.parse(parts[0]);
+                            final month = int.parse(parts[1]);
+                            final year = int.parse(parts[2]);
+                            final fecha = DateTime(year, month, day);
+                            final nuevaCharola = modelo.CharolaRegistro(
+                              nombreCharola: vm.nombreController.text,
+                              fechaCreacion: fecha,
+                              fechaActualizacion: fecha,
+                              densidadLarva: double.parse(
+                                vm.densidadLarvaController.text,
+                              ),
+                              comidas: [
+                                modelo.ComidaAsignada(
+                                  comidaId: vm.selectedAlimentacion!.idAlimento,
+                                  cantidadOtorgada: double.parse(
+                                    vm.comidaCicloController.text,
+                                  ),
+                                ),
+                              ],
+                              hidrataciones: [
+                                modelo.HidratacionAsignada(
+                                  hidratacionId:
+                                      vm.selectedHidratacion!.idHidratacion,
+                                  cantidadOtorgada: double.parse(
+                                    vm.hidratacionCicloController.text,
+                                  ),
+                                ),
+                              ],
+                            );
+                            vm.resetForm();
+                            Navigator.pop(context, nuevaCharola);
+                          }
                         }
-                      } else {
-                        final parts = vm.fechaController.text.split('/');
-                        final day = int.parse(parts[0]);
-                        final month = int.parse(parts[1]);
-                        final year = int.parse(parts[2]);
-                        final fecha = DateTime(year, month, day);
-                        final nuevaCharola = modelo.CharolaRegistro(
-                          nombreCharola: vm.nombreController.text,
-                          fechaCreacion: fecha,
-                          fechaActualizacion: fecha,
-                          densidadLarva: double.parse(vm.densidadLarvaController.text),
-                          comidas: [modelo.ComidaAsignada(comidaId: vm.selectedAlimentacion!.idAlimento, cantidadOtorgada: double.parse(vm.comidaCicloController.text))],
-                          hidrataciones: [modelo.HidratacionAsignada(hidratacionId: vm.selectedHidratacion!.idHidratacion, cantidadOtorgada: double.parse(vm.hidratacionCicloController.text))]
-                        );
-                        vm.resetForm();
-                        Navigator.pop(context, nuevaCharola);
-                      }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pink,
-                    minimumSize: const Size(200, 70),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.pink,
+                        minimumSize: const Size(200, 70),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text(
+                        'Registrar',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'Registrar',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ),
               ],
             ),
           ),
         ),
-      
+      ),
     );
   }
 
@@ -228,7 +294,8 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
               lastDate: DateTime.now(),
             );
             if (pickedDate != null) {
-              controller.text = '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
+              controller.text =
+                  '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
             }
           },
         ),
@@ -253,7 +320,12 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
             labelText: label,
             border: const OutlineInputBorder(),
           ),
-          items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+          items:
+              items
+                  .map(
+                    (item) => DropdownMenuItem(value: item, child: Text(item)),
+                  )
+                  .toList(),
           onChanged: onChanged,
           validator: validator,
         ),

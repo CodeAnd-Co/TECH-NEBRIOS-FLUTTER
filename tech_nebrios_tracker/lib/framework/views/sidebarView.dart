@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_nebrios_tracker/framework/viewmodels/tamizarCharolaViewModel.dart';
-import 'package:tech_nebrios_tracker/framework/views/charolasDashboardView.dart';
-import 'package:tech_nebrios_tracker/framework/views/reporteView.dart';
-import 'package:tech_nebrios_tracker/framework/views/alimentacionView.dart';
-import 'package:tech_nebrios_tracker/framework/views/seleccionarTamizadoView.dart';
+import 'package:zuustento_tracker/framework/viewmodels/tamizarCharolaViewModel.dart';
+import 'package:zuustento_tracker/framework/views/charolasDashboardView.dart';
+import 'package:zuustento_tracker/framework/views/reporteView.dart';
+import 'package:zuustento_tracker/framework/views/alimentacionView.dart';
+import 'package:zuustento_tracker/framework/views/seleccionarTamizadoView.dart';
 import './detalleCharolaView.dart';
 import './tamizarCharolaIndividualView.dart';
 

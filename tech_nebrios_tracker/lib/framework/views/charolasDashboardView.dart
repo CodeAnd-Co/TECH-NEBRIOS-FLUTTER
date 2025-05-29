@@ -106,6 +106,21 @@ Widget build(BuildContext context) {
     body: SafeArea(
       child: Consumer<CharolaViewModel>(
         builder: (context, vm, _) {
+          // Mostrar error fuera del ciclo de build
+          if (vm.mensajeError != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(vm.mensajeError!),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+              vm.mostrarErrorSnackBar(""); // limpia después de mostrar
+            });
+          }
+
           return Column(
             children: [
               const Header(

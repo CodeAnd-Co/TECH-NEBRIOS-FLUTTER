@@ -54,6 +54,20 @@ class CharolaViewModel extends ChangeNotifier {
   bool get cargandoDropdowns => _cargandoDropdowns;
   bool _cargandoRegistro = false;
   bool get cargandoRegistro => _cargandoRegistro;
+  String? _mensajeError;
+  String? get mensajeError => _mensajeError;
+
+void Function(String mensaje)? onErrorSnackBar;
+
+/// Asigna un mensaje de error y permite notificar con SnackBar desde la vista
+void mostrarErrorSnackBar(String mensaje) {
+  _mensajeError = mensaje.isNotEmpty ? mensaje : null;
+  notifyListeners();
+  if (mensaje.isNotEmpty && onErrorSnackBar != null) {
+    onErrorSnackBar!(mensaje);
+  }
+}
+
 
   Future<void> cargarAlimentos() async {
     _cargandoDropdowns = true;
@@ -223,16 +237,19 @@ class CharolaViewModel extends ChangeNotifier {
         charolas = dash.data; // Asigna las nuevas charolas
         totalPags = dash.totalPags; // Total de páginas disponibles
         hayMas = pagActual < totalPags; // Verifica si hay más páginas
+
+        _mensajeError = null;
       }
     } catch (e) {
-      // Manejo básico de errores comunes con logs personalizados
-      final msg =
-          e.toString().contains('401')
-              ? '🚫 401: No autorizado'
-              : e.toString().contains('101')
-              ? '🌐 101: Problemas de red'
-              : '💥 Error interno del servidor';
-      _logger.e(msg);
+      final msg = e.toString().contains('401')
+          ? '🚫 Error 401: No autorizado'
+          : e.toString().contains('101')
+              ? '🌐 Error 101: Sin conexión a internet'
+              : '💥 Error 500: El servidor no respondió correctamente';
+
+      _logger.e(_mensajeError);
+      mostrarErrorSnackBar(msg);
+
     } finally {
       _cargandoLista = false;
       notifyListeners();

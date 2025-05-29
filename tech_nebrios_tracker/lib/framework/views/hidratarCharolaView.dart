@@ -53,6 +53,7 @@ import '../../framework/viewmodels/charolaViewModel.dart';
                               SizedBox(
                                 width: 250,
                                 child: DropdownButtonFormField<int>(
+                                  isExpanded: true,
                                   value: hidratacionIdSeleccionada,
                                   items:
                                       hidratacionCharolaVM.listaHidratacion.map((hidratacion) {
@@ -73,7 +74,7 @@ import '../../framework/viewmodels/charolaViewModel.dart';
                                   validator: (v) => v == null ? 'Selecciona hidratación' : null,
                                 ),
                               ),
-                              const SizedBox(width: 20),
+                              const SizedBox(width: 22),
                               SizedBox(
                                 width: 250,
                                 child: TextFormField(

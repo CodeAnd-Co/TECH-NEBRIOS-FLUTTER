@@ -11,23 +11,14 @@ import '../../framework/viewmodels/charolaViewModel.dart';
       listen: false,
     );
 
+    await comidaCharolaVM.cargarAlimentos();
+
     int? comidaIdSeleccionada;
     final TextEditingController cantidadController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (dialogcontext) {
-        return FutureBuilder(
-          future: comidaCharolaVM.cargarAlimentos(),
-          builder: (context, snapshot){
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const AlertDialog(
-                content: SizedBox(
-                  height: 100,
-                  child: Center(child: CircularProgressIndicator(),),
-                )
-              );
-            }
             return ChangeNotifierProvider.value(
               value: comidaCharolaVM,
               child: Consumer<AlimentacionViewModel>(
@@ -179,5 +170,3 @@ import '../../framework/viewmodels/charolaViewModel.dart';
           }
         );
       }
-    );
-  }

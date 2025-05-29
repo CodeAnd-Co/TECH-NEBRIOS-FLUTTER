@@ -23,17 +23,13 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
     final vm = Provider.of<CharolaViewModel>(context, listen: false);
     final today = DateTime.now();
     vm.fechaController.text = '${today.day}/${today.month}/${today.year}';
+    vm.cargarHidratacion();
+    vm.cargarAlimentos();
   }
 
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<CharolaViewModel>(context);
-
-    // Carga dropdowns una única vez tras el primer frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (vm.alimentos.isEmpty) vm.cargarAlimentos();
-      if (vm.hidrataciones.isEmpty) vm.cargarHidratacion();
-    });
 
     return WillPopScope(
       onWillPop: () async {

@@ -13,7 +13,12 @@ class SidebarView extends StatefulWidget {
   final int initialIndex;
   final String? mensajeExito;
 
-  const SidebarView({Key? key, this.onLogout, this.initialIndex = 0, this.mensajeExito}) : super(key: key);
+  const SidebarView({
+    Key? key,
+    this.onLogout,
+    this.initialIndex = 0,
+    this.mensajeExito,
+  }) : super(key: key);
 
   @override
   State<SidebarView> createState() => _SidebarViewState();
@@ -54,7 +59,6 @@ class _SidebarViewState extends State<SidebarView> {
     });
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -66,7 +70,7 @@ class _SidebarViewState extends State<SidebarView> {
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
-            ),
+          ),
         );
       });
       _mensajeMostrado = true; // Limpiar el mensaje después de mostrarlo
@@ -78,7 +82,7 @@ class _SidebarViewState extends State<SidebarView> {
     if (_detalleCharolaActual != null) {
       return [_detalleCharolaActual!];
     }
-    
+
     if (_vistaTamizadoIndividual != null) {
       return [_vistaTamizadoIndividual!];
     }
@@ -88,7 +92,7 @@ class _SidebarViewState extends State<SidebarView> {
       VistaSeleccionarTamizado(),
       const Placeholder(),
       const AlimentacionScreen(),
-      const VistaTablaCharolas()
+      const VistaTablaCharolas(),
     ];
   }
 
@@ -117,15 +121,31 @@ class _SidebarViewState extends State<SidebarView> {
                               height: 100,
                             ),
                             const SizedBox(height: 20),
-                            _buildNavItem(icon: Icons.inventory_2, label: 'Charolas', index: 0),
+                            _buildNavItem(
+                              icon: Icons.inventory_2,
+                              label: 'Charolas',
+                              index: 0,
+                            ),
                             const SizedBox(height: 20),
-                            _buildNavItem(icon: Icons.storage, label: 'Tamizar', index: 1),
+                            _buildNavItem(
+                              icon: Icons.storage,
+                              label: 'Tamizar',
+                              index: 1,
+                            ),
                             // const SizedBox(height: 20),
                             // _buildNavItem(icon: Icons.archive, label: 'Frass', index: 2),
                             const SizedBox(height: 20),
-                            _buildNavItem(icon: Icons.edit_note, label: 'Nutrición', index: 3),
+                            _buildNavItem(
+                              icon: Icons.edit_note,
+                              label: 'Nutrición',
+                              index: 3,
+                            ),
                             const SizedBox(height: 20),
-                            _buildNavItem(icon: Icons.download, label: 'Excel', index: 4),
+                            _buildNavItem(
+                              icon: Icons.download,
+                              label: 'Excel',
+                              index: 4,
+                            ),
                           ],
                         ),
                       ),
@@ -136,7 +156,9 @@ class _SidebarViewState extends State<SidebarView> {
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: IconButton(
                         icon: const Icon(Icons.logout, color: Colors.red),
-                        onPressed: widget.onLogout ?? () {}, // ✅ Si no se pasa, no hace nada
+                        onPressed:
+                            widget.onLogout ??
+                            () {}, // ✅ Si no se pasa, no hace nada
                       ),
                     ),
                   ],
@@ -175,15 +197,20 @@ class _SidebarViewState extends State<SidebarView> {
         final showLabel = screenWidth > 500;
 
         return InkWell(
-          onTap: () { setState(() {
-            _currentIndex = index;
-            _detalleCharolaActual = null; // ✅ Siempre cierra detalle si navegas
-          });
+          onTap: () {
+            setState(() {
+              _currentIndex = index;
+              _detalleCharolaActual =
+                  null; // ✅ Siempre cierra detalle si navegas
+            });
 
-          if (index == 1) {
-            final viewModel = Provider.of<TamizadoViewModel>(context, listen: false);
-            viewModel.limpiarInformacion();
-          } 
+            if (index == 1) {
+              final viewModel = Provider.of<TamizadoViewModel>(
+                context,
+                listen: false,
+              );
+              viewModel.limpiarInformacion();
+            }
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),

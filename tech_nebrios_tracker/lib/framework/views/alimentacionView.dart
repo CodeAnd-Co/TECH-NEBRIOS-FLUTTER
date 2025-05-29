@@ -409,18 +409,19 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return ChangeNotifierProvider.value(
-          value: vmAlimentacion,
-          child: Consumer<AlimentacionViewModel>(
-            builder: (context, vm, _) {
-              return AlertDialog(
-                title: const Center(
-                  child: Text(
-                    'Nuevo Alimento',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
+      builder:
+          (BuildContext dialogContext) {
+            return  ChangeNotifierProvider.value(
+              value: vmAlimentacion,
+              child: Consumer<AlimentacionViewModel>(
+                builder: (context, vm, _) {
+                  return AlertDialog(
+                    title: const Center(
+                      child: Text(
+                        'Editar Alimento',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                 content: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

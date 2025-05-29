@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "tech_nebrios_tracker" "\0"
+            VALUE "CompanyName", "Code & Co." "\0"
+            VALUE "FileDescription", "Zuustento Tracker" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "tech_nebrios_tracker" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "tech_nebrios_tracker.exe" "\0"
-            VALUE "ProductName", "tech_nebrios_tracker" "\0"
+            VALUE "InternalName", "Zuustento Tracker" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 Zuustento Tracker. All rights reserved." "\0"
+            VALUE "OriginalFilename", "Zuustento Tracker.exe" "\0"
+            VALUE "ProductName", "Zuustento Tracker" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

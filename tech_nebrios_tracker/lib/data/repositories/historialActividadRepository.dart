@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:tech_nebrios_tracker/data/models/constantes.dart';
+import 'package:zuustento_tracker/data/models/constantes.dart';
 import '../models/historialActividadModel.dart';
 import '../services/historialActividadAPIService.dart';
 import '../../domain/usuarioUseCases.dart';

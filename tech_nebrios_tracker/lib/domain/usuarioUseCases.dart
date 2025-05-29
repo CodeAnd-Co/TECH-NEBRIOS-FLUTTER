@@ -1,5 +1,5 @@
-import 'package:tech_nebrios_tracker/data/repositories/usuarioRepository.dart';
-import 'package:tech_nebrios_tracker/data/models/loginModel.dart';
+import 'package:zuustento_tracker/data/repositories/usuarioRepository.dart';
+import 'package:zuustento_tracker/data/models/loginModel.dart';
 
 ///Clase que maneja los casos de uso relacionados con el usuario
 class UserUseCases {

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:tech_nebrios_tracker/data/services/localStorageService.dart';
+import 'package:zuustento_tracker/data/services/localStorageService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tech_nebrios_tracker/data/models/loginModel.dart';
-import 'package:tech_nebrios_tracker/data/models/constantes.dart';
+import 'package:zuustento_tracker/data/models/loginModel.dart';
+import 'package:zuustento_tracker/data/models/constantes.dart';
 
 ///Clase que implementa el repositorio de usuario y conecta con el servicio de APIs
 /// y el servicio de almacenamiento local

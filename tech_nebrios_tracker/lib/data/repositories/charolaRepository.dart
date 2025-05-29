@@ -16,39 +16,54 @@ class CharolaRepository {
   final UserUseCases _userUseCases = UserUseCases();
 
   /// Obtiene charolas paginadas.
-Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {String estado = 'activa'}) async {
-  final uri = Uri.parse('${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite&estado=$estado');
-  final token = await _userUseCases.obtenerTokenActual();
-
-  try {
-    final respuesta = await http.get(uri, headers: {
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'application/json',
-    });
-
-    if (respuesta.statusCode == 200) {
-      return jsonDecode(respuesta.body) as Map<String, dynamic>;
-    } else if (respuesta.statusCode == 401) {
+  Future<Map<String, dynamic>?> obtenerCharolasPaginadas(
+    int pag,
+    int limite, {
+    String estado = 'activa',
+  }) async {
+    final uri = Uri.parse(
+      '${APIRutas.CHAROLA}/charolas?page=$pag&limit=$limite&estado=$estado',
+    );
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
       throw Exception('Debe iniciar sesión para continuar');
-    } else if (respuesta.statusCode == 500) {
-      throw Exception('Error del servidor. Inténtelo más tarde');
-    } else {
-      _logger.e("Error HTTP inesperado: ${respuesta.statusCode}");
-      throw Exception('Error HTTP ${respuesta.statusCode}');
     }
-  } on SocketException catch (_) {
-    throw Exception('❌ Error de conexión. Verifique su red.');
-  } catch (e) {
-    _logger.e("Error al conectarse al backend (paginado): $e");
-    rethrow;
-  }
-}
 
+    try {
+      final respuesta = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (respuesta.statusCode == 200) {
+        return jsonDecode(respuesta.body) as Map<String, dynamic>;
+      } else if (respuesta.statusCode == 401) {
+        throw Exception('Debe iniciar sesión para continuar');
+      } else if (respuesta.statusCode == 500) {
+        throw Exception('Error del servidor. Inténtelo más tarde');
+      } else {
+        _logger.e("Error HTTP inesperado: ${respuesta.statusCode}");
+        throw Exception('Error HTTP ${respuesta.statusCode}');
+      }
+    } on SocketException catch (_) {
+      throw Exception('❌ Error de conexión. Verifique su red.');
+    } catch (e) {
+      _logger.e("Error al conectarse al backend (paginado): $e");
+      rethrow;
+    }
+  }
 
   /// Convierte la respuesta cruda de la API en un modelo [CharolaDashboard].
   ///
   /// Retorna null si la respuesta no es válida.
-  Future<CharolaDashboard?> obtenerCharolaRespuesta(int pag, int limite, {String estado = 'activa'}) async {
+  Future<CharolaDashboard?> obtenerCharolaRespuesta(
+    int pag,
+    int limite, {
+    String estado = 'activa',
+  }) async {
     final data = await obtenerCharolasPaginadas(pag, limite, estado: estado);
     if (data != null) {
       return CharolaDashboard.fromJson(data);
@@ -59,6 +74,10 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
   /// Obtiene el detalle de una charola específica.
   Future<CharolaDetalle?> obtenerCharola(int id) async {
     final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
     final uri = Uri.parse('${APIRutas.CHAROLA}/consultarCharola/$id');
 
     try {
@@ -90,6 +109,10 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
   /// Elimina una charola por ID.
   Future<void> eliminarCharola(int id) async {
     final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
     final uri = Uri.parse('${APIRutas.CHAROLA}/eliminarCharola/$id');
 
     try {
@@ -116,8 +139,12 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
   }
 
   /// Registra una nueva charola.
-  Future<void> registrarCharola(CharolaRegistro charola) async {
+  Future<Map<String, dynamic>> registrarCharola(CharolaRegistro charola) async {
     final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
     final uri = Uri.parse('${APIRutas.CHAROLA}/registrarCharola');
 
     try {
@@ -132,7 +159,7 @@ Future<Map<String, dynamic>?> obtenerCharolasPaginadas(int pag, int limite, {Str
 
       // Verifica el código de estado HTTP
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return;
+        return json.decode(response.body)['data'] as Map<String, dynamic>;
       }
       if (response.statusCode == 401) {
         throw Exception('No autorizado. Por favor, inicie sesión.');

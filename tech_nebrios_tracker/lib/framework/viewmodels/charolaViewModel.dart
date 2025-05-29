@@ -52,6 +52,8 @@ class CharolaViewModel extends ChangeNotifier {
   Hidratacion? selectedHidratacion;
   bool _cargandoDropdowns = false;
   bool get cargandoDropdowns => _cargandoDropdowns;
+  bool _cargandoRegistro = false;
+  bool get cargandoRegistro => _cargandoRegistro;
 
   Future<void> cargarAlimentos() async {
     _cargandoDropdowns = true;
@@ -84,14 +86,15 @@ class CharolaViewModel extends ChangeNotifier {
   final TextEditingController densidadLarvaController = TextEditingController();
   final TextEditingController fechaController = TextEditingController();
   final TextEditingController comidaCicloController = TextEditingController();
-  final TextEditingController pesoController = TextEditingController();
   final TextEditingController hidratacionCicloController =
       TextEditingController();
 
   /// Valida el formulario y registra la charola si es válido.
   /// Si el formulario no es válido, muestra un mensaje de error.
-  Future<void> registrarCharola() async {
+  Future<CharolaTarjeta> registrarCharola() async {
     try {
+      _cargandoRegistro = true;
+      notifyListeners();
       final parts = fechaController.text.split('/');
       final day = int.parse(parts[0]);
       final month = int.parse(parts[1]);
@@ -103,7 +106,6 @@ class CharolaViewModel extends ChangeNotifier {
         fechaCreacion: fecha,
         fechaActualizacion: fecha,
         densidadLarva: double.parse(densidadLarvaController.text),
-        pesoCharola: double.parse(pesoController.text),
         comidas: [
           ComidaAsignada(
             comidaId: selectedAlimentacion!.idAlimento,
@@ -117,10 +119,18 @@ class CharolaViewModel extends ChangeNotifier {
           ),
         ],
       );
-      await _registrarUseCase.registrar(charola: registro);
-      _logger.i('Charola registrada');
-    } catch (e) {
-      _logger.e('Error al registrar charola');
+      final data = await _registrarUseCase.registrar(charola: registro);
+            final tarjeta = CharolaTarjeta(
+        charolaId: data['charolaId'] as int,
+        nombreCharola: data['nombreCharola'] as String,
+        fechaCreacion: DateTime.parse(data['fechaCreacion'] as String),
+      );
+      _cargandoRegistro = false;
+      notifyListeners();
+      return tarjeta;
+      } catch (e) {
+      _cargandoRegistro = false;
+      notifyListeners();
       rethrow;
     }
   }
@@ -131,7 +141,6 @@ class CharolaViewModel extends ChangeNotifier {
     densidadLarvaController.clear();
     fechaController.clear();
     comidaCicloController.clear();
-    pesoController.clear();
     hidratacionCicloController.clear();
     selectedAlimentacion = null;
     selectedHidratacion = null;
@@ -160,19 +169,26 @@ class CharolaViewModel extends ChangeNotifier {
   }
 
   /// Elimina una charola por ID
+  bool _error = false;
+  bool get error => _error;
+
   Future<void> eliminarCharola(int id) async {
+    _error = false;
     _cargandoCharola = true;
     notifyListeners();
     try {
       await _eliminarUseCase.eliminar(
         id,
-      ); // Llama al caso de uso de eliminación
-      _charola = null; // Limpia el detalle después de eliminar
+      );
+      _charola = null;
+      _cargandoCharola = false;
+      notifyListeners();
     } catch (e) {
-      _logger.e('Error eliminando charola: $e'); // Registra el error
+      _error = true;
+      _cargandoCharola = false;
+      notifyListeners();
+      _logger.e('Error eliminando charola: $e');
     }
-    _cargandoCharola = false;
-    notifyListeners();
   }
 
   // === LISTADO PAGINADO ===

@@ -3,12 +3,26 @@ import 'package:http/http.dart' as http;
 import '../models/hidratacionModel.dart';
 import '../models/constantes.dart';
 import '../services/hidratacionAPIService.dart';
+import '../../domain/usuarioUseCases.dart';
 
 class HidratacionRepository extends HidratacionService {
+  final UserUseCases _userUseCases = UserUseCases();
+
   @override
   Future<List<Hidratacion>> obtenerHidratacion() async {
     final uri = Uri.parse(APIRutas.HIDRATACION);
-    final response = await http.get(uri);
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
     // Verifica éxito 200 OK
     if (response.statusCode != 200) {
@@ -22,7 +36,7 @@ class HidratacionRepository extends HidratacionService {
     return data.map((item) => Hidratacion.fromJson(item)).toList();
   }
 
-/// Envía los datos de un nuevo tipo de hidratacion al backend para su registro.
+  /// Envía los datos de un nuevo tipo de hidratacion al backend para su registro.
   ///
   /// Realiza una solicitud `POST` al endpoint `HIDRATACION/agregar` con el
   /// nombre y la descripción del alimento como cuerpo en formato JSON.
@@ -38,9 +52,13 @@ class HidratacionRepository extends HidratacionService {
   @override
   Future<void> registrarHidratacion(String nombre, String descripcion) async {
     final uri = Uri.parse('${APIRutas.HIDRATACION}/agregar');
+    final token = await _userUseCases.obtenerTokenActual();
     final response = await http.post(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode({'nombre': nombre, 'descripcion': descripcion}),
     );
 

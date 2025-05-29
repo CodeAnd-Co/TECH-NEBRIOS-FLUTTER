@@ -94,7 +94,10 @@ class HidratacionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> registrarHidratacion(String nombre, String descripcion) async {
+  Future<String?> registrarHidratacion(
+    String nombre,
+    String descripcion,
+  ) async {
     if (nombre.trim().isEmpty || descripcion.trim().isEmpty) {
       return 'Nombre y descripción no pueden estar vacíos.';
     }

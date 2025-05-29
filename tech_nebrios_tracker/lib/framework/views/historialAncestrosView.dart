@@ -1,84 +1,93 @@
 //RF03: Consultar historial de ancestros de una charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF3
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-
 import '../viewmodels/historialCharolaViewModel.dart';
 import '../../data/models/historialCharolaModel.dart';
 
-/// Pantalla que dispara y muestra el popup de historial de ancestros
-class HistorialAncestrosScreen extends StatefulWidget {
-  const HistorialAncestrosScreen({super.key, this.charolaId = 1});
+void mostrarPopUpHistorialAncestros({
+  required BuildContext context,
+  required int charolaId,
+}){
+  final vistaModelo = Provider.of<HistorialCharolaViewModel>(context, listen: false);
 
-  /// ID de la charola cuya historia se consulta
-  final int charolaId;
+  showDialog(
+    context: context, 
+    builder: (dialogContext){
+      return FutureBuilder(
+        future: vistaModelo.obtenerAncestros(charolaId), 
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const AlertDialog(
+              content: SizedBox(
+                height: 100,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            );
+          }
+          
+          final data = vistaModelo.historialAncestros.first;
+          final hasAncestros = data.ancestros.isEmpty;
 
-  @override
-  State<HistorialAncestrosScreen> createState() => _HistorialAncestrosScreenState();
-}
-
-class _HistorialAncestrosScreenState extends State<HistorialAncestrosScreen> {
-  bool _hasShownPopup = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (kDebugMode) {
-        debugPrint('[View] initState: solicitando ancestros para id=${widget.charolaId}');
-      }
-      context.read<HistorialCharolaViewModel>().obtenerAncestros(widget.charolaId);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final vm = context.watch<HistorialCharolaViewModel>();
-
-    // Mostrar popup automáticamente una sola vez cuando haya datos
-    if (!vm.isLoading && vm.error == null && vm.historialAncestros.isNotEmpty && !_hasShownPopup) {
-      _hasShownPopup = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showHistorialPopup(context, vm.historialAncestros.first);
-      });
-    }
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Historial de Ancestros')),
-      body: Center(child: _buildBody(vm)),
-    );
-  }
-
-  Widget _buildBody(HistorialCharolaViewModel vm) {
-    if (vm.isLoading) {
-      return const CircularProgressIndicator();
-    }
-
-    if (vm.error != null) {
-      return Text(
-        vm.error!,
-        style: const TextStyle(color: Colors.red, fontSize: 16),
+          return AlertDialog(
+            title: Stack(
+              alignment: Alignment.center,
+              children: [ 
+                const Center(
+                child: Text(
+                    'Historial de Ancestros',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.red),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ]
+            ),
+            content: SingleChildScrollView(
+              child: SizedBox(
+              width: 500,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Divider(height: 1),
+                  if (hasAncestros)
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        'La charola no tiene ancestros',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    )
+                  else
+                    _HistorialAncestrosTable(data: data),
+                ],
+              ),
+            ),
+          )
+          );
+        },
       );
     }
-
-    if (vm.historialAncestros.isEmpty) {
-      return const Text('No hay ancestros disponibles');
-    }
-
-    final HistorialAncestros data = vm.historialAncestros.first;
-    return ElevatedButton(
-      onPressed: () => _showHistorialPopup(context, data),
-      child: const Text('Ver Historial'),
-    );
-  }
+  );
 }
 
 /// Tabla que muestra la lista de ancestros y fecha de creación
 class _HistorialAncestrosTable extends StatelessWidget {
   final HistorialAncestros data;
-  const _HistorialAncestrosTable({required this.data, super.key});
+  const _HistorialAncestrosTable({required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +97,6 @@ class _HistorialAncestrosTable extends StatelessWidget {
         border: TableBorder.all(color: Colors.black, width: 1),
         columnWidths: const {0: FlexColumnWidth(2), 1: FlexColumnWidth(1)},
         children: [
-          // Encabezado
           const TableRow(
             decoration: BoxDecoration(color: Colors.teal),
             children: [
@@ -110,7 +118,6 @@ class _HistorialAncestrosTable extends StatelessWidget {
               ),
             ],
           ),
-          // Fila de datos con fondo crema
           TableRow(
             decoration: const BoxDecoration(color: Color(0xFFf5ecec)),
             children: [
@@ -141,74 +148,4 @@ class _HistorialAncestrosTable extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Diálogo personalizado con cierre en X rojo a la izquierda y texto centrado
-class HistorialAncestrosDialog extends StatelessWidget {
-  final HistorialAncestros data;
-  const HistorialAncestrosDialog({required this.data, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-        final hasAncestros = data.ancestros.isNotEmpty;
-
-    return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: SizedBox(
-        width: 500,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Header con botón de cierre a la izquierda y título centrado
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Center(
-                    child: Text(
-                      'Historial de Ancestros',
-                      style: Theme.of(context).textTheme.titleLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.close),
-                      color: Colors.red,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-            // Si no hay ancestros
-            if (!hasAncestros)
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  'La charola no tiene ancestros',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              )
-            else
-              _HistorialAncestrosTable(data: data),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Función de ayuda para mostrar el diálogo
-void _showHistorialPopup(BuildContext context, HistorialAncestros data) {
-  showDialog(
-    context: context,
-    builder: (_) => HistorialAncestrosDialog(data: data),
-  );
 }

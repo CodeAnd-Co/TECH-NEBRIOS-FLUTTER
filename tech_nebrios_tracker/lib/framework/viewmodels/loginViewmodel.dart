@@ -62,6 +62,12 @@ class LoginViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void limpiarCampos() {
+    usuarioController.clear();
+    contrasenaController.clear();
+    notifyListeners();
+  }
   
   ///Verifica si hay un usuario actual en el almacenamiento local y lo establece en el controlador de texto
   void _obtenerTokenActual() async {

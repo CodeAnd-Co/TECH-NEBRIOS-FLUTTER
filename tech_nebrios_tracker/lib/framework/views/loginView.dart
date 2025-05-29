@@ -40,7 +40,7 @@ class LoginView extends StatelessWidget {
                     child: TextField(
                       controller: viewModel.usuarioController,
                       decoration: InputDecoration(
-                        hintText: 'Ingresa tu nombre de usuario aqui',
+                        hintText: 'Ingresa tu nombre de usuario aquí',
                         prefixIcon: Icon(Icons.people_alt),
                         filled: true,
                         fillColor: Colors.grey[200],
@@ -69,7 +69,7 @@ class LoginView extends StatelessWidget {
                     child: TextField(
                       controller: viewModel.contrasenaController,
                       decoration: InputDecoration(
-                        hintText: 'Ingresa tu contraseña aqui',
+                        hintText: 'Ingresa tu contraseña aquí',
                         prefixIcon: Icon(Icons.lock),
                         filled: true,
                         fillColor: Colors.grey[200],
@@ -80,6 +80,22 @@ class LoginView extends StatelessWidget {
                       ),
                       textAlign: TextAlign.center,
                       keyboardType: TextInputType.visiblePassword,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) async {
+                        await viewModel.iniciarSesion();
+                        if (!viewModel.hasError) {
+                          onLogin(); 
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(viewModel.errorMessage),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
                       autocorrect: false,
                       textCapitalization: TextCapitalization.none,
                     ),

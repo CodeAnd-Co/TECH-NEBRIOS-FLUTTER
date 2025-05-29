@@ -147,6 +147,13 @@ class CharolaTarjeta {
       fechaCreacion: DateTime.parse(json['fechaCreacion']),
     );
   }
+
+
+  Map<String, dynamic> toJson() => {
+    'charolaId': charolaId,
+    'nombreCharola': nombreCharola,
+    'fechaCreacion': fechaCreacion.toIso8601String(),
+  };
 }
 
 /// Modelo que representa la respuesta paginada de la API

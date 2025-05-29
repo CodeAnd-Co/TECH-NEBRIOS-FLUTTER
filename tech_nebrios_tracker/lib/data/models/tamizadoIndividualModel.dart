@@ -1,7 +1,11 @@
+import './charolaModel.dart';
+
 class TamizadoIndividual {
-  List<String> charolas;
-  String alimento;
-  String hidratacion;
+  List<CharolaRegistro> charolasNuevas;
+  List<CharolaTarjeta> charolasParaTamizar;
+
+  int alimento;
+  int hidratacion;
   double fras;
   double pupa;
   double alimentoCantidad;
@@ -9,7 +13,8 @@ class TamizadoIndividual {
   DateTime fecha;
 
   TamizadoIndividual({
-    required this.charolas,
+    required this.charolasNuevas,
+    required this.charolasParaTamizar,
     required this.alimento,
     required this.hidratacion,
     required this.fras,
@@ -21,7 +26,8 @@ class TamizadoIndividual {
 
   Map<String, dynamic> toJson() {
     return {
-      'charolas': charolas,
+      'charolasNuevas': charolasNuevas,
+      'charolasParaTamizar': charolasParaTamizar,
       'alimento': alimento,
       'hidratacion': hidratacion,
       'fras': fras,

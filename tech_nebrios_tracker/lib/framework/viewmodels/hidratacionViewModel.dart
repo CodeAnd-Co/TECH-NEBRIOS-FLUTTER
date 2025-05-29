@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:tech_nebrios_tracker/domain/registrarHidratacionUseCase.dart';
+import 'package:zuustento_tracker/domain/registrarHidratacionUseCase.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/hidratacionRepository.dart';
 

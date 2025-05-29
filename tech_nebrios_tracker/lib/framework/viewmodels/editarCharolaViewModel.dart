@@ -1,10 +1,10 @@
 //RF7 Editar información de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF7
 
 import 'package:flutter/material.dart';
-import 'package:tech_nebrios_tracker/data/models/alimentacionModel.dart';
-import 'package:tech_nebrios_tracker/domain/editarCharolaUseCase.dart';
+import 'package:zuustento_tracker/data/models/alimentacionModel.dart';
+import 'package:zuustento_tracker/domain/editarCharolaUseCase.dart';
 import '../../data/repositories/editarCharolaRepository.dart';
-import 'package:tech_nebrios_tracker/data/models/hidratacionModel.dart';
+import 'package:zuustento_tracker/data/models/hidratacionModel.dart';
 import 'package:intl/intl.dart';
 
 class EditarCharolaViewModel extends ChangeNotifier{

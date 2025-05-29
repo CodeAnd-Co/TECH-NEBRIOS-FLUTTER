@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_nebrios_tracker/framework/viewmodels/tamizarCharolaViewModel.dart';
-import 'package:tech_nebrios_tracker/framework/views/charolasDashboardView.dart';
-import 'package:tech_nebrios_tracker/framework/views/reporteView.dart';
-import 'package:tech_nebrios_tracker/framework/views/alimentacionView.dart';
-import 'package:tech_nebrios_tracker/framework/views/seleccionarTamizadoView.dart';
+import 'package:zuustento_tracker/framework/viewmodels/tamizarCharolaViewModel.dart';
+import 'package:zuustento_tracker/framework/views/charolasDashboardView.dart';
+import 'package:zuustento_tracker/framework/views/reporteView.dart';
+import 'package:zuustento_tracker/framework/views/alimentacionView.dart';
+import 'package:zuustento_tracker/framework/views/seleccionarTamizadoView.dart';
 import './detalleCharolaView.dart';
-import './tamizarMultiplesCharolasView.dart';
 import './tamizarCharolaIndividualView.dart';
 
 class SidebarView extends StatefulWidget {
@@ -25,7 +24,6 @@ class _SidebarViewState extends State<SidebarView> {
   bool _mensajeMostrado = false;
   Widget? _detalleCharolaActual;
   Widget? _vistaTamizadoIndividual;
-  Widget? _vistaTamizadoMultiple;
 
   void _mostrarDetalleCharola(int id) {
     setState(() {
@@ -90,9 +88,7 @@ class _SidebarViewState extends State<SidebarView> {
       VistaSeleccionarTamizado(),
       const Placeholder(),
       const AlimentacionScreen(),
-      const VistaTablaCharolas(),
-      VistaTamizadoIndividual(onRegresar: _cerrarVistaTamizado),
-      VistaTamizadoMultiple(onRegresar: _cerrarVistaTamizado),
+      const VistaTablaCharolas()
     ];
   }
 

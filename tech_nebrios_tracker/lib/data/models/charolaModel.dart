@@ -18,8 +18,10 @@ class CharolaDetalle {
   final int densidadLarva;
   final String fechaCreacion;
   final int pesoCharola;
+  final int comidaId;
   final String comidaNombre;
   final String comidaDesc;
+  final int hidratacionId;
   final String hidratacionNombre;
   final String hidratacionDesc;
 
@@ -36,8 +38,10 @@ class CharolaDetalle {
     required this.densidadLarva,
     required this.fechaCreacion,
     required this.pesoCharola,
+    required this.comidaId,
     required this.comidaNombre,
     required this.comidaDesc,
+    required this.hidratacionId,
     required this.hidratacionNombre,
     required this.hidratacionDesc,
   });
@@ -103,8 +107,11 @@ class CharolaDetalle {
       densidadLarva: parseToInt(charolaData['densidadLarva']),
       fechaCreacion: (charolaData['fechaCreacion'] as String?) ?? 'desconocido',
       pesoCharola: parseToInt(charolaData['pesoCharola']),
+      comidaId: (parseToInt(comidaData['comidaId'])),
       comidaNombre: (comidaData['nombre'] as String?) ?? 'desconocido',
       comidaDesc: (comidaData['descripcion'] as String?) ?? 'desconocido',
+      hidratacionId:
+        (parseToInt(hidratacionData['hidratacionId'])),
       hidratacionNombre:
           (hidratacionData['nombre'] as String?) ?? 'desconocido',
       hidratacionDesc:
@@ -219,7 +226,6 @@ class CharolaRegistro {
   final DateTime fechaCreacion;
   final DateTime fechaActualizacion;
   final double densidadLarva;
-  final double pesoCharola;
   final List<ComidaAsignada> comidas;
   final List<HidratacionAsignada> hidrataciones;
 
@@ -228,7 +234,6 @@ class CharolaRegistro {
     required this.fechaCreacion,
     required this.fechaActualizacion,
     required this.densidadLarva,
-    required this.pesoCharola,
     required this.comidas,
     required this.hidrataciones,
   });
@@ -238,7 +243,6 @@ class CharolaRegistro {
     'fechaCreacion': fechaCreacion.toIso8601String(),
     'fechaActualizacion': fechaActualizacion.toIso8601String(),
     'densidadLarva': densidadLarva,
-    'pesoCharola': pesoCharola,
     'comidas': comidas.map((comida) => comida.toJson()).toList(),
     'hidrataciones':
         hidrataciones.map((hidratacion) => hidratacion.toJson()).toList(),

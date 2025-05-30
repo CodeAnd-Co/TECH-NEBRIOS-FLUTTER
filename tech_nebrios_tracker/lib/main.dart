@@ -12,6 +12,7 @@ import 'framework/viewmodels/tamizarCharolaViewModel.dart';
 import 'framework/viewmodels/editarCharolaViewModel.dart';
 import 'framework/viewmodels/alimentacionViewModel.dart';
 import 'framework/viewmodels/historialCharolaViewModel.dart';
+import 'framework/viewmodels/hidratacionViewModel.dart';
 
 /// Punto de entrada principal para la aplicación Tech Nebrios Tracker.
 ///
@@ -36,6 +37,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => HistorialActividadViewmodel()),
         ChangeNotifierProvider(create: (_) => EditarCharolaViewModel()),
         ChangeNotifierProvider(create: (_) => AlimentacionViewModel()),
+        ChangeNotifierProvider(create: (_) => HidratacionViewModel()),
       ],
       child: const MyApp(),
     ),

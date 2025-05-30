@@ -22,7 +22,9 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
     // Al iniciar, ponemos la fecha de hoy en el campo
     final vm = Provider.of<CharolaViewModel>(context, listen: false);
     final today = DateTime.now();
-    vm.fechaController.text = '${today.day}/${today.month}/${today.year}';
+    final dd = today.day.toString().padLeft(2, '0');
+    final mm = today.month.toString().padLeft(2, '0');
+    vm.fechaController.text = '$dd/$mm/${today.year}';
     vm.cargarHidratacion();
     vm.cargarAlimentos();
   }
@@ -288,10 +290,13 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
               initialDate: DateTime.now(),
               firstDate: DateTime(2000),
               lastDate: DateTime.now(),
+              cancelText: 'Cancelar',
+              confirmText: 'Aceptar',
             );
             if (pickedDate != null) {
-              controller.text =
-                  '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
+              final dd = pickedDate.day.toString().padLeft(2, '0');
+              final mm = pickedDate.month.toString().padLeft(2, '0');
+              controller.text = '$dd/$mm/${pickedDate.year}';
             }
           },
         ),

@@ -9,7 +9,6 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loginVM = Provider.of<LoginViewModel>(context, listen: false);
     return Scaffold(
       body: Center(
         child: SingleChildScrollView( // <-- Added scroll view here

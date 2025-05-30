@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/alimentacionModel.dart';
 import '../../data/repositories/alimentacionRepository.dart';
@@ -6,6 +7,8 @@ import '../../domain/editarAlimentacionUseCase.dart';
 import '../../domain/eliminarAlimentacionUseCase.dart';
 import '../../domain/registrarAlimentacionUseCase.dart';
 import '../../domain/alimentarCharolaUseCase.dart';
+
+enum EstadoViewModel { inicial, cargando, exito, error }
 
 class AlimentacionViewModel extends ChangeNotifier {
   final AlimentacionRepository _repo;
@@ -19,6 +22,11 @@ class AlimentacionViewModel extends ChangeNotifier {
   static const int _chunkSize = 20;
   List<Alimento> _allAlimentos = [];
   final List<Alimento> _pagedAlimentos = [];
+  /// Logger instance for logging
+  final Logger _logger = Logger();
+  EstadoViewModel _estado = EstadoViewModel.inicial;
+  EstadoViewModel get estado => _estado;
+
   int _currentIndex = 0;
 
   bool _isLoading = false;
@@ -65,19 +73,34 @@ class AlimentacionViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> eliminarAlimento(int idAlimento) async {
+  Future<String?> eliminarAlimento(int idAlimento) async {
     _setLoading(true);
+    _estado = EstadoViewModel.cargando;
+    notifyListeners();
+
     try {
-      await _eliminarCasoUso.eliminar(idAlimento: idAlimento);
+      await _repo.eliminarAlimento(idAlimento);
+      _estado = EstadoViewModel.exito;
       await cargarAlimentos();
-    } on Exception catch (e) {
-      final msg = e.toString();
-      if (msg.contains('500')) throw Exception('❌ Error del servidor.');
-      throw Exception('❌ Error desconocido. $e');
+      return null;
+    } catch (e) {
+      final msg = e.toString().contains('401')
+          ? '🚫 401: No autorizado'
+          : e.toString().contains('101')
+          ? '🌐 101: Problemas de red'
+          : e.toString().contains('400')
+          ? '❌ 400: Datos no válidos'
+          : '💥 Error de conexión';
+
+      _logger.e(msg);
+      _estado = EstadoViewModel.error;
+      return msg;
     } finally {
+      notifyListeners();
       _setLoading(false);
     }
   }
+
 
   Future<String?> editarAlimento(Alimento alimento) async {
     if (alimento.nombreAlimento.trim().isEmpty || alimento.descripcionAlimento.trim().isEmpty) {
@@ -88,18 +111,30 @@ class AlimentacionViewModel extends ChangeNotifier {
     }
 
     _setLoading(true);
-    try {
-      await _editarCasoUso.editar(alimento: alimento);
-      await cargarAlimentos();
-      return null;
-    } on Exception catch (e) {
-      final msg = e.toString();
-      if (msg.contains('400')) return '❌ Datos no válidos.';
-      if (msg.contains('500')) return '❌ Error del servidor.';
-      return '❌ Error desconocido.';
-    } finally {
-      _setLoading(false);
-    }
+      _estado = EstadoViewModel.cargando;
+      notifyListeners();
+      try {
+        await _repo.editarAlimento(alimento);
+        _estado = EstadoViewModel.exito;
+        await cargarAlimentos();
+        return null;
+      }catch (e) {
+        final msg = e.toString().contains('401')
+            ? '🚫 401: No autorizado'
+            : e.toString().contains('101')
+            ? '🌐 101: Problemas de red'
+            : e.toString().contains('400')
+            ? '❌ 400: Datos no válidos'
+            : '💥 Error de conexión';
+
+        _logger.e(msg);
+        _estado = EstadoViewModel.error;
+        return msg;
+      }
+      finally {
+        notifyListeners();
+        _setLoading(false);
+      }
   }
 
   Future<String?> registrarAlimento(String nombre, String descripcion) async {
@@ -117,19 +152,30 @@ class AlimentacionViewModel extends ChangeNotifier {
     }
 
     _setLoading(true);
-    try {
-      await _registrarCasoUso.registrar(nombre: nombre, descripcion: descripcion);
-      await cargarAlimentos();
-      return null;
-    } on Exception catch (e) {
-      final msg = e.toString();
-      if (msg.contains('400')) return '❌ Datos no válidos.';
-      if (msg.contains('101')) return '❌ Sin conexión a internet.';
-      if (msg.contains('500')) return '❌ Error del servidor.';
-      return '❌ Error desconocido.';
-    } finally {
-      _setLoading(false);
-    }
+      _estado = EstadoViewModel.cargando;
+      notifyListeners();
+
+      try {
+        await _repo.postDatosAlimento(nombre, descripcion);
+        _estado = EstadoViewModel.exito;
+        await cargarAlimentos();
+        return null;
+      } catch (e) {
+        final msg = e.toString().contains('401')
+            ? '🚫 401: No autorizado'
+            : e.toString().contains('101')
+            ? '🌐 101: Problemas de red'
+            : e.toString().contains('400')
+            ? '❌ 400: Datos no válidos'
+            : '💥 Error de conexión';
+
+        _logger.e(msg);
+        _estado = EstadoViewModel.error;
+        return msg;
+      } finally {
+        notifyListeners();
+        _setLoading(false);
+      }
   }
 
   Future<void> registrarAlimentacion({

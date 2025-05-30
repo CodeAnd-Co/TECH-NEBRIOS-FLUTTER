@@ -2,6 +2,7 @@
 //RF24: Editar un tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF24
 //RF26: Registrar la alimentación de la charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF26
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../models/alimentacionModel.dart';
 import '../models/constantes.dart';
@@ -119,32 +120,39 @@ class AlimentacionRepository extends AlimentacionService {
   ///
   /// @throws [Exception] si ocurre un error en la solicitud o respuesta.
   @override
-  Future<void> postDatosComida(String nombre, String descripcion) async {
-    final uri = Uri.parse('${APIRutas.ALIMENTACION}/agregar');
-    final token = await _userUseCases.obtenerTokenActual();
-    if (token == null) {
-      throw Exception('Debe iniciar sesión para continuar');
-    }
+  Future<void> postDatosAlimento(String nombre, String descripcion) async {
+    try {
+      final uri = Uri.parse('${APIRutas.ALIMENTACION}/agregar');
+      final token = await _userUseCases.obtenerTokenActual();
+      if (token == null) {
+        throw Exception('Debe iniciar sesión para continuar');
+      }
 
-    final response = await http.post(
-      uri,
-       headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({'nombre': nombre, 'descripcion': descripcion}),
-    );
+      final response = await http.post(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'nombre': nombre, 'descripcion': descripcion}),
+      );
 
-    if (response.statusCode == 400) {
-      throw Exception('❌ Datos no válidos.');
-    } else if (response.statusCode == 101) {
-      throw Exception('❌ Sin conexión a internet.');
-    } else if (response.statusCode == 500) {
-      throw Exception('❌ Error del servidor.');
-    } else if (response.statusCode != 200) {
-      throw Exception('❌ Error desconocido (${response.statusCode}).');
+      if (response.statusCode == 400) {
+        throw Exception('❌ Datos no válidos.');
+      } else if (response.statusCode == 101) {
+        throw Exception('❌ Sin conexión a internet.');
+      } else if (response.statusCode == 500) {
+        throw Exception('❌ Error del servidor.');
+      } else if (response.statusCode != 200) {
+        throw Exception('❌ Error desconocido (${response.statusCode}).');
+      }
+    } on SocketException {
+      throw Exception('❌ Error de conexión. Verifica tu conexión a internet.');
+    } catch (e) {
+      throw Exception('❌ Ocurrió un error inesperado: $e');
     }
   }
+
 
   @override
   Future<bool> registrarAlimentacion(ComidaCharola comidaCharola) async {

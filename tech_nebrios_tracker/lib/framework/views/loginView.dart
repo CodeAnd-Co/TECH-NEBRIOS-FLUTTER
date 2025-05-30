@@ -11,80 +11,110 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          width: 900,
-          height: 500,
-          padding:EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-            Image.asset('assets/images/zuustento_logo.png'),
-            Consumer<LoginViewModel>(builder: (context, viewModel, child) {
-              return Column(
-                //crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Usuario',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    width:500,
-                    child: TextField(
-                      controller: viewModel.usuarioController,
-                      decoration: InputDecoration(
-                        hintText: 'Ingresa tu nombre de usuario aquí',
-                        prefixIcon: Icon(Icons.people_alt),
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          borderSide: BorderSide.none,
+        child: SingleChildScrollView( // <-- Added scroll view here
+          child: Container(
+            width: 900,
+            height: 500,
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: SingleChildScrollView(
+              child:
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/images/zuustento_logo.png'),
+                Consumer<LoginViewModel>(builder: (context, viewModel, child) {
+                  return Column(
+                    children: [
+                      const Text(
+                        'Usuario',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.emailAddress,
-                      autocorrect: false,
-                      textCapitalization: TextCapitalization.none,
-                    ),
-                  ),
-                  const SizedBox(height:50),
-                  const Text(
-                    'Contraseña',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 500,
-                    child: TextField(
-                      controller: viewModel.contrasenaController,
-                      decoration: InputDecoration(
-                        hintText: 'Ingresa tu contraseña aquí',
-                        prefixIcon: Icon(Icons.lock),
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          borderSide: BorderSide.none,
+                      SizedBox(
+                        width: 500,
+                        child: TextField(
+                          controller: viewModel.usuarioController,
+                          decoration: InputDecoration(
+                            hintText: 'Ingresa tu nombre de usuario aquí',
+                            prefixIcon: Icon(Icons.people_alt),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.emailAddress,
+                          autocorrect: false,
+                          textCapitalization: TextCapitalization.none,
                         ),
                       ),
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.visiblePassword,
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (_) async {
+                      const SizedBox(height: 50),
+                      const Text(
+                        'Contraseña',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 500,
+                        child: TextField(
+                          controller: viewModel.contrasenaController,
+                          decoration: InputDecoration(
+                            hintText: 'Ingresa tu contraseña aquí',
+                            prefixIcon: Icon(Icons.lock),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.visiblePassword,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) async {
+                            await viewModel.iniciarSesion();
+                            if (!viewModel.hasError) {
+                              onLogin();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(viewModel.errorMessage),
+                                  backgroundColor: Colors.red,
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          },
+                          autocorrect: false,
+                          textCapitalization: TextCapitalization.none,
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+                const SizedBox(height: 15),
+                Consumer<LoginViewModel>(builder: (context, viewModel, child) {
+                  return SizedBox(
+                    width: 150,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () async {
                         await viewModel.iniciarSesion();
                         if (!viewModel.hasError) {
-                          onLogin(); 
+                          onLogin();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -96,48 +126,21 @@ class LoginView extends StatelessWidget {
                           );
                         }
                       },
-                      autocorrect: false,
-                      textCapitalization: TextCapitalization.none,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text(
+                        'Iniciar Sesión',
+                        style: TextStyle(fontSize: 15)
+                      ),
                     ),
-                  ),
-                ],
-              );
-            }),
-            const SizedBox(height: 15),
-            Consumer<LoginViewModel>(builder: (context, viewModel, child) {
-              return SizedBox(
-                width: 150,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await viewModel.iniciarSesion();
-                    if (!viewModel.hasError) {
-                      onLogin();
-                    }
-                    else{
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(viewModel.errorMessage),
-                          backgroundColor:Colors.red,
-                          behavior: SnackBarBehavior.floating,
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text(
-                    'Iniciar Sesión',
-                    style: TextStyle(fontSize: 15)
-                    ),
-                ),
-              );
-            }),
-            const SizedBox(height: 15),
-          ],
+                  );
+                }),
+                const SizedBox(height: 15),
+              ],
+            ),
+            )
           ),
         ),
       ),

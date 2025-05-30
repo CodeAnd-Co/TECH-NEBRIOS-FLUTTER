@@ -30,7 +30,7 @@ class RegistrarAlimentoCasoUsoImpl implements RegistrarAlimentoCasoUso {
     required String nombre,
     required String descripcion,
   }) {
-    return repositorio.postDatosComida(nombre, descripcion);
+    return repositorio.postDatosAlimento(nombre, descripcion);
   }
 }
 

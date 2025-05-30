@@ -358,9 +358,12 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                 Navigator.of(dialogContext).pop();
                                 await vmAlimentacion.cargarAlimentos();
                               } else {
-                                ScaffoldMessenger.of(
-                                  dialogContext,
-                                ).showSnackBar(SnackBar(content: Text(resultado)));
+                              ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                SnackBar(
+                                  content: Text(resultado),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -485,9 +488,12 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                 if (resultado == null) {
                                   Navigator.of(dialogContext).pop();
                                 } else {
-                                  ScaffoldMessenger.of(
-                                    dialogContext,
-                                  ).showSnackBar(SnackBar(content: Text(resultado)));
+                                ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                  SnackBar(
+                                    content: Text(resultado),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
                                 }
                               },
                               child: const Text(
@@ -573,11 +579,17 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                   ),
                                 ),
                                 onPressed: () async {
-                                  await vmAlimentacion.eliminarAlimento(idAlimento);
+                                  final resultado = await vmAlimentacion.eliminarAlimento(idAlimento);
                                   Navigator.of(dialogContext).pop();
+
                                   ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Alimento eliminado exitosamente'),
+                                    SnackBar(
+                                      content: Text(
+                                        resultado == null
+                                            ? '✅ Alimento eliminado exitosamente'
+                                            : resultado,
+                                      ),
+                                      backgroundColor: resultado == null ? Colors.green : Colors.red,
                                     ),
                                   );
                                 },

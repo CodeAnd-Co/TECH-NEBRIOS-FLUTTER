@@ -412,7 +412,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                   return AlertDialog(
                     title: const Center(
                       child: Text(
-                        'Nuevo Alimento',
+                        'Editar Alimento',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),

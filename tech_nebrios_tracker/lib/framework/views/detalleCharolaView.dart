@@ -8,6 +8,7 @@ import './historialAncestrosView.dart';
 import './editarCharolaView.dart';
 import 'components/atoms/texto.dart';
 import '../views/alimentarCharolaView.dart';
+import '../views/hidratarCharolaView.dart';
 
 /// Pantalla que muestra el detalle de una charola específica.
 class PantallaCharola extends StatefulWidget {
@@ -353,11 +354,20 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                           );
                                         },
                                       ),
-                                      //    _crearBotonIcono(
-                                      //      icono: Icons.water_drop,
-                                      //      texto: 'Hidratar',
-                                      //      alPresionar: () {}, // TODO MBI
-                                      //    ),
+                                      _crearBotonIcono(
+                                        icono: Icons.water_drop,
+                                        texto: 'Hidratar',
+                                        alPresionar: () {
+                                          mostrarDialogoHidratar(
+                                            context,
+                                            viewModel.charola!.charolaId,
+                                            Provider.of<CharolaViewModel>(
+                                              context,
+                                              listen: false,
+                                            ),
+                                          );
+                                        }, 
+                                      ),
                                       _crearBotonIcono(
                                         icono: Icons.device_hub,
                                         texto: 'Ancestros',

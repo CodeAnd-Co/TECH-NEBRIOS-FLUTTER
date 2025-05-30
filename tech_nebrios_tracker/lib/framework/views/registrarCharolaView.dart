@@ -35,7 +35,6 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
 
     return WillPopScope(
       onWillPop: () async {
-        // Al pulsar atrás, resetea el formulario
         vm.resetForm();
         return true;
       },
@@ -170,6 +169,12 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                           if (widget.postOnSave) {
                             try {
                               final nuevaTarjeta = await vm.registrarCharola();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Charola creada exitosamente.'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
                               vm.resetForm();
                               await vm.cargarCharolas();
                               Navigator.pop(context, nuevaTarjeta);

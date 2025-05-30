@@ -1,5 +1,5 @@
 class APIRutas{
-  static const String BASEURL = "http://10.25.82.62:3000";
+  static const String BASEURL = "http://localhost:3000";
 
   static const String USUARIO = "$BASEURL/usuario";
 

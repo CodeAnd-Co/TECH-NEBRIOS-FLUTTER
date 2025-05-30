@@ -50,48 +50,36 @@ class CharolaViewModel extends ChangeNotifier {
   List<Hidratacion> hidrataciones = [];
   Alimento? selectedAlimentacion;
   Hidratacion? selectedHidratacion;
-  bool _cargandoDropdowns = false;
-  bool get cargandoDropdowns => _cargandoDropdowns;
   bool _cargandoRegistro = false;
   bool get cargandoRegistro => _cargandoRegistro;
   String? _mensajeError;
   String? get mensajeError => _mensajeError;
 
-void Function(String mensaje)? onErrorSnackBar;
+  void Function(String mensaje)? onErrorSnackBar;
 
-/// Asigna un mensaje de error y permite notificar con SnackBar desde la vista
-void mostrarErrorSnackBar(String mensaje) {
-  _mensajeError = mensaje.isNotEmpty ? mensaje : null;
-  notifyListeners();
-  if (mensaje.isNotEmpty && onErrorSnackBar != null) {
-    onErrorSnackBar!(mensaje);
+  /// Asigna un mensaje de error y permite notificar con SnackBar desde la vista
+  void mostrarErrorSnackBar(String mensaje) {
+    _mensajeError = mensaje.isNotEmpty ? mensaje : null;
+    notifyListeners();
+    if (mensaje.isNotEmpty && onErrorSnackBar != null) {
+      onErrorSnackBar!(mensaje);
+    }
   }
-}
 
 
   Future<void> cargarAlimentos() async {
-    _cargandoDropdowns = true;
-    notifyListeners();
     try {
       alimentos = await _alimentoRepo.obtenerAlimentos();
     } catch (e) {
       _logger.e('Error cargando alimentos');
-    } finally {
-      _cargandoDropdowns = false;
-      notifyListeners();
     }
   }
 
   Future<void> cargarHidratacion() async {
-    _cargandoDropdowns = true;
-    notifyListeners();
     try {
       hidrataciones = await _hidratacionRepo.obtenerHidratacion();
     } catch (e) {
       _logger.e('Error cargando hidrataciones');
-    } finally {
-      _cargandoDropdowns = false;
-      notifyListeners();
     }
   }
 

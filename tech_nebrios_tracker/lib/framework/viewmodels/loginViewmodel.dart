@@ -9,9 +9,11 @@ class LoginViewModel extends ChangeNotifier {
   
   String _errorMessage = '';
   bool _hasError = false;
+  bool _cargando = false;
   
   String get errorMessage => _errorMessage;
   bool get hasError => _hasError;
+  bool get cargando => _cargando;
   
   LoginViewModel() {
     //_checkCurrentUser();
@@ -41,23 +43,27 @@ class LoginViewModel extends ChangeNotifier {
     }
 
     try {
+      _cargando = true;
+      notifyListeners();
       final sesion = await _userUseCases.iniciarSesion(usuario, contrasena);
 
       if(sesion == null) {
         _errorMessage = 'Usuario o contraseña incorrectos';
         _hasError = true;
+        _cargando = false;
         notifyListeners();
         return;
       } 
       else {
         guardarToken(sesion.token);
-
+        _cargando = false;
         _hasError = false;
         notifyListeners();
         return;
       }
     }catch (e){
       _errorMessage = 'Error al iniciar sesión. Inténtalo de nuevo más tarde.';
+      _cargando = false;
       _hasError = true;
       notifyListeners();
     }

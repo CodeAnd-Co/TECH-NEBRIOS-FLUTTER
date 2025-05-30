@@ -110,31 +110,39 @@ class LoginView extends StatelessWidget {
                   return SizedBox(
                     width: 150,
                     height: 50,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        await viewModel.iniciarSesion();
-                        if (!viewModel.hasError) {
-                          onLogin();
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(viewModel.errorMessage),
-                              backgroundColor: Colors.red,
-                              behavior: SnackBarBehavior.floating,
-                              duration: const Duration(seconds: 2),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          viewModel.cargando ? CircularProgressIndicator() :
+                          ElevatedButton(
+                            onPressed: () async {
+                              await viewModel.iniciarSesion();
+                              if (!viewModel.hasError) {
+                                onLogin();
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(viewModel.errorMessage),
+                                    backgroundColor: Colors.red,
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
                             ),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text(
-                        'Iniciar Sesión',
-                        style: TextStyle(fontSize: 15)
-                      ),
-                    ),
+                            child: const Text(
+                              'Iniciar Sesión',
+                              style: TextStyle(fontSize: 15)
+                            ),
+                          ),
+                        ],
+                      )
+                    )
                   );
                 }),
                 const SizedBox(height: 15),

@@ -32,7 +32,7 @@ abstract class AlimentacionService {
   /// [descripcion] es la descripción detallada del alimento.
   ///
   /// Lanza excepciones si el backend responde con error (400, 500, etc.).
-  Future<void> postDatosComida(String nombre, String descripcion);
+  Future<void> postDatosAlimento(String nombre, String descripcion);
 
   /// Registra una alimentación en la charola.
   Future<bool> registrarAlimentacion(ComidaCharola comidaCharola);

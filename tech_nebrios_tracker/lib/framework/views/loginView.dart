@@ -20,7 +20,9 @@ class LoginView extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Column(
+            child: SingleChildScrollView(
+              child:
+            Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/images/zuustento_logo.png'),
@@ -138,6 +140,7 @@ class LoginView extends StatelessWidget {
                 const SizedBox(height: 15),
               ],
             ),
+            )
           ),
         ),
       ),

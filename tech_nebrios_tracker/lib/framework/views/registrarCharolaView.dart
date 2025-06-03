@@ -1,9 +1,8 @@
+//RF5 Registrar charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
-import '../../data/models/alimentacionModel.dart';
-import '../../data/models/hidratacionModel.dart';
 import '../views/components/header.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 
@@ -96,19 +95,53 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                                     ? 'Selecciona fecha'
                                     : null,
                       ),
-                      _buildDropdownFormField<Alimento>(
-                        label: 'Alimentación *',
-                        items:
-                            vm.alimentos.map((a) => a.nombreAlimento).toList(),
-                        value: vm.selectedAlimentacion?.nombreAlimento,
-                        onChanged: (value) {
-                          vm.selectedAlimentacion = vm.alimentos.firstWhere(
-                            (a) => a.nombreAlimento == value,
-                          );
-                        },
-                        validator:
-                            (v) => v == null ? 'Selecciona alimento' : null,
+                      Container(
+                        margin: const EdgeInsets.all(5),
+                        width: 200,
+                        child: DropdownButtonFormField<String>(
+                          hint:
+                              vm.alimentos.isEmpty
+                                  ? const Text(
+                                    'No hay alimentos disponibles',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14,
+                                    ),
+                                  )
+                                  : const Text('Selecciona alimento'),
+                          decoration: const InputDecoration(
+                            labelText: 'Alimentación *',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 12,
+                            ),
+                          ),
+                          items:
+                              vm.alimentos
+                                  .map(
+                                    (a) => DropdownMenuItem(
+                                      value: a.nombreAlimento,
+                                      child: Text(a.nombreAlimento),
+                                    ),
+                                  )
+                                  .toList(),
+                          value: vm.selectedAlimentacion?.nombreAlimento,
+                          onChanged:
+                              vm.alimentos.isEmpty
+                                  ? null
+                                  : (value) {
+                                    vm.selectedAlimentacion = vm.alimentos
+                                        .firstWhere(
+                                          (a) => a.nombreAlimento == value,
+                                        );
+                                  },
+                          validator:
+                              (v) => v == null ? 'Selecciona alimento' : null,
+                        ),
                       ),
+
                       _buildTextFormField(
                         label: 'Cantidad de alimento (g) *',
                         controller: vm.comidaCicloController,
@@ -126,20 +159,52 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                         maxLength: 8,
                       ),
                       const SizedBox(), // Espacio para alinear con el dropdown
-                      _buildDropdownFormField<Hidratacion>(
-                        label: 'Hidratación *',
-                        items:
-                            vm.hidrataciones
-                                .map((h) => h.nombreHidratacion)
-                                .toList(),
-                        value: vm.selectedHidratacion?.nombreHidratacion,
-                        onChanged: (value) {
-                          vm.selectedHidratacion = vm.hidrataciones.firstWhere(
-                            (h) => h.nombreHidratacion == value,
-                          );
-                        },
-                        validator:
-                            (v) => v == null ? 'Selecciona hidratación' : null,
+                      Container(
+                        margin: const EdgeInsets.all(5),
+                        width: 200,
+                        child: DropdownButtonFormField<String>(
+                          hint:
+                              vm.hidrataciones.isEmpty
+                                  ? const Text(
+                                    'No hay hidratación disponible',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14,
+                                    ),
+                                  )
+                                  : const Text('Selecciona hidratación'),
+                          decoration: const InputDecoration(
+                            labelText: 'Hidratación *',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 12,
+                            ),
+                          ),
+                          items:
+                              vm.hidrataciones
+                                  .map(
+                                    (h) => DropdownMenuItem(
+                                      value: h.nombreHidratacion,
+                                      child: Text(h.nombreHidratacion),
+                                    ),
+                                  )
+                                  .toList(),
+                          value: vm.selectedHidratacion?.nombreHidratacion,
+                          onChanged:
+                              vm.hidrataciones.isEmpty
+                                  ? null
+                                  : (value) {
+                                    vm.selectedHidratacion = vm.hidrataciones
+                                        .firstWhere(
+                                          (h) => h.nombreHidratacion == value,
+                                        );
+                                  },
+                          validator:
+                              (v) =>
+                                  v == null ? 'Selecciona hidratación' : null,
+                        ),
                       ),
                       _buildTextFormField(
                         label: 'Cantidad de hidratación (g) *',

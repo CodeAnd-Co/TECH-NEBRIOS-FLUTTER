@@ -25,11 +25,9 @@ class TamizadoViewModel extends ChangeNotifier {
 
   List<Alimento> alimentos = [];
   Alimento? seleccionAlimentacion;
-  bool _alimentosCargados = false;
 
   List<Hidratacion> hidratacion = [];
   Hidratacion? seleccionHidratacion;
-  bool _hidratacionCargados = false;
 
   /// Se definen controladores para el texto
   final frasController = TextEditingController();

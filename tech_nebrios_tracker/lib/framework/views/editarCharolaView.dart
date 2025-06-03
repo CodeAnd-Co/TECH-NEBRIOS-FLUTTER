@@ -10,7 +10,7 @@ import '../../data/models/alimentacionModel.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../utils/positive_number_formatter.dart';
 
-void mostrarPopUpEditarCharola({
+Future<void> mostrarPopUpEditarCharola({
   required BuildContext context,
   required int charolaId,
   required String nombreCharola,
@@ -23,12 +23,14 @@ void mostrarPopUpEditarCharola({
   required String hidratacion,
   required int hidratacionOtorgado,
   required String estado,
-}) {
+}) async {
   final vm = Provider.of<CharolaViewModel>(context, listen: false);
   final editarViewModel = Provider.of<EditarCharolaViewModel>(
     context,
     listen: false,
   );
+
+  await editarViewModel.cargarDatos(nombreCharola, fechaCreacion, densidadLarva, alimentoId, alimento, alimentoOtorgado, hidratacionId, hidratacion, hidratacionOtorgado, estado);
 
   // Cargar dropdowns y los datos existentes en el ViewModel de edición
   WidgetsBinding.instance.addPostFrameCallback((_) {

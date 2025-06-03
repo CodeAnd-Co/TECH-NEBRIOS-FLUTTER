@@ -216,5 +216,11 @@ class TamizadoViewModel extends ChangeNotifier {
     _hasError = false;
     notifyListeners();
   }
+
+  void limpiarError() {
+    _hasError = false;
+    _errorMessage = '';
+    notifyListeners();
+  }
 }
 

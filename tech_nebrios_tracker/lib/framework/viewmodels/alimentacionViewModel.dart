@@ -143,8 +143,8 @@ class AlimentacionViewModel extends ChangeNotifier {
     if (nombre.trim().isEmpty || descripcion.trim().isEmpty) {
       return 'Nombre y descripción no pueden estar vacíos.';
     }
-    if (nombre.length > 25) {
-      return 'El nombre no puede tener más de 25 caracteres.';
+    if (nombre.length > 20) {
+      return 'El nombre no puede tener más de 20 caracteres.';
     }
     if (descripcion.length > 200) {
       return 'La descripción no puede tener más de 200 caracteres.';

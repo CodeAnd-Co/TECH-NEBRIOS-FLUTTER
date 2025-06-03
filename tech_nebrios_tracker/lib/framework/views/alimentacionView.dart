@@ -360,6 +360,13 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
                               if (resultado == null) {
                                 Navigator.of(dialogContext).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('✅ Alimento registrado exitosamente'),
+                                    backgroundColor: Colors.green,
+                                    duration: Duration(seconds: 3),
+                                  ),
+                                );
                                 await vmAlimentacion.cargarAlimentos();
                               } else {
                               ScaffoldMessenger.of(dialogContext).showSnackBar(

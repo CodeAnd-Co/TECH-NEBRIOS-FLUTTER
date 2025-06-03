@@ -49,7 +49,7 @@ class CharolaRepository {
         throw Exception('Error HTTP ${respuesta.statusCode}');
       }
     } on SocketException catch (_) {
-      throw Exception('❌ Error de conexión. Verifique su red.');
+      throw ('💥 Error de conexión');
     } catch (e) {
       _logger.e("Error al conectarse al backend (paginado): $e");
       rethrow;
@@ -99,7 +99,7 @@ class CharolaRepository {
         throw Exception('Error al obtener la charola');
       }
     } on SocketException {
-      throw Exception('❌ Error de conexión. Verifique su red.');
+      throw ('💥 Error de conexión');
     } catch (e) {
       _logger.e('Error al obtener charola: $e');
       return null;
@@ -131,7 +131,7 @@ class CharolaRepository {
       _logger.e('Error HTTP: ${response.statusCode}');
       throw Exception('Error al eliminar la charola');
     } on SocketException {
-      throw Exception('❌ Error de conexión. Verifique su red.');
+      throw ('💥 Error de conexión');
     } catch (e) {
       _logger.e('Error al eliminar charola: $e');
       rethrow;
@@ -167,7 +167,7 @@ class CharolaRepository {
       _logger.e('Error HTTP: ${response.statusCode}');
       throw Exception('Error al registrar la charola');
     } on SocketException {
-      throw Exception('❌ Error de conexión. Verifique su red.');
+      throw ('💥 Error de conexión');
     } catch (e) {
       _logger.e('Error al registrar charola: $e');
       rethrow;

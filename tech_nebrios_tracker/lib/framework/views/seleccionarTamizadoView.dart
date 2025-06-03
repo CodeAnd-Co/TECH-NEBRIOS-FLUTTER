@@ -102,6 +102,21 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
       final vm = Provider.of<CharolaViewModel>(context, listen: false);
       vm.cambiarEstado('activa'); 
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final seleccionVM = Provider.of<TamizadoViewModel>(context, listen: false);
+      seleccionVM.addListener((){
+        if (seleccionVM.hasError && seleccionVM.errorMessage.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(seleccionVM.errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+          seleccionVM.limpiarError();
+        }
+      });
+    });
   }
 
   @override
@@ -286,14 +301,7 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                           )
                                         );
                                       }
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text(seleccionVM.errorMessage),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
+                                    } 
                                   },
                                   icon: Icon(Icons.done, size: iconSize.clamp(20, 30)),
                                   label: Text(

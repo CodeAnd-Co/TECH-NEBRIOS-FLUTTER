@@ -296,7 +296,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       const SizedBox(height: 30),
                       TextField(
                         controller: nombreController,
-                        maxLength: 25,
+                        maxLength: 20,
                         decoration: const InputDecoration(
                           labelText: 'Nombre:',
                           border: OutlineInputBorder(),
@@ -424,7 +424,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       const SizedBox(height: 30),
                       TextField(
                         controller: nombreController,
-                        maxLength: 25,
+                        maxLength: 20,
                         decoration: const InputDecoration(
                           labelText: 'Nombre:',
                           border: OutlineInputBorder(),

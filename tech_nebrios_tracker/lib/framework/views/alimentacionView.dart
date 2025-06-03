@@ -236,10 +236,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       child: Row(
         children: [
           Expanded(child: Text(alimento.nombreAlimento)),
-          IconButton(
-            icon: const Icon(Icons.visibility),
-            onPressed: () => _visualizarDescripcion(alimento),
-          ),
+          ///IconButton(
+            ///icon: const Icon(Icons.visibility),
+            ///onPressed: () => _visualizarDescripcion(alimento),
+          ///),
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () => _onEditarAlimento(alimento),

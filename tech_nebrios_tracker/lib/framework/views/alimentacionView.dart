@@ -237,6 +237,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
         children: [
           Expanded(child: Text(alimento.nombreAlimento)),
           IconButton(
+            icon: const Icon(Icons.visibility),
+            onPressed: () => _visualizarDescripcion(alimento),
+          ),
+          IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () => _onEditarAlimento(alimento),
           ),
@@ -514,6 +518,74 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       }
     );
   }
+
+  /// Muestra un diálogo para visualizar [alimento].
+  void _visualizarDescripcion(Alimento alimento) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Center(
+            child: Text(
+              'Alimento',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Divider(height: 1),
+                const SizedBox(height: 30),
+                TextField(
+                  controller: TextEditingController(text: alimento.nombreAlimento),
+                  readOnly: true,
+                  maxLength: 20,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: TextEditingController(text: alimento.descripcionAlimento),
+                  readOnly: true,
+                  maxLength: 200,
+                  decoration: const InputDecoration(
+                    labelText: 'Descripción',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                ),
+              ],
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  minimumSize: const Size(150, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text(
+                  'Cerrar',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   /// Muestra un diálogo de confirmación para eliminar [alimento].
   /// Si se confirma, llama a [vm.eliminarAlimento].

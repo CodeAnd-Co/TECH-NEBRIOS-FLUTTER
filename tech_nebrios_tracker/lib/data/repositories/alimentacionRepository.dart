@@ -119,7 +119,7 @@ class AlimentacionRepository extends AlimentacionService {
   ///
   /// @throws [Exception] si ocurre un error en la solicitud o respuesta.
   @override
-  Future<void> postDatosComida(String nombre, String descripcion) async {
+  Future<void> postDatosAlimento(String nombre, String descripcion) async {
     final uri = Uri.parse('${APIRutas.ALIMENTACION}/agregar');
     final token = await _userUseCases.obtenerTokenActual();
     if (token == null) {

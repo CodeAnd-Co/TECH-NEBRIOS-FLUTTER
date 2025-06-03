@@ -1,9 +1,8 @@
+//RF5 Registrar charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
-import '../../data/models/alimentacionModel.dart';
-import '../../data/models/hidratacionModel.dart';
 import '../views/components/header.dart';
 import '../../data/models/charolaModel.dart' as modelo;
 

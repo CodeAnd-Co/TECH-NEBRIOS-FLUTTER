@@ -273,9 +273,13 @@ Widget build(BuildContext context) {
                                       "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
                                   nombreCharola: charola.nombreCharola,
                                   color: obtenerColorPorNombre(charola.nombreCharola),
-                                  onTap: () async { 
-                                    await context.read<CharolaViewModel>().cargarCharola(charola.charolaId);
-                                    onVerDetalle(charola.charolaId);
+                                  onTap: () async {
+                                    final vmCharola = context.read<CharolaViewModel>();
+                                    await vmCharola.cargarCharola(charola.charolaId);
+
+                                    if (vmCharola.charola != null) {
+                                      onVerDetalle(charola.charolaId);
+                                    }
                                   },
                                 ),
                               );

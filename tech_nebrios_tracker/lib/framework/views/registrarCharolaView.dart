@@ -120,7 +120,7 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                             isDense: true,
                             contentPadding: EdgeInsets.symmetric(
                               horizontal: 12,
-                              vertical: 12,
+                              vertical: 16,
                             ),
                           ),
                           items:
@@ -184,7 +184,7 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
                             isDense: true,
                             contentPadding: EdgeInsets.symmetric(
                               horizontal: 12,
-                              vertical: 12,
+                              vertical: 16,
                             ),
                           ),
                           items:

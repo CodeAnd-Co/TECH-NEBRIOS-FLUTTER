@@ -1,5 +1,7 @@
-//RF03: Consultar historial de ancestros de una charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF3
+// RF03: Consultar historial de ancestros de una charola
+// https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF3
 
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../../data/models/historialCharolaModel.dart';
 import '../../data/repositories/historialCharolaRepository.dart';
@@ -9,7 +11,7 @@ class HistorialCharolaViewModel extends ChangeNotifier {
   late final HistorialActividadUseCasesImp Historial;
   final HistorialCharolaRepository _repo = HistorialCharolaRepository();
 
-  HistorialCharolaViewModel(){
+  HistorialCharolaViewModel() {
     Historial = HistorialActividadUseCasesImp(repositorio: _repo);
   }
 
@@ -23,16 +25,25 @@ class HistorialCharolaViewModel extends ChangeNotifier {
       List.unmodifiable(_historialAncestros);
 
   Future<void> obtenerAncestros(int charolaId) async {
-  try {
-    final result = await _repo.obtenerAncestros(charolaId);
-    _historialAncestros = result;
+    _setLoading(true);
     _error = null;
-  } catch (e) {
-    _historialAncestros = [];
-    _error = 'No pude cargar ancestros';
-  }
-}
+    notifyListeners();
 
+    try {
+      final result = await _repo.obtenerAncestros(charolaId);
+      _historialAncestros = result;
+    } on SocketException {
+      // Error de conexión a internet
+      _historialAncestros = [];
+      _error = 'El servidor no responde. Por favor, inténtalo más tarde.';
+    } catch (e) {
+      // Cualquier otro error
+      _historialAncestros = [];
+      _error = 'No pude cargar ancestros: ${e.toString()}';
+    } finally {
+      _setLoading(false);
+    }
+  }
 
   void _setLoading(bool value) {
     _isLoading = value;

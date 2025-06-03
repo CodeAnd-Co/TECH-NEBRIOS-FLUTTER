@@ -87,6 +87,21 @@ void mostrarPopUpEditarCharola({
                           children: [
                             const Divider(height: 1),
                             const SizedBox(height: 30),
+
+                            if (editarViewModel.estadoController.text == "pasada") ...[
+                              Center(
+                                child: _buildDropdownFormField(
+                                  label: "Estado",
+                                  items: ["activa", "pasada"],
+                                  value: editarViewModel.estadoController.text,
+                                  onChanged: (value) {
+                                    editarViewModel.estadoController.text = value!;
+                                  },
+                                  validator: (v) => v == null ? 'Selecciona un estado' : null,
+                                ),
+                              ),
+                            ] else ...[
+
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -224,8 +239,7 @@ void mostrarPopUpEditarCharola({
                                     _buildDropdownFormField(
                                       label: "Estado",
                                       items: ["activa", "pasada"],
-                                      value:
-                                          editarViewModel.estadoController.text,
+                                      value: editarViewModel.estadoController.text,
                                       onChanged: (value) {
                                         editarViewModel.estadoController.text =
                                             value!;
@@ -303,6 +317,8 @@ void mostrarPopUpEditarCharola({
                                 ),
                               ],
                             ),
+                            
+                            ],
                           ],
                         ),
                       ),
@@ -347,7 +363,7 @@ void mostrarPopUpEditarCharola({
                                       ),
                                     ),
                                     child: const Text(
-                                      'Editar información',
+                                      'Editar',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20,
@@ -361,6 +377,7 @@ void mostrarPopUpEditarCharola({
                                         vm.resetForm();
                                         Navigator.of(dialogContext).pop();
                                         vm.cargarCharola(charolaId);
+                                        vm.cargarCharolas();
 
                                         ScaffoldMessenger.of(
                                           context,

@@ -25,11 +25,9 @@ class TamizadoViewModel extends ChangeNotifier {
 
   List<Alimento> alimentos = [];
   Alimento? seleccionAlimentacion;
-  bool _alimentosCargados = false;
 
   List<Hidratacion> hidratacion = [];
   Hidratacion? seleccionHidratacion;
-  bool _hidratacionCargados = false;
 
   /// Se definen controladores para el texto
   final frasController = TextEditingController();
@@ -151,10 +149,8 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   Future<void> cargarAlimentos() async {
-    if (_alimentosCargados) return; // Evita cargar los datos más de una vez
     try {
       alimentos = await _alimentoRepo.obtenerAlimentos();
-      _alimentosCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
       _logger.e('Error al cargar los alimentos: $e');
@@ -162,10 +158,8 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   Future<void> cargarHidratacion() async {
-    if (_hidratacionCargados) return; // Evita cargar los datos más de una vez
     try {
       hidratacion = await _hidratacionRepo.obtenerHidratacion();
-      _hidratacionCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
       _logger.e('Error al cargar la hidratación: $e');
@@ -220,6 +214,12 @@ class TamizadoViewModel extends ChangeNotifier {
     charolasParaTamizar.clear();
     nombresCharolas.clear();
     _hasError = false;
+    notifyListeners();
+  }
+
+  void limpiarError() {
+    _hasError = false;
+    _errorMessage = '';
     notifyListeners();
   }
 }

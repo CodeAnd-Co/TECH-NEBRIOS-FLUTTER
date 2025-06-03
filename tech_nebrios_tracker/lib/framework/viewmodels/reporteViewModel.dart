@@ -63,7 +63,7 @@ class ReporteViewModel extends ChangeNotifier{
         _estadoDescarga ='Aún no existen datos de charolas que descargar.';
         _error = true;
       } else if (codigo == 500) {
-        _estadoDescarga ='❌ Ha ocurrido un error al descargar el archivo.';
+        _estadoDescarga ='❌ Ha ocurrido un error al descargar el archivo. No se puede descargar en iPad.';
         _error = true;
       }
       notifyListeners();

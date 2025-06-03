@@ -1,4 +1,5 @@
-//RF03: Consultar historial de ancestros de una charola - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF3
+// RF03: Consultar historial de ancestros de una charola
+// https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF3
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,15 +10,21 @@ import '../../data/models/historialCharolaModel.dart';
 void mostrarPopUpHistorialAncestros({
   required BuildContext context,
   required int charolaId,
-}){
-  final vistaModelo = Provider.of<HistorialCharolaViewModel>(context, listen: false);
+}) {
+  final vistaModelo =
+      Provider.of<HistorialCharolaViewModel>(context, listen: false);
+
+  // Llamamos obtenerAncestros _antes_ de construir el FutureBuilder,
+  // para que no dispare notifyListeners() durante el build.
+  final futureAncestros = vistaModelo.obtenerAncestros(charolaId);
 
   showDialog(
-    context: context, 
-    builder: (dialogContext){
-      return FutureBuilder(
-        future: vistaModelo.obtenerAncestros(charolaId), 
+    context: context,
+    builder: (dialogContext) {
+      return FutureBuilder<void>(
+        future: futureAncestros,
         builder: (context, snapshot) {
+          // Mientras carga la petición
           if (snapshot.connectionState != ConnectionState.done) {
             return const AlertDialog(
               content: SizedBox(
@@ -26,16 +33,93 @@ void mostrarPopUpHistorialAncestros({
               ),
             );
           }
-          
-          final data = vistaModelo.historialAncestros.first;
-          final hasAncestros = data.ancestros.isEmpty;
+
+          // Si hubo un error en el ViewModel (conexión o backend)
+          final errorMsg = vistaModelo.error;
+          if (errorMsg != null) {
+            return AlertDialog(
+              title: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Center(
+                    child: Text(
+                      'Historial de Ancestros',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ],
+              ),
+              content: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  errorMsg,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Si no hubo error, obtenemos la lista
+          final lista = vistaModelo.historialAncestros;
+          // Si la lista está vacía, indicamos que no hay ancestros
+          if (lista.isEmpty) {
+            return AlertDialog(
+              title: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Center(
+                    child: Text(
+                      'Historial de Ancestros',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ],
+              ),
+              content: const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  'La charola no tiene ancestros',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Finalmente, mostramos la tabla con el primer elemento (único historial)
+          final data = lista.first;
 
           return AlertDialog(
             title: Stack(
               alignment: Alignment.center,
-              children: [ 
+              children: [
                 const Center(
-                child: Text(
+                  child: Text(
                     'Historial de Ancestros',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontWeight: FontWeight.bold),
@@ -48,39 +132,25 @@ void mostrarPopUpHistorialAncestros({
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
-              ]
+              ],
             ),
             content: SingleChildScrollView(
               child: SizedBox(
-              width: 500,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Divider(height: 1),
-                  if (hasAncestros)
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        'La charola no tiene ancestros',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    )
-                  else
+                width: 500,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Divider(height: 1),
                     _HistorialAncestrosTable(data: data),
-                ],
+                  ],
+                ),
               ),
             ),
-          )
           );
         },
       );
-    }
+    },
   );
 }
 

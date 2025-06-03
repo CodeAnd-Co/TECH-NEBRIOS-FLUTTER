@@ -104,6 +104,16 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
   final List<modelo.CharolaRegistro> nuevasCharolas = [];
   final formKey2 = GlobalKey<FormState>();
 
+  late TamizadoViewModel viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = Provider.of<TamizadoViewModel>(context, listen: false);
+    viewModel.cargarAlimentos();
+    viewModel.cargarHidratacion();
+  }
+
   @override
   Widget build(BuildContext context) {
     final charolaVM = Provider.of<CharolaViewModel>(context);

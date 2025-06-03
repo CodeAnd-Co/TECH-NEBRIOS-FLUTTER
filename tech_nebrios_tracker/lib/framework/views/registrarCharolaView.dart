@@ -32,6 +32,11 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
   Widget build(BuildContext context) {
     final vm = Provider.of<CharolaViewModel>(context);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      vm.cargarAlimentos();
+      vm.cargarHidratacion();
+    });
+
     return WillPopScope(
       onWillPop: () async {
         vm.resetForm();

@@ -165,10 +165,21 @@ class CharolaViewModel extends ChangeNotifier {
       _charola = await _obtenerUseCase.obtenerCharola(id);
     } catch (e) {
       _logger.e('Error cargando detalle: $e');
+
+      final msg = e.toString().contains('401')
+          ? '🚫 Error 401: No autorizado'
+          : e.toString().contains('101')
+              ? '🌐 Error 101: Sin conexión a internet'
+              : '💥 Error de conexión';
+
+      mostrarErrorSnackBar(msg);
       _charola = null;
+    } finally {
+      _cargandoCharola = false;
+      notifyListeners();
     }
-    _cargandoCharola = false; notifyListeners();
   }
+
 
   /// Elimina una charola por ID
   bool _error = false;
@@ -233,7 +244,7 @@ class CharolaViewModel extends ChangeNotifier {
           ? '🚫 Error 401: No autorizado'
           : e.toString().contains('101')
               ? '🌐 Error 101: Sin conexión a internet'
-              : '💥 Error 500: El servidor no respondió correctamente';
+              : '💥 Error de conexión';
 
       _logger.e(_mensajeError);
       mostrarErrorSnackBar(msg);

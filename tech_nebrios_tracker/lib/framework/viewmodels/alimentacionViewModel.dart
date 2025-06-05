@@ -12,9 +12,6 @@ enum EstadoViewModel { inicial, cargando, exito, error }
 
 class AlimentacionViewModel extends ChangeNotifier {
   final AlimentacionRepository _repo;
-  final EditarAlimentoCasoUso _editarCasoUso;
-  final EliminarAlimentoCasoUso _eliminarCasoUso;
-  final RegistrarAlimentoCasoUso _registrarCasoUso;
   final AlimentarCharolaUseCase _alimentarCasoUso;
 
   final formKey = GlobalKey<FormState>();
@@ -39,9 +36,6 @@ class AlimentacionViewModel extends ChangeNotifier {
     RegistrarAlimentoCasoUso? registrarCasoUso,
     AlimentarCharolaUseCase? alimentarCasoUso,
   })  : _repo = repo ?? AlimentacionRepository(),
-        _editarCasoUso = editarCasoUso ?? EditarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository()),
-        _registrarCasoUso = registrarCasoUso ?? RegistrarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository()),
-        _eliminarCasoUso = eliminarCasoUso ?? EliminarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository()),
         _alimentarCasoUso = alimentarCasoUso ?? AlimentarCharolaUseCase(repositorio: repo ?? AlimentacionRepository());
 
   bool get isLoading => _isLoading;

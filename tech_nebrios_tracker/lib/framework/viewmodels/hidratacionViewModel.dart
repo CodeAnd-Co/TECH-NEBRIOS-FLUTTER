@@ -1,10 +1,13 @@
 // RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
 
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
+import 'package:flutter/material.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/hidratacionRepository.dart';
 import '../../domain/eliminarHidratacionUseCase.dart';
 
+enum EstadoViewModel { inicial, cargando, exito, error }
 /// ViewModel que controla el estado y la lógica de la pantalla
 /// de alimentación (lista, edición, registro y scroll infinito).
 ///
@@ -21,6 +24,11 @@ class HidratacionViewModel extends ChangeNotifier {
 
   /// Subconjunto actual que se muestra en pantalla.
   final List<Hidratacion> _pagedHidratacion = [];
+
+   /// Logger instance for logging
+  final Logger _logger = Logger();
+  EstadoViewModel _estado = EstadoViewModel.inicial;
+  EstadoViewModel get estado => _estado;
 
   /// Índice hasta donde ya se ha cargado.
   int _currentIndex = 0;
@@ -72,16 +80,33 @@ class HidratacionViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> eliminarHidratacion(int idHidratacion) async {
+  Future<String?> eliminarHidratacion(int idHidratacion) async {
     _setLoading(true);
+    _estado = EstadoViewModel.cargando;
+    notifyListeners();
+
     try {
-      await _eliminarCasoUso.eliminar(idHidratacion: idHidratacion);
+      await _repo.eliminarHidratacion(idHidratacion);
+      _estado = EstadoViewModel.exito;
       await cargarHidratacion();
-    } on Exception catch (e) {
-      final msg = e.toString();
-      if (msg.contains('500')) throw Exception('❌ Error del servidor.');
-      throw Exception('❌ Error desconocido. $e');
+      return null;
+    } catch (e) {
+      final msg = e.toString().contains('401')
+          ? '🚫 401: No autorizado'
+          : e.toString().contains('101')
+          ? '🌐 101: Problemas de red'
+          : e.toString().contains('400')
+          ? '❌ 400: Datos no válidos'
+          : e.toString().contains('409')
+          ? '❌ No se puede eliminar el alimento porque está asignado a una charola'
+          : '💥 Error de conexión';
+
+      _logger.e(msg);
+      _estado = EstadoViewModel.error;
+
+      return msg;
     } finally {
+      notifyListeners();
       _setLoading(false);
     }
   }

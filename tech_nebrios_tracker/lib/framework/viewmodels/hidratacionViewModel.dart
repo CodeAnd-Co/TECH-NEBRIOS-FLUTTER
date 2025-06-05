@@ -156,7 +156,7 @@ class HidratacionViewModel extends ChangeNotifier {
           : e.toString().contains('400')
           ? '❌ 400: Datos no válidos'
           : e.toString().contains('409')
-          ? '❌ No se puede eliminar el alimento porque está asignado a una charola'
+          ? '❌ No se puede eliminar la hidratación porque está asignado a una charola'
           : '💥 Error de conexión';
 
       _logger.e(msg);

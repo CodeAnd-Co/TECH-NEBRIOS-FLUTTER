@@ -18,7 +18,7 @@ abstract class HidratacionService {
   Future<void> eliminarHidratacion(int idHidratacion);
   /// Registra una hidratación en la charola especificada.
   ///
-  /// [hidratarCharola] contiene los datos de la hidratación a registrar.
+  /// [hidratacionCharola] contiene los datos de la hidratación a registrar.
   ///
   /// Returns `Future<bool>` indicando el éxito o fallo del registro.
   Future<bool> registrarHidratacion(HidratacionCharola hidratacionCharola); 

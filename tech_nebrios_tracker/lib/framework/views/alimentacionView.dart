@@ -200,7 +200,6 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           ),
         ),
         // Lista dinámica con scroll infinito
-        // Lista dinámica con scroll infinito
         Expanded(
           child:
               vmHidratacion.listaHidratacion.isEmpty && vmHidratacion.isLoading
@@ -768,11 +767,17 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                   ),
                                 ),
                                 onPressed: () async {
-                                  await vmHidratacion.eliminarHidratacion(idHidratacion);
+                                  final resultado = await vmHidratacion.eliminarHidratacion(idHidratacion);
                                   Navigator.of(dialogContext).pop();
+
                                   ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Hidratación eliminado exitosamente'),
+                                    SnackBar(
+                                      content: Text(
+                                        resultado == null
+                                            ? '✅ Hidratación eliminado exitosamente'
+                                            : resultado,
+                                      ),
+                                      backgroundColor: resultado == null ? Colors.green : Colors.red,
                                     ),
                                   );
                                 },

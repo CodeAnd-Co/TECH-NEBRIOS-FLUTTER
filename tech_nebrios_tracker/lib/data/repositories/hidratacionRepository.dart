@@ -45,7 +45,17 @@ class HidratacionRepository extends HidratacionService {
   @override
   Future<void> eliminarHidratacion(int idHidratacion) async {
     final uri = Uri.parse('${APIRutas.HIDRATACION}/eliminar/$idHidratacion');
-    final response = await http.delete(uri);
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
+    final response = await http.delete(uri,
+    headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
     // Manejo de códigos de error específicos
     if (response.statusCode == 500) {
@@ -76,7 +86,6 @@ class HidratacionRepository extends HidratacionService {
 Future<bool> registrarHidratacion(HidratacionCharola hidratacionCharola) async {
   final uri = Uri.parse('${APIRutas.CHAROLA}/hidratar');
   final token = await _userUseCases.obtenerTokenActual();
-
   if (token == null) {
     throw Exception('Debe iniciar sesión para continuar');
   }
@@ -90,17 +99,11 @@ Future<bool> registrarHidratacion(HidratacionCharola hidratacionCharola) async {
     body: jsonEncode(hidratacionCharola.toJson()),
   );
 
-  if (response.statusCode == 400) {
-    throw Exception('❌ Datos no válidos.');
-  } else if (response.statusCode == 101) {
-    throw Exception('❌ Sin conexión a internet.');
-  } else if (response.statusCode == 500) {
-    throw Exception('❌ Error del servidor.');
-  } else if (response.statusCode != 200 && response.statusCode != 201) {
-    throw Exception('❌ Error desconocido (${response.statusCode}).');
-  }
-
-  return true;
+  if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('Error al registrar alimentación: ${response.body}');
+    }
 }
 
 }

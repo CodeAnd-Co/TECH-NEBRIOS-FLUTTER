@@ -13,12 +13,25 @@ class FrasScreen extends StatefulWidget {
 }
 
 class _FrasScreenState extends State<FrasScreen> {
+  bool _hasLoadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<FrasViewModel>().cargarFras();
-    });
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Solo queremos programar la carga la primera vez o cuando la ruta se vuelva a mostrar,
+    // pero hacerlo después de que termine el build actual.
+    if (!_hasLoadedOnce) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<FrasViewModel>().cargarFras();
+      });
+      _hasLoadedOnce = true;
+    } else {
+      // Si quieres que cada vez que la pantalla reaparezca se recargue de nuevo:
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<FrasViewModel>().cargarFras();
+      });
+    }
   }
 
   @override

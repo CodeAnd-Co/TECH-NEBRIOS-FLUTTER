@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tech_nebrios_tracker/domain/historialActividadUseCase.dart';
+import 'package:zuustento_tracker/domain/historialActividadUseCase.dart';
 import '../../data/repositories/historialActividadRepository.dart';
 //import '../../domain/tablaUseCases.dart';
 

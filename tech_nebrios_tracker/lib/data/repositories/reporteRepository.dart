@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
-import 'package:tech_nebrios_tracker/data/models/constantes.dart';
+import 'package:zuustento_tracker/data/models/constantes.dart';
 import '../services/reporteAPIService.dart';
 import '../../domain/usuarioUseCases.dart';
 

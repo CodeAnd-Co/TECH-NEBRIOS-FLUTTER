@@ -1,4 +1,5 @@
 // RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
+// RF42 Registrar la hidratación de la charola - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF42
 
 import '../models/hidratacionModel.dart';
 
@@ -15,4 +16,10 @@ abstract class HidratacionService {
   ///
   /// [idHidratacion] es el identificador del alimento a eliminar.
   Future<void> eliminarHidratacion(int idHidratacion);
+  /// Registra una hidratación en la charola especificada.
+  ///
+  /// [hidratarCharola] contiene los datos de la hidratación a registrar.
+  ///
+  /// Returns `Future<bool>` indicando el éxito o fallo del registro.
+  Future<bool> registrarHidratacion(HidratacionCharola hidratacionCharola); 
 }

@@ -1,4 +1,5 @@
 // RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
+// RF42 Registrar la hidratación de la charola - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF42
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -53,4 +54,53 @@ class HidratacionRepository extends HidratacionService {
       throw Exception('❌ Error desconocido (${response.statusCode}).');
     }
   }
+/// Registra una hidratación para una charola a través de una solicitud HTTP POST.
+///
+/// Este método toma un objeto [HidratarCharola], lo convierte a JSON y lo envía a la
+/// API configurada mediante un endpoint definido en [APIRutas.CHAROLA]/hidratar.
+///
+/// El token de autenticación se obtiene desde [_userUseCases] y se incluye en los headers
+/// como autorización. La función maneja explícitamente varios códigos de error.
+///
+/// Si el código de estado es 200 o 201, se considera que el registro fue exitoso.
+///
+/// Lanza:
+/// - [Exception] con un mensaje específico en caso de error.
+///
+/// Parámetros:
+/// - [hidratarCharola]: Objeto con los datos de la hidratación a registrar.
+///
+/// Retorna:
+/// - [Future<bool>] que indica si la operación fue exitosa (`true`), o lanza una excepción si falla.
+@override
+Future<bool> registrarHidratacion(HidratacionCharola hidratacionCharola) async {
+  final uri = Uri.parse('${APIRutas.CHAROLA}/hidratar');
+  final token = await _userUseCases.obtenerTokenActual();
+
+  if (token == null) {
+    throw Exception('Debe iniciar sesión para continuar');
+  }
+
+  final response = await http.post(
+    uri,
+    headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(hidratacionCharola.toJson()),
+  );
+
+  if (response.statusCode == 400) {
+    throw Exception('❌ Datos no válidos.');
+  } else if (response.statusCode == 101) {
+    throw Exception('❌ Sin conexión a internet.');
+  } else if (response.statusCode == 500) {
+    throw Exception('❌ Error del servidor.');
+  } else if (response.statusCode != 200 && response.statusCode != 201) {
+    throw Exception('❌ Error desconocido (${response.statusCode}).');
+  }
+
+  return true;
+}
+
 }

@@ -1,4 +1,4 @@
-import 'package:tech_nebrios_tracker/data/services/localStorageService.dart';
+import 'package:zuustento_tracker/data/services/localStorageService.dart';
 
 /// Interfaz del caso de uso
 abstract class CerrarSesionUseCase {

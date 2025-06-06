@@ -1,4 +1,5 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
+// RF6 Buscar charolas por nombre - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF6
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -158,7 +159,7 @@ class VistaCharolas extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 10),
                           // Botón Registrar charola
                           ElevatedButton.icon(
                             onPressed: () {
@@ -205,6 +206,8 @@ class VistaCharolas extends StatelessWidget {
                   onPressed: (index) {
                     final estado = index == 0 ? 'activa' : 'pasada';
                     vm.cambiarEstado(estado);
+                    vm.busquedaController.clear();
+                    vm.filtrarCharolas('');
                   },
                   borderRadius: BorderRadius.circular(10),
                   selectedColor: Colors.white,

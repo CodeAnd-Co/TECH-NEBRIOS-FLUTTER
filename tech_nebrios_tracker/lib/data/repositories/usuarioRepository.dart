@@ -79,13 +79,12 @@ class UserRepository implements LocalStorageService, UserApiService{
       }
 
       if (respuesta.statusCode == 401){
-        return {'codigo': 200, 'mensaje': 'Falta inicio de sesión'};
+        return {'codigo': 200, 'mensaje': '❌ Por favor, vuelva a iniciar sesión. ❌'};
       }
 
-      return {'codigo': 500, 'mensaje': 'Error de servidor'};
+      return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
     } catch (error) {
-      print(error);
-      return {'codigo': 500, 'mensaje': 'Error de servidor'};
+      return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
     }
   }
 }

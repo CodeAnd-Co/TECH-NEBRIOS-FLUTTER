@@ -31,7 +31,19 @@ class _VistaUsuario extends State<VistaUsuario>{
                 titulo: "Usuarios",
                 showDivider: true,
               ),
-            
+              vistaModelo.error ? 
+                Center(
+                  child: Column(
+                    children: [
+                      Text("Ocurrió un error al obtener los datos:", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 10,),
+                      Text(vistaModelo.mensaje, style: TextStyle(fontSize: 20),),
+                      SizedBox(height: 10,),
+                    ],
+                  )
+                  
+                )
+              :
               SingleChildScrollView(//RefreshIndicator(
                 child: Card(
                   elevation: 4,

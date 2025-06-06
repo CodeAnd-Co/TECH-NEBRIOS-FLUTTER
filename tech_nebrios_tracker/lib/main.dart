@@ -42,7 +42,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => EditarCharolaViewModel()),
         ChangeNotifierProvider(create: (_) => AlimentacionViewModel()),
         ChangeNotifierProvider(create: (_) => HidratacionViewModel()),
-        ChangeNotifierProvider(create: (_) => Usuarioviewmodel())
+        ChangeNotifierProvider(create: (_) => UsuarioViewModel())
       ],
       child: const MyApp(),
     ),

@@ -1,5 +1,6 @@
 import 'package:zuustento_tracker/data/repositories/usuarioRepository.dart';
 import 'package:zuustento_tracker/data/models/loginModel.dart';
+import 'package:zuustento_tracker/data/models/usuarioModel.dart';
 
 abstract class UsuarioUseCases {
   Future<String?> obtenerTokenActual();
@@ -10,7 +11,9 @@ abstract class UsuarioUseCases {
 
   Future<LoginRespuesta?> iniciarSesion(String usuario, String contrasena);
 
-  Future<Map<dynamic, dynamic>?> obtenerUsuarios();
+  Future<Map<dynamic, dynamic>> obtenerUsuarios();
+
+  Future<Map<dynamic, dynamic>> registrarUsuario(Usuario nuevoUsuario);
 }
 ///Clase que maneja los casos de uso relacionados con el usuario
 class UsuarioUseCasesImp extends UsuarioUseCases {
@@ -44,4 +47,7 @@ class UsuarioUseCasesImp extends UsuarioUseCases {
     return await _repository.obtenerUsuarios();
   }
   
+  Future<Map<dynamic, dynamic>> registrarUsuario(Usuario nuevoUsuario) async {
+    return await _repository.registrarUsuario(nuevoUsuario);
+  }
 }

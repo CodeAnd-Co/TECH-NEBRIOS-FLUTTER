@@ -1,18 +1,20 @@
 class Usuario {
-  final int usuarioId;
+  final int? usuarioId;
   final String nombre;
   final String apellido_p;
   final String apellido_m;
   final String user;
   final String? tipo_usuario;
+  final String? contrasena;
 
   Usuario({
-    required this.usuarioId,
+    this.usuarioId,
     required this.nombre,
     required this.apellido_m,
     required this.apellido_p,
     required this.user,
-    this.tipo_usuario
+    this.tipo_usuario,
+    this.contrasena
   });
 
   /// Método para construir una instancia de un Json
@@ -27,7 +29,11 @@ class Usuario {
     );
   }
 
-  static List<Usuario> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => Usuario.fromJson(json)).toList();
-  }
+  Map<String, dynamic> toJson()=>{
+    'usuario': user,
+    'contrasena': contrasena,
+    'nombre': nombre,
+    'apellido_m': apellido_m,
+    'apellido_p': apellido_m
+  };
 }

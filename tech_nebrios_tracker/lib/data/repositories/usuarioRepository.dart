@@ -87,4 +87,34 @@ class UserRepository implements LocalStorageService, UserApiService{
       return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
     }
   }
+
+  @override
+  Future<Map<dynamic, dynamic>> registrarUsuario(nuevoUsuario) async{
+    final url = Uri.parse('${APIRutas.USUARIO}/registrarUsuario');
+    final token = await obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+    try{
+      final respuesta = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(nuevoUsuario.toJson())
+      );
+      if (respuesta.statusCode == 200){
+        return {'codigo': 200, 'mensaje': 'Usuario creado exitosamente.'};
+      }
+
+      if(respuesta.statusCode == 401){
+        return {'codigo': 401, 'mensaje': '❌ Por favor, vuelva a iniciar sesión. ❌'};
+      }
+
+      return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
+    } catch (error){
+      return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
+    }
+  }
 }

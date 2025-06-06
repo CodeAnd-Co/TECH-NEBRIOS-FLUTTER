@@ -14,10 +14,12 @@ class ReporteViewModel extends ChangeNotifier{
   String _estadoDescarga = '';
   String _mensajeGet = '';
   bool _error = false;
+  bool _descargando = false;
 
   bool get errorGet => _error;
   String get estadoDescarga => _estadoDescarga;
   String get mensajeGet => _mensajeGet;
+  bool get descargando => _descargando;
 
   Future<void> getDatos() async {
     try{
@@ -45,7 +47,37 @@ class ReporteViewModel extends ChangeNotifier{
     }
   }
 
+  Future<void> getEliminadas() async {
+    try{
+      _estadoDescarga = '';
+      _mensajeGet = '';
+      notifyListeners();
+
+      var respuesta = await tabla.getEliminadas();
+      valoresTabla = respuesta['mensaje'];
+      var codigo = respuesta['codigo'];
+
+      if (codigo == 201) {
+        _mensajeGet = '❌ No hay datos de charolas eliminadas ❌';
+      } else if (codigo == 401) {
+        _mensajeGet = '❌ Por favor, vuelva a iniciar sesión. ❌';
+      } else if (codigo == 403) {
+        _mensajeGet = '❌ No tiene permisos para acceder a esta información. ❌';
+      } else if (codigo == 500) {
+        _mensajeGet = '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌';
+      }
+      notifyListeners();
+    }catch (error) {
+      _mensajeGet = '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌';
+      notifyListeners();
+    }
+  }
+
   Future<void> postDescargarArchivo() async {
+    if (_descargando) return; // Evita múltiples descargas simultáneas
+    _descargando = true;
+    notifyListeners();
+
     try {
       _error = false;
 
@@ -66,10 +98,23 @@ class ReporteViewModel extends ChangeNotifier{
         _estadoDescarga ='❌ Ha ocurrido un error al descargar el archivo. No se puede descargar en iPad.';
         _error = true;
       }
-      notifyListeners();
     } catch (e) {
       _estadoDescarga = '❌ Ha ocurrido un error al descargar el archivo.';
+    } finally {
+      _descargando = false;
       notifyListeners();
+    }
+  }
+
+  String estadoActual = 'Reporte';
+
+  void cambiarEstado(String nuevoEstado) async {
+    estadoActual = nuevoEstado;
+    notifyListeners();
+    if (nuevoEstado == 'Reporte') {
+      await getDatos();
+    } else if (nuevoEstado == 'Eliminadas') {
+      await getEliminadas();
     }
   }
 }

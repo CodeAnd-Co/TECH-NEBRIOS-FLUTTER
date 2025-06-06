@@ -53,6 +53,48 @@ class ReporteRepository extends ReporteAPIService {
     }
   }
 
+  Future<Map<dynamic, dynamic>> getEliminadas() async {
+    // Construir la URL
+    final url = Uri.parse('${APIRutas.REPORTE}/getEliminadas');
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
+    try {
+      // Esperar la respuesta de la llamada al backend
+      final respuesta = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      // Si la respuesta de la llamada salió bien
+      if (respuesta.statusCode == 200) {
+        var decodificacion = jsonDecode(respuesta.body);
+        var informacionCharolas = decodificacion["resultado"];
+
+        return {'codigo': 200, 'mensaje': informacionCharolas};
+      } else if (respuesta.statusCode == 201) {
+        // Si la respuesta no contiene información
+        return {'codigo': 201, 'mensaje': []};
+      } else if (respuesta.statusCode == 401) {
+        // Si el usuario no esta loggueado
+        return {'codigo': 401, 'mensaje': null};
+      } else if (respuesta.statusCode == 403) {
+        // Si el usuario no es un administrador
+        return {'codigo': 403, 'mensaje': null};
+      } else {
+        // Error de servidor
+        return {'codigo': 500, 'mensaje': null};
+      }
+    } catch (error) {
+      return {'codigo': 500, 'mensaje': null};
+    }
+  }
+
   @override
   Future<Map<dynamic, dynamic>> postDescargarArchivo() async {
     // Construir la URL

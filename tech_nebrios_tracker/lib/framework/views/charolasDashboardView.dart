@@ -99,74 +99,67 @@ class VistaCharolas extends StatelessWidget {
 
   const VistaCharolas({super.key, required this.onVerDetalle});
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: const Color(0xFFF5F7FA),
-    body: SafeArea(
-      child: Consumer<CharolaViewModel>(
-        builder: (context, vm, _) {
-          // Mostrar error fuera del ciclo de build
-          if (vm.mensajeError != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(vm.mensajeError!),
-                  backgroundColor: Colors.red,
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-              vm.mostrarErrorSnackBar(""); // limpia después de mostrar
-            });
-          }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      body: SafeArea(
+        child: Consumer<CharolaViewModel>(
+          builder: (context, vm, _) {
+            // Mostrar error fuera del ciclo de build
+            if (vm.mensajeError != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(vm.mensajeError!),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+                vm.mostrarErrorSnackBar(""); // limpia después de mostrar
+              });
+            }
 
-          return Column(
-            children: [
-              const Header(
-                titulo: 'Charolas',
-                showDivider: true,
-                subtitulo: null, // No usas subtítulo en esta pantalla
-              ),
+            return Column(
+              children: [
+                const Header(
+                  titulo: 'Charolas',
+                  showDivider: true,
+                  subtitulo: null, // No usas subtítulo en esta pantalla
+                ),
                 // const SizedBox(height: 4),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final screenWidth = constraints.maxWidth;
-
-                      // Escalado responsivo
                       final fontSize = screenWidth * 0.012;
                       final iconSize = screenWidth * 0.015;
 
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Campo de búsqueda expandido
+                          // Campo de búsqueda
                           Expanded(
-                            child: Visibility(
-                              visible: false,
-                              maintainSize: true,
-                              maintainAnimation: true,
-                              maintainState: true,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'Buscar',
-                                  prefixIcon: const Icon(Icons.search),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
+                            child: TextField(
+                              controller: vm.busquedaController,
+                              onChanged: (value) => vm.filtrarCharolas(value),
+                              decoration: InputDecoration(
+                                hintText: 'Buscar Charola',
+                                prefixIcon: Icon(Icons.search),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
                                 ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 12),
-
-                          // Botón responsivo
+                          // Botón Registrar charola
                           ElevatedButton.icon(
                             onPressed: () {
                               Navigator.push(
@@ -253,7 +246,7 @@ Widget build(BuildContext context) {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: GridView.builder(
-                        itemCount: vm.charolas.length,
+                        itemCount: vm.charolasFiltradas.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 5,
@@ -263,7 +256,7 @@ Widget build(BuildContext context) {
                             ),
                         itemBuilder: (context, index) {
                           final modelo.CharolaTarjeta charola =
-                              vm.charolas[index];
+                              vm.charolasFiltradas[index];
                           return LayoutBuilder(
                             builder: (context, constraints) {
                               return AspectRatio(
@@ -272,10 +265,15 @@ Widget build(BuildContext context) {
                                   fecha:
                                       "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
                                   nombreCharola: charola.nombreCharola,
-                                  color: obtenerColorPorNombre(charola.nombreCharola),
+                                  color: obtenerColorPorNombre(
+                                    charola.nombreCharola,
+                                  ),
                                   onTap: () async {
-                                    final vmCharola = context.read<CharolaViewModel>();
-                                    await vmCharola.cargarCharola(charola.charolaId);
+                                    final vmCharola =
+                                        context.read<CharolaViewModel>();
+                                    await vmCharola.cargarCharola(
+                                      charola.charolaId,
+                                    );
 
                                     if (vmCharola.charola != null) {
                                       onVerDetalle(charola.charolaId);

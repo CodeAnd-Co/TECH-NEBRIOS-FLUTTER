@@ -66,7 +66,6 @@ class CharolaViewModel extends ChangeNotifier {
     }
   }
 
-
   Future<void> cargarAlimentos() async {
     try {
       alimentos = await _alimentoRepo.obtenerAlimentos();
@@ -90,6 +89,13 @@ class CharolaViewModel extends ChangeNotifier {
   final TextEditingController comidaCicloController = TextEditingController();
   final TextEditingController hidratacionCicloController =
       TextEditingController();
+  final TextEditingController busquedaController = TextEditingController();
+  String _busqueda = '';
+  List<CharolaTarjeta> _charolasFiltradas = [];
+  List<CharolaTarjeta> get charolasFiltradas =>
+      _charolasFiltradas.isEmpty && _busqueda.isEmpty
+          ? charolas
+          : _charolasFiltradas;
 
   /// Valida el formulario y registra la charola si es válido.
   /// Si el formulario no es válido, muestra un mensaje de error.
@@ -122,7 +128,7 @@ class CharolaViewModel extends ChangeNotifier {
         ],
       );
       final data = await _registrarUseCase.registrar(charola: registro);
-            final tarjeta = CharolaTarjeta(
+      final tarjeta = CharolaTarjeta(
         charolaId: data['charolaId'] as int,
         nombreCharola: data['nombreCharola'] as String,
         fechaCreacion: DateTime.parse(data['fechaCreacion'] as String),
@@ -130,7 +136,7 @@ class CharolaViewModel extends ChangeNotifier {
       _cargandoRegistro = false;
       notifyListeners();
       return tarjeta;
-      } catch (e) {
+    } catch (e) {
       _cargandoRegistro = false;
       notifyListeners();
       rethrow;
@@ -149,6 +155,22 @@ class CharolaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void filtrarCharolas(String query) {
+    _busqueda = query;
+    if (query.isEmpty) {
+      _charolasFiltradas = [];
+    } else {
+      _charolasFiltradas =
+          charolas
+              .where(
+                (c) =>
+                    c.nombreCharola.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList();
+    }
+    notifyListeners();
+  }
+
   // === DETALLE DE UNA CHAROLA ===
   CharolaDetalle? _charola; // Detalle de la charola actual
   CharolaDetalle? get charola => _charola; // Getter del detalle
@@ -163,12 +185,17 @@ class CharolaViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       _charola = await _obtenerUseCase.obtenerCharola(id);
+      // Al final de cargarCharolas()
+      if (_busqueda.isNotEmpty) {
+        filtrarCharolas(_busqueda);
+      }
     } catch (e) {
       _logger.e('Error cargando detalle: $e');
 
-      final msg = e.toString().contains('401')
-          ? '🚫 Error 401: No autorizado'
-          : e.toString().contains('101')
+      final msg =
+          e.toString().contains('401')
+              ? '🚫 Error 401: No autorizado'
+              : e.toString().contains('101')
               ? '🌐 Error 101: Sin conexión a internet'
               : '💥 Error de conexión';
 
@@ -180,7 +207,6 @@ class CharolaViewModel extends ChangeNotifier {
     }
   }
 
-
   /// Elimina una charola por ID
   bool _error = false;
   bool get error => _error;
@@ -190,9 +216,7 @@ class CharolaViewModel extends ChangeNotifier {
     _cargandoCharola = true;
     notifyListeners();
     try {
-      await _eliminarUseCase.eliminar(
-        id,
-      );
+      await _eliminarUseCase.eliminar(id);
       _charola = null;
       _cargandoCharola = false;
       notifyListeners();
@@ -240,15 +264,15 @@ class CharolaViewModel extends ChangeNotifier {
         _mensajeError = null;
       }
     } catch (e) {
-      final msg = e.toString().contains('401')
-          ? '🚫 Error 401: No autorizado'
-          : e.toString().contains('101')
+      final msg =
+          e.toString().contains('401')
+              ? '🚫 Error 401: No autorizado'
+              : e.toString().contains('101')
               ? '🌐 Error 101: Sin conexión a internet'
               : '💥 Error de conexión';
 
       _logger.e(_mensajeError);
       mostrarErrorSnackBar(msg);
-
     } finally {
       _cargandoLista = false;
       notifyListeners();

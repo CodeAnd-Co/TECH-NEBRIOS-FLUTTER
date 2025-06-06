@@ -8,6 +8,7 @@ import '../viewmodels/tamizarCharolaViewModel.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../views/registrarCharolaView.dart';
 import 'components/header.dart';
+import '../viewmodels/frasViewModel.dart';
 
 /// Widget que representa una tarjeta individual de charola con diseño responsivo.
 class CharolaTarjeta extends StatelessWidget {
@@ -103,6 +104,16 @@ class VistaTamizadoIndividual extends StatefulWidget {
 class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
   final List<modelo.CharolaRegistro> nuevasCharolas = [];
   final formKey2 = GlobalKey<FormState>();
+
+  late TamizadoViewModel viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = Provider.of<TamizadoViewModel>(context, listen: false);
+    viewModel.cargarAlimentos();
+    viewModel.cargarHidratacion();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -215,7 +226,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
                                   PositiveNumberFormatter(),
                                 ],
-                                maxLength: 7,
+                                maxLength: 5,
                                 validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
                               )
                             ),
@@ -243,7 +254,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
                                   PositiveNumberFormatter(),
                                 ],
-                                maxLength: 7,
+                                maxLength: 5,
                                 validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
                               )
                             ),
@@ -263,7 +274,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
                                   PositiveNumberFormatter(),
                                 ],
-                                maxLength: 7,
+                                maxLength: 5,
                                 validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
                               )
                             ),
@@ -291,7 +302,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
                                   PositiveNumberFormatter(),
                                 ],
-                                maxLength: 7,
+                                maxLength: 5,
                                 validator: (v) => v == null || v.isEmpty ? 'Ingresa cantidad' : null,
                               )
                             ),
@@ -357,6 +368,7 @@ class _VistaTamizadoIndividualState extends State<VistaTamizadoIndividual> {
                                     ),
                                   );
                                   charolaVM.cargarCharolas();
+                                  context.read<FrasViewModel>().cargarFras();
                                   widget.onRegresar();
                                 }else{
                                   ScaffoldMessenger.of(context).showSnackBar(

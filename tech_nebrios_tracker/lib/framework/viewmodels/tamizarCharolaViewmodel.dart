@@ -18,18 +18,17 @@ import '../../data/models/tamizadoRespuestaModel.dart';
 class TamizadoViewModel extends ChangeNotifier {
   final Logger _logger = Logger();
   final TamizarCharolaRepository repository = TamizarCharolaRepository();
-  final TamizarCharolaUseCases tamizarCharolaUseCases = TamizarCharolaUseCasesImpl();
+  final TamizarCharolaUseCases tamizarCharolaUseCases =
+      TamizarCharolaUseCasesImpl();
 
   final AlimentacionRepository _alimentoRepo = AlimentacionRepository();
   final HidratacionRepository _hidratacionRepo = HidratacionRepository();
 
   List<Alimento> alimentos = [];
   Alimento? seleccionAlimentacion;
-  bool _alimentosCargados = false;
 
   List<Hidratacion> hidratacion = [];
   Hidratacion? seleccionHidratacion;
-  bool _hidratacionCargados = false;
 
   /// Se definen controladores para el texto
   final frasController = TextEditingController();
@@ -51,7 +50,7 @@ class TamizadoViewModel extends ChangeNotifier {
 
   bool _tamizadoExitoso = false;
   final _mensajeExitoso = 'Tamizado exitoso';
-  
+
   String get errorMessage => _errorMessage;
   bool get hasError => _hasError;
   bool get tamizadoExitoso => _tamizadoExitoso;
@@ -62,14 +61,20 @@ class TamizadoViewModel extends ChangeNotifier {
     cargarHidratacion();
   }
 
-  Future<bool> tamizarCharolaIndividual(List<modelo.CharolaRegistro> charolasNuevas) async {
+  Future<bool> tamizarCharolaIndividual(
+    List<modelo.CharolaRegistro> charolasNuevas,
+  ) async {
     try {
       _tamizadoExitoso = false;
       cargando = true;
       _hasError = false;
       notifyListeners();
 
-      DateTime fecha = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      DateTime fecha = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      );
 
       /// Se construye el objeto de tamizado individual
       TamizadoIndividual tamizadoIndividual = TamizadoIndividual(
@@ -84,7 +89,8 @@ class TamizadoViewModel extends ChangeNotifier {
         fecha: fecha,
       );
 
-      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases.tamizarCharola(tamizadoIndividual);
+      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases
+          .tamizarCharola(tamizadoIndividual);
 
       if (respuesta?.exito == true) {
         _hasError = false;
@@ -95,12 +101,12 @@ class TamizadoViewModel extends ChangeNotifier {
         return true;
       } else {
         _hasError = true;
-        _errorMessage = 'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
+        _errorMessage =
+            'Error al tamizar la charola. Inténtalo de nuevo más tarde.';
         cargando = false;
         notifyListeners();
         return false;
       }
-
     } catch (e) {
       _hasError = true;
       _errorMessage = 'Error de servidor. Inténtalo de nuevo más tarde.';
@@ -110,7 +116,9 @@ class TamizadoViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> tamizarCharolaMultiple(List<modelo.CharolaRegistro> charolasNuevas) async {
+  Future<bool> tamizarCharolaMultiple(
+    List<modelo.CharolaRegistro> charolasNuevas,
+  ) async {
     try {
       _tamizadoExitoso = false;
       cargando = true;
@@ -120,11 +128,11 @@ class TamizadoViewModel extends ChangeNotifier {
       /// Se construye el objeto de tamizado múltiple
       TamizadoMultiple tamizadoMultiple = TamizadoMultiple(
         charolas: charolasNuevas,
-        charolasParaTamizar: charolasParaTamizar
+        charolasParaTamizar: charolasParaTamizar,
       );
 
-      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases.tamizarCharolasMultiples(tamizadoMultiple);
-
+      TamizadoRespuesta? respuesta = await tamizarCharolaUseCases
+          .tamizarCharolasMultiples(tamizadoMultiple);
 
       if (respuesta?.exito == true) {
         _hasError = false;
@@ -135,12 +143,12 @@ class TamizadoViewModel extends ChangeNotifier {
         return true;
       } else {
         _hasError = true;
-        _errorMessage = 'Error al tamizar las charolas. Inténtalo de nuevo más tarde.';
+        _errorMessage =
+            'Error al tamizar las charolas. Inténtalo de nuevo más tarde.';
         cargando = false;
         notifyListeners();
         return false;
       }
-
     } catch (e) {
       _hasError = true;
       _errorMessage = 'Error de servidor. Inténtalo de nuevo más tarde.';
@@ -151,10 +159,8 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   Future<void> cargarAlimentos() async {
-    if (_alimentosCargados) return; // Evita cargar los datos más de una vez
     try {
       alimentos = await _alimentoRepo.obtenerAlimentos();
-      _alimentosCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
       _logger.e('Error al cargar los alimentos: $e');
@@ -162,10 +168,8 @@ class TamizadoViewModel extends ChangeNotifier {
   }
 
   Future<void> cargarHidratacion() async {
-    if (_hidratacionCargados) return; // Evita cargar los datos más de una vez
     try {
       hidratacion = await _hidratacionRepo.obtenerHidratacion();
-      _hidratacionCargados = true; // Marca los datos como cargados
       notifyListeners(); // Notifica a la vista que los datos han cambiado
     } catch (e) {
       _logger.e('Error al cargar la hidratación: $e');
@@ -175,19 +179,18 @@ class TamizadoViewModel extends ChangeNotifier {
   bool siguienteInterfaz(BuildContext context) {
     _hasError = false;
     _tamizadoExitoso = false;
-    if(charolasParaTamizar.isEmpty) {
+    if (charolasParaTamizar.isEmpty) {
       _hasError = true;
       _errorMessage = 'No hay charolas seleccionadas para tamizar.';
       notifyListeners();
       return false;
-    } 
+    }
     return true;
-    
   }
 
   void agregarCharola(modelo.CharolaTarjeta charola) {
     _tamizadoExitoso = false;
-    if(charolasParaTamizar.contains(charola)) {
+    if (charolasParaTamizar.contains(charola)) {
       _hasError = true;
       _errorMessage = 'La charola ya está seleccionada.';
       notifyListeners();
@@ -196,8 +199,7 @@ class TamizadoViewModel extends ChangeNotifier {
     if (charolasParaTamizar.length < 5) {
       charolasParaTamizar.add(charola);
       notifyListeners();
-    }
-    else {
+    } else {
       _hasError = true;
       _errorMessage = 'No se pueden tamizar más de 5 charolas.';
       notifyListeners();
@@ -222,5 +224,10 @@ class TamizadoViewModel extends ChangeNotifier {
     _hasError = false;
     notifyListeners();
   }
-}
 
+  void limpiarError() {
+    _hasError = false;
+    _errorMessage = '';
+    notifyListeners();
+  }
+}

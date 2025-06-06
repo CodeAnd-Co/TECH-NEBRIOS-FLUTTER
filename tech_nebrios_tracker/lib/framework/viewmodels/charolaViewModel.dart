@@ -50,34 +50,36 @@ class CharolaViewModel extends ChangeNotifier {
   List<Hidratacion> hidrataciones = [];
   Alimento? selectedAlimentacion;
   Hidratacion? selectedHidratacion;
-  bool _cargandoDropdowns = false;
-  bool get cargandoDropdowns => _cargandoDropdowns;
   bool _cargandoRegistro = false;
   bool get cargandoRegistro => _cargandoRegistro;
+  String? _mensajeError;
+  String? get mensajeError => _mensajeError;
+
+  void Function(String mensaje)? onErrorSnackBar;
+
+  /// Asigna un mensaje de error y permite notificar con SnackBar desde la vista
+  void mostrarErrorSnackBar(String mensaje) {
+    _mensajeError = mensaje.isNotEmpty ? mensaje : null;
+    notifyListeners();
+    if (mensaje.isNotEmpty && onErrorSnackBar != null) {
+      onErrorSnackBar!(mensaje);
+    }
+  }
+
 
   Future<void> cargarAlimentos() async {
-    _cargandoDropdowns = true;
-    notifyListeners();
     try {
       alimentos = await _alimentoRepo.obtenerAlimentos();
     } catch (e) {
       _logger.e('Error cargando alimentos');
-    } finally {
-      _cargandoDropdowns = false;
-      notifyListeners();
     }
   }
 
   Future<void> cargarHidratacion() async {
-    _cargandoDropdowns = true;
-    notifyListeners();
     try {
       hidrataciones = await _hidratacionRepo.obtenerHidratacion();
     } catch (e) {
       _logger.e('Error cargando hidrataciones');
-    } finally {
-      _cargandoDropdowns = false;
-      notifyListeners();
     }
   }
 
@@ -163,10 +165,21 @@ class CharolaViewModel extends ChangeNotifier {
       _charola = await _obtenerUseCase.obtenerCharola(id);
     } catch (e) {
       _logger.e('Error cargando detalle: $e');
+
+      final msg = e.toString().contains('401')
+          ? '🚫 Error 401: No autorizado'
+          : e.toString().contains('101')
+              ? '🌐 Error 101: Sin conexión a internet'
+              : '💥 Error de conexión';
+
+      mostrarErrorSnackBar(msg);
       _charola = null;
+    } finally {
+      _cargandoCharola = false;
+      notifyListeners();
     }
-    _cargandoCharola = false; notifyListeners();
   }
+
 
   /// Elimina una charola por ID
   bool _error = false;
@@ -223,16 +236,19 @@ class CharolaViewModel extends ChangeNotifier {
         charolas = dash.data; // Asigna las nuevas charolas
         totalPags = dash.totalPags; // Total de páginas disponibles
         hayMas = pagActual < totalPags; // Verifica si hay más páginas
+
+        _mensajeError = null;
       }
     } catch (e) {
-      // Manejo básico de errores comunes con logs personalizados
-      final msg =
-          e.toString().contains('401')
-              ? '🚫 401: No autorizado'
-              : e.toString().contains('101')
-              ? '🌐 101: Problemas de red'
-              : '💥 Error interno del servidor';
-      _logger.e(msg);
+      final msg = e.toString().contains('401')
+          ? '🚫 Error 401: No autorizado'
+          : e.toString().contains('101')
+              ? '🌐 Error 101: Sin conexión a internet'
+              : '💥 Error de conexión';
+
+      _logger.e(_mensajeError);
+      mostrarErrorSnackBar(msg);
+
     } finally {
       _cargandoLista = false;
       notifyListeners();

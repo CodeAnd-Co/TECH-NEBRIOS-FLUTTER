@@ -12,9 +12,6 @@ enum EstadoViewModel { inicial, cargando, exito, error }
 
 class AlimentacionViewModel extends ChangeNotifier {
   final AlimentacionRepository _repo;
-  final EditarAlimentoCasoUso _editarCasoUso;
-  final EliminarAlimentoCasoUso _eliminarCasoUso;
-  final RegistrarAlimentoCasoUso _registrarCasoUso;
   final AlimentarCharolaUseCase _alimentarCasoUso;
 
   final formKey = GlobalKey<FormState>();
@@ -39,9 +36,6 @@ class AlimentacionViewModel extends ChangeNotifier {
     RegistrarAlimentoCasoUso? registrarCasoUso,
     AlimentarCharolaUseCase? alimentarCasoUso,
   })  : _repo = repo ?? AlimentacionRepository(),
-        _editarCasoUso = editarCasoUso ?? EditarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository()),
-        _registrarCasoUso = registrarCasoUso ?? RegistrarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository()),
-        _eliminarCasoUso = eliminarCasoUso ?? EliminarAlimentoCasoUsoImpl(repositorio: repo ?? AlimentacionRepository()),
         _alimentarCasoUso = alimentarCasoUso ?? AlimentarCharolaUseCase(repositorio: repo ?? AlimentacionRepository());
 
   bool get isLoading => _isLoading;
@@ -90,6 +84,8 @@ class AlimentacionViewModel extends ChangeNotifier {
           ? '🌐 101: Problemas de red'
           : e.toString().contains('400')
           ? '❌ 400: Datos no válidos'
+          : e.toString().contains('409')
+          ? '❌ No se puede eliminar el alimento porque está asignado a una charola'
           : '💥 Error de conexión';
 
       _logger.e(msg);
@@ -141,8 +137,8 @@ class AlimentacionViewModel extends ChangeNotifier {
     if (nombre.trim().isEmpty || descripcion.trim().isEmpty) {
       return 'Nombre y descripción no pueden estar vacíos.';
     }
-    if (nombre.length > 25) {
-      return 'El nombre no puede tener más de 25 caracteres.';
+    if (nombre.length > 20) {
+      return 'El nombre no puede tener más de 20 caracteres.';
     }
     if (descripcion.length > 200) {
       return 'La descripción no puede tener más de 200 caracteres.';

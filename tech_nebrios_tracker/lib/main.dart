@@ -9,6 +9,7 @@ import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewModel.dart';
 import 'framework/viewmodels/tamizarCharolaViewModel.dart';
+import 'framework/viewmodels/frasViewModel.dart';
 import 'framework/viewmodels/editarCharolaViewModel.dart';
 import 'framework/viewmodels/alimentacionViewModel.dart';
 import 'framework/viewmodels/hidratacionViewModel.dart';
@@ -41,6 +42,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => EditarCharolaViewModel()),
         ChangeNotifierProvider(create: (_) => AlimentacionViewModel()),
         ChangeNotifierProvider(create: (_) => HidratacionViewModel()),
+        ChangeNotifierProvider(create: (_) => FrasViewModel()),
+
       ],
       child: const MyApp(),
     ),

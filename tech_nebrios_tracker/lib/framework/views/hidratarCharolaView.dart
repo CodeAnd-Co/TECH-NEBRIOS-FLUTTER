@@ -1,21 +1,21 @@
-// RF26 Registrar la alimentación de la charola - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF26
+// RF42 Registrar la hidratación de la charola - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF42
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/alimentacionViewModel.dart';
+import '../viewmodels/hidratacionViewModel.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 
-void mostrarDialogoAlimentar(
+void mostrarDialogoHidratar(
   BuildContext context,
   int charolaId,
   CharolaViewModel charolaViewModel,
 ) async {
-  final comidaCharolaVM = Provider.of<AlimentacionViewModel>(
+  final comidaCharolaVM = Provider.of<HidratacionViewModel>(
     context,
     listen: false,
   );
 
-  await comidaCharolaVM.cargarAlimentos();
+  await comidaCharolaVM.cargarHidratacion();
 
   int? comidaIdSeleccionada;
   final TextEditingController cantidadController = TextEditingController();
@@ -25,10 +25,10 @@ void mostrarDialogoAlimentar(
     builder: (dialogcontext) {
       return ChangeNotifierProvider.value(
         value: comidaCharolaVM,
-        child: Consumer<AlimentacionViewModel>(
+        child: Consumer<HidratacionViewModel>(
           builder: (context, value, _) {
             final listaIds =
-                comidaCharolaVM.alimentos.map((a) => a.idAlimento).toList();
+                comidaCharolaVM.listaHidratacion.map((a) => a.idHidratacion).toList();
 
             int? valorActual;
             if (comidaIdSeleccionada != null &&
@@ -44,7 +44,7 @@ void mostrarDialogoAlimentar(
                 children: [
                   const Center(
                     child: Text(
-                      'Registrar alimentación',
+                      'Registrar hidratación',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -67,17 +67,17 @@ void mostrarDialogoAlimentar(
                               margin: const EdgeInsets.all(5),
                               child: DropdownButtonFormField<int>(
                                 hint:
-                                    comidaCharolaVM.alimentos.isEmpty
+                                    comidaCharolaVM.listaHidratacion.isEmpty
                                         ? const Text(
-                                          'No hay alimentos disponibles',
+                                          'No hay hidratación disponibles',
                                           style: TextStyle(
                                             color: Colors.red,
                                             fontSize: 14,
                                           ),
                                         )
-                                        : const Text('Selecciona alimento'),
+                                        : const Text('Selecciona hidratación'),
                                 decoration: const InputDecoration(
-                                  labelText: 'Tipo de alimento *',
+                                  labelText: 'Tipo de hidratación *',
                                   border: OutlineInputBorder(),
                                   isDense: true,
                                   contentPadding: EdgeInsets.symmetric(
@@ -86,19 +86,19 @@ void mostrarDialogoAlimentar(
                                   ),
                                 ),
                                 items:
-                                    comidaCharolaVM.alimentos
+                                    comidaCharolaVM.listaHidratacion
                                         .map(
-                                          (alimento) => DropdownMenuItem<int>(
-                                            value: alimento.idAlimento,
+                                          (hidratacion) => DropdownMenuItem<int>(
+                                            value: hidratacion.idHidratacion,
                                             child: Text(
-                                              alimento.nombreAlimento,
+                                              hidratacion.nombreHidratacion,
                                             ),
                                           ),
                                         )
                                         .toList(),
                                 value: valorActual,
                                 onChanged:
-                                    comidaCharolaVM.alimentos.isEmpty
+                                    comidaCharolaVM.listaHidratacion.isEmpty
                                         ? null
                                         : (value) {
                                           comidaIdSeleccionada = value;
@@ -106,7 +106,7 @@ void mostrarDialogoAlimentar(
                                 validator:
                                     (v) =>
                                         v == null
-                                            ? 'Selecciona alimento'
+                                            ? 'Selecciona hidratación'
                                             : null,
                               ),
                             ),
@@ -193,9 +193,9 @@ void mostrarDialogoAlimentar(
                                       cantidadController.text,
                                     );
 
-                                    await comidaCharolaVM.registrarAlimentacion(
+                                    await comidaCharolaVM.registrarHidratacion(
                                       charolaId: charolaId,
-                                      comidaId: comidaIdSeleccionada!,
+                                      hidratacionId: comidaIdSeleccionada!,
                                       cantidadOtorgada: cantidad,
                                       fechaOtorgada:
                                           DateTime.now().toIso8601String(),
@@ -220,7 +220,7 @@ void mostrarDialogoAlimentar(
                                       ).showSnackBar(
                                         const SnackBar(
                                           content: Text(
-                                            'Alimentación registrada con éxito',
+                                            'Hidratación registrada con éxito',
                                           ),
                                           backgroundColor: Colors.green,
                                         ),
@@ -232,7 +232,7 @@ void mostrarDialogoAlimentar(
                                   }
                                 },
                                 child: const Text(
-                                  'Alimentar',
+                                  'Hidratar',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,

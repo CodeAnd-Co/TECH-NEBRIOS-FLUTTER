@@ -87,19 +87,19 @@ class _VistaTablaCharolasState extends State<VistaTablaCharolas> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: const Color(0xFF0571FF),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
-                        vertical: 12,
+                        vertical: 20,
                       ),
                     ),
                     child: const Text(
                       "Descargar Excel",
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 16),
                     ),
                   ),
                 ],

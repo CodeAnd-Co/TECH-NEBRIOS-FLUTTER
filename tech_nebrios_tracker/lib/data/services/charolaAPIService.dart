@@ -3,7 +3,7 @@
 // RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
 // RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
 
-import 'package:tech_nebrios_tracker/data/models/charolaModel.dart';
+import 'package:zuustento_tracker/data/models/charolaModel.dart';
 
 /// Contrato abstracto que define la comunicación con la API para charolas.
 abstract class CharolaAPIService {

@@ -1,5 +1,5 @@
-name: tech_nebrios_tracker
-description: "A new Flutter project."
+name: zuustento_tracker
+description: "Zuustento Tracker."
 publish_to: 'none'
 version: 0.1.0
 
@@ -34,6 +34,18 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  ios: true
+  android: true
+  windows:
+    generate: true
+    image_path: "assets/images/ZuustentoTracker_DesktopAppIcon.png"
+  macos:
+    generate: true
+    image_path: "assets/images/ZuustentoTracker_DesktopAppIcon.png"
+  image_path: "assets/images/ZuustentoTracker_AppIcon.PNG"
 
 flutter:
   assets:

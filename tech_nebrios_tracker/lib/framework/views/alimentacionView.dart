@@ -237,6 +237,10 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
       child: Row(
         children: [
           Expanded(child: Text(alimento.nombreAlimento)),
+          ///IconButton(
+            ///icon: const Icon(Icons.visibility),
+            ///onPressed: () => _visualizarDescripcion(alimento),
+          ///),
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () => _onEditarAlimento(alimento),
@@ -299,9 +303,9 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       const SizedBox(height: 30),
                       TextField(
                         controller: nombreController,
-                        maxLength: 25,
+                        maxLength: 20,
                         decoration: const InputDecoration(
-                          labelText: 'Nombre:',
+                          labelText: 'Nombre',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -310,7 +314,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                         controller: descripcionController,
                         maxLength: 200,
                         decoration: const InputDecoration(
-                          labelText: 'Descripción:',
+                          labelText: 'Descripción',
                           border: OutlineInputBorder(),
                         ),
                         maxLines: null,
@@ -359,11 +363,21 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
                               if (resultado == null) {
                                 Navigator.of(dialogContext).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('✅ Alimento registrado exitosamente'),
+                                    backgroundColor: Colors.green,
+                                    duration: Duration(seconds: 3),
+                                  ),
+                                );
                                 await vmAlimentacion.cargarAlimentos();
                               } else {
-                                ScaffoldMessenger.of(
-                                  dialogContext,
-                                ).showSnackBar(SnackBar(content: Text(resultado)));
+                              ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                SnackBar(
+                                  content: Text(resultado),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -412,7 +426,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                   return AlertDialog(
                     title: const Center(
                       child: Text(
-                        'Nuevo Alimento',
+                        'Editar Alimento',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -424,9 +438,9 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       const SizedBox(height: 30),
                       TextField(
                         controller: nombreController,
-                        maxLength: 25,
+                        maxLength: 20,
                         decoration: const InputDecoration(
-                          labelText: 'Nombre:',
+                          labelText: 'Nombre',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -435,7 +449,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                         controller: descripcionController,
                         maxLength: 200,
                         decoration: const InputDecoration(
-                          labelText: 'Descripción:',
+                          labelText: 'Descripción',
                           border: OutlineInputBorder(),
                         ),
                         maxLines: null,
@@ -487,10 +501,21 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                 );
                                 if (resultado == null) {
                                   Navigator.of(dialogContext).pop();
-                                } else {
-                                  ScaffoldMessenger.of(
-                                    dialogContext,
-                                  ).showSnackBar(SnackBar(content: Text(resultado)));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('✅ Alimento registrado exitosamente'),
+                                      backgroundColor: Colors.green,
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                  await vmAlimentacion.cargarAlimentos();
+                                }else {
+                                ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                  SnackBar(
+                                    content: Text(resultado),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
                                 }
                               },
                               child: const Text(
@@ -632,6 +657,74 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Muestra un diálogo para visualizar [alimento].
+  void _visualizarDescripcion(Alimento alimento) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Center(
+            child: Text(
+              'Alimento',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Divider(height: 1),
+                const SizedBox(height: 30),
+                TextField(
+                  controller: TextEditingController(text: alimento.nombreAlimento),
+                  readOnly: true,
+                  maxLength: 20,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: TextEditingController(text: alimento.descripcionAlimento),
+                  readOnly: true,
+                  maxLength: 200,
+                  decoration: const InputDecoration(
+                    labelText: 'Descripción',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                ),
+              ],
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  minimumSize: const Size(150, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text(
+                  'Cerrar',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   /// Muestra un diálogo de confirmación para eliminar [alimento].
   /// Si se confirma, llama a [vm.eliminarAlimento].
   void _onEliminarAlimento(int idAlimento) {
@@ -696,11 +789,17 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                   ),
                                 ),
                                 onPressed: () async {
-                                  await vmAlimentacion.eliminarAlimento(idAlimento);
+                                  final resultado = await vmAlimentacion.eliminarAlimento(idAlimento);
                                   Navigator.of(dialogContext).pop();
+
                                   ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Alimento eliminado exitosamente'),
+                                    SnackBar(
+                                      content: Text(
+                                        resultado == null
+                                            ? '✅ Alimento eliminado exitosamente'
+                                            : resultado,
+                                      ),
+                                      backgroundColor: resultado == null ? Colors.green : Colors.red,
                                     ),
                                   );
                                 },

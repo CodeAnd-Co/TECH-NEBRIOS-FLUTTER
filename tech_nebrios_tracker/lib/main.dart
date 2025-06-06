@@ -9,9 +9,11 @@ import 'framework/viewmodels/charolaViewModel.dart';
 import 'framework/navigation/app_router.dart';
 import 'framework/viewmodels/loginViewModel.dart';
 import 'framework/viewmodels/tamizarCharolaViewModel.dart';
+import 'framework/viewmodels/frasViewModel.dart';
 import 'framework/viewmodels/editarCharolaViewModel.dart';
 import 'framework/viewmodels/alimentacionViewModel.dart';
 import 'framework/viewmodels/historialCharolaViewModel.dart';
+import 'framework/viewmodels/hidratacionViewModel.dart';
 
 /// Punto de entrada principal para la aplicación Tech Nebrios Tracker.
 ///
@@ -21,8 +23,11 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    setWindowMinSize(const Size(1000, 700)); // Tamaño mínimo deseado
-    // setWindowMaxSize(const Size(1600, 1200)); // (opcional) Tamaño máximo
+    // Tamaño inicial (posición + tamaño)
+    setWindowFrame(const Rect.fromLTWH(100, 100, 1000, 700));
+
+    // Tamaño mínimo permitido
+    setWindowMinSize(const Size(1000, 700));
   }
 
   runApp(
@@ -36,6 +41,9 @@ void main() {
         ChangeNotifierProvider(create: (_) => HistorialActividadViewmodel()),
         ChangeNotifierProvider(create: (_) => EditarCharolaViewModel()),
         ChangeNotifierProvider(create: (_) => AlimentacionViewModel()),
+        ChangeNotifierProvider(create: (_) => HidratacionViewModel()),
+        ChangeNotifierProvider(create: (_) => FrasViewModel()),
+
       ],
       child: const MyApp(),
     ),

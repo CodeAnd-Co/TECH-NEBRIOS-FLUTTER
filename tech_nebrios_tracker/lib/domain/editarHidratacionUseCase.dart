@@ -1,5 +1,5 @@
 //RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
-import 'package:tech_nebrios_tracker/data/models/hidratacionModel.dart';
+import 'package:zuustento_tracker/data/models/hidratacionModel.dart';
 import '../data/repositories/hidratacionRepository.dart';
 
 /// Interfaz de caso de uso para editar hidratacion.

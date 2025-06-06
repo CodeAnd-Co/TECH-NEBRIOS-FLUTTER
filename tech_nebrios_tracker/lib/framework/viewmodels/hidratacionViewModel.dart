@@ -1,10 +1,12 @@
-/// RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
+// RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
+// RF42 Registrar la hidratación de la charola - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF42
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/hidratacionRepository.dart';
 import '../../domain/editarHidratacionUseCase.dart';
-
+import '../../domain/hidratarCharolaUseCase.dart';
 
 /// ViewModel que controla el estado y la lógica de la pantalla
 /// de alimentación (lista, edición, registro y scroll infinito).
@@ -13,9 +15,9 @@ import '../../domain/editarHidratacionUseCase.dart';
 class HidratacionViewModel extends ChangeNotifier {
   final HidratacionRepository _repo;
   final EditarHidratacionCasoUso _editarCasoUso;
+  final HidratarCharolaUseCase _hidratarCasoUso;
 
   final formKey = GlobalKey<FormState>();
-
 
   /// Tamaño de cada “chunk” que se mostrará por scroll.
   static const int _chunkSize = 20;
@@ -35,8 +37,10 @@ class HidratacionViewModel extends ChangeNotifier {
   HidratacionViewModel({
     HidratacionRepository? repo,
     EditarHidratacionCasoUso? editarCasoUso,
+    HidratarCharolaUseCase? hidratarCasoUso,
   })  : _repo = repo ?? HidratacionRepository(),
-        _editarCasoUso = editarCasoUso ?? EditarHidratacionCasoUsoImpl(repositorio: repo ?? HidratacionRepository());
+        _editarCasoUso = editarCasoUso ?? EditarHidratacionCasoUsoImpl(repositorio: repo ?? HidratacionRepository()),
+        _hidratarCasoUso = hidratarCasoUso ?? HidratarCharolaUseCase(repositorio: repo ?? HidratacionRepository());        
 
   /// Indica si actualmente se está cargando más datos.
   bool get isLoading => _isLoading;
@@ -47,7 +51,7 @@ class HidratacionViewModel extends ChangeNotifier {
   /// Lista inmutable que la UI puede leer.
   List<Hidratacion> get listaHidratacion => List.unmodifiable(_pagedHidratacion);
 
-  /// True si quedan más ítems en [_allAlimentos] que no se han mostrado.
+  /// True si quedan más ítems en [_allHidratacion] que no se han mostrado.
   bool get hasMore => _currentIndex < _allHidratacion.length;
 
   /// Descarga toda la lista y carga el primer chunk.
@@ -76,6 +80,56 @@ class HidratacionViewModel extends ChangeNotifier {
     });
   }
 
+  /// Registra una nueva hidratación para una charola mediante el caso de uso asociado.
+  ///
+  /// Este método construye un objeto [HidratarCharola] con los parámetros proporcionados
+  /// y llama al caso de uso para realizar el registro en el backend. Durante el proceso:
+  ///
+  /// - Se activa un estado de carga mediante `_setLoading(true)`.
+  /// - Se limpian errores previos.
+  /// - Se capturan errores específicos según el código de estado retornado por la API.
+  /// - Se desactiva el estado de carga al finalizar.
+  ///
+  /// Si ocurre un error durante la operación, el atributo [_error] será actualizado
+  /// con un mensaje adecuado que puede ser mostrado en la interfaz.
+  ///
+  Future<void> registrarHidratacion({
+    required int charolaId,
+    required int hidratacionId,
+    required int cantidadOtorgada,
+    required String fechaOtorgada,
+  }) async {
+    _setLoading(true);
+    _error = null;
+
+    try {
+      final hidratarCharola = HidratarCharola(
+        charolaId: charolaId,
+        hidratacionId: hidratacionId,
+        cantidadOtorgada: cantidadOtorgada,
+        fechaOtorgada: fechaOtorgada,
+      );
+
+      await _hidratarCasoUso(hidratarCharola);
+
+    } on Exception catch (e) {
+      final mensaje = e.toString();
+
+      if (mensaje.contains('400')) {
+        _error = '❌ Datos inválidos. Revisa la información ingresada.';
+      } else if (mensaje.contains('101')) {
+        _error = '❌ Sin conexión a internet.';
+      } else if (mensaje.contains('500')) {
+        _error = '❌ Error del servidor. Intenta más tarde.';
+      } else {
+        _error = '❌ Ocurrió un error: ${mensaje.replaceAll('Exception: ', '')}';
+      }
+
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   Future<String?> editarHidratacion(Hidratacion hidratacion) async {
     if (hidratacion.nombreHidratacion.trim().isEmpty || hidratacion.descripcionHidratacion.trim().isEmpty) {
       return 'Nombre y descripción no pueden estar vacíos.';
@@ -94,11 +148,9 @@ class HidratacionViewModel extends ChangeNotifier {
       if (msg.contains('400')) return '❌ Datos no válidos.';
       if (msg.contains('500')) return '❌ Error del servidor.';
       return '❌ Error desconocido.';
-    } finally {
-      _setLoading(false);
     }
   }
-
+  
   /// Toma el siguiente rango de [_chunkSize] ítems y los añade.
   void _agregarSiguienteChunk() {
     final nextIndex = (_currentIndex + _chunkSize).clamp(

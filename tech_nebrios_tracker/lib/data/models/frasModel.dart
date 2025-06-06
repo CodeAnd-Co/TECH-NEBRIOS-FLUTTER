@@ -1,35 +1,46 @@
+// RF29: Visualizar la información del Frass obtenido - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF29
+
 //  Modelo que representa un fras en la aplicación.
 // 
 //  Corresponde al JSON devuelto por la API:
-//  {
-//    "frasId": "1"
-//    "gramosGenerados" :	"500"
-//    "charolaId"	: "2"
-// }
+// [
+//     {
+//         "CHAROLA": {
+//             "nombreCharola": "Charola_A"
+//         },
+//         "FRAS": {
+//             "fechaRegistro": "2025-06-04T00:00:00.000Z",
+//             "gramosGenerados": 12
+//         }
+//     },
+//     {
+//         "CHAROLA": {
+//             "nombreCharola": "Charola_B"
+//         },
+//         "FRAS": {
+//             "fechaRegistro": "2025-06-05T00:00:00.000Z",
+//             "gramosGenerados": 1
+//         }
+//     },
+// ]
 
 
 class Fras {
-  /// Identificador único del fras.
-  final int idFras;
-
-  /// Gramos generados por el fras.
-  final int gramosGenerados;
-
-  /// Identificador de la charola asociada al fras.
-  final int idCharola;
+  final String nombreCharola;
+  final DateTime fechaRegistro;
+  final double gramosGenerados;
 
   Fras({
-    required this.idFras,
+    required this.nombreCharola,
+    required this.fechaRegistro,
     required this.gramosGenerados,
-    required this.idCharola,
   });
 
-  /// Crea una instancia de [Fras] a partir de un [json] Map.
   factory Fras.fromJson(Map<String, dynamic> json) {
     return Fras(
-      idFras: json['frasId'] as int,
-      gramosGenerados: json['gramosGenerados'] as int,
-      idCharola: json['charolaId'] as int,
+      nombreCharola: json['CHAROLA']['nombreCharola'],
+      fechaRegistro: DateTime.parse(json['FRAS']['fechaRegistro']),
+      gramosGenerados: json['FRAS']['gramosGenerados'].toDouble(),
     );
   }
 }

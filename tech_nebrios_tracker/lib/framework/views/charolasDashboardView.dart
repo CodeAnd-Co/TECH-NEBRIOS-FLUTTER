@@ -106,6 +106,21 @@ Widget build(BuildContext context) {
     body: SafeArea(
       child: Consumer<CharolaViewModel>(
         builder: (context, vm, _) {
+          // Mostrar error fuera del ciclo de build
+          if (vm.mensajeError != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(vm.mensajeError!),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+              vm.mostrarErrorSnackBar(""); // limpia después de mostrar
+            });
+          }
+
           return Column(
             children: [
               const Header(
@@ -258,9 +273,13 @@ Widget build(BuildContext context) {
                                       "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
                                   nombreCharola: charola.nombreCharola,
                                   color: obtenerColorPorNombre(charola.nombreCharola),
-                                  onTap: () async { 
-                                    await context.read<CharolaViewModel>().cargarCharola(charola.charolaId);
-                                    onVerDetalle(charola.charolaId);
+                                  onTap: () async {
+                                    final vmCharola = context.read<CharolaViewModel>();
+                                    await vmCharola.cargarCharola(charola.charolaId);
+
+                                    if (vmCharola.charola != null) {
+                                      onVerDetalle(charola.charolaId);
+                                    }
                                   },
                                 ),
                               );

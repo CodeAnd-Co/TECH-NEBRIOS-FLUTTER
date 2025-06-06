@@ -50,7 +50,10 @@ class HidratacionRepository extends HidratacionService {
   ///
   /// @throws [Exception] si ocurre un error en la solicitud o respuesta.
   @override
-  Future<void> registrarHidratacion(String nombre, String descripcion) async {
+  Future<void> registrarTipoHidratacion(
+    String nombre,
+    String descripcion,
+  ) async {
     final uri = Uri.parse('${APIRutas.HIDRATACION}/agregar');
     final token = await _userUseCases.obtenerTokenActual();
     final response = await http.post(

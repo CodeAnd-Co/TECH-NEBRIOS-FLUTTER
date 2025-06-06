@@ -16,5 +16,5 @@ abstract class HidratacionService {
   /// [descripcion] es la descripción detallada de la hidratación.
   ///
   /// Lanza excepciones si el backend responde con error (400, 500, etc.).
-  Future<void> registrarHidratacion(String nombre, String descripcion);
+  Future<void> registrarTipoHidratacion(String nombre, String descripcion);
 }

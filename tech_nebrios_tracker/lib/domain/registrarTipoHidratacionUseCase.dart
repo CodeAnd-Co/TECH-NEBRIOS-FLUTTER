@@ -4,22 +4,23 @@ import '../data/repositories/hidratacionRepository.dart';
 /// Interfaz de caso de uso para registrar un nuevo tipo de hidratación.
 ///
 /// Define la operación de registro sin depender de la implementación.
-abstract class RegistrarHidratacionCasoUso {
+abstract class registrarTipoHidratacionCasoUso {
   /// Registra un nuevo tipo de hidratación con [nombre] y [descripcion].
   ///
   /// Lanza excepción si el repositorio falla.
   Future<void> registrar({required String nombre, required String descripcion});
 }
 
-/// Implementación concreta de [RegistrarHidratacionCasoUso].
+/// Implementación concreta de [registrarTipoHidratacionCasoUso].
 ///
 /// Utiliza un [HidratacionRepository] para realizar el registro
 /// en la fuente de datos (API, base local, etc.).
-class RegistrarHidratacionCasoUsoImpl implements RegistrarHidratacionCasoUso {
+class registrarTipoHidratacionCasoUsoImpl
+    implements registrarTipoHidratacionCasoUso {
   /// Repositorio inyectado (por defecto usa [HidratacionRepository]).
   final HidratacionRepository repositorio;
 
-  RegistrarHidratacionCasoUsoImpl({HidratacionRepository? repositorio})
+  registrarTipoHidratacionCasoUsoImpl({HidratacionRepository? repositorio})
     : repositorio = repositorio ?? HidratacionRepository();
 
   @override
@@ -27,6 +28,6 @@ class RegistrarHidratacionCasoUsoImpl implements RegistrarHidratacionCasoUso {
     required String nombre,
     required String descripcion,
   }) {
-    return repositorio.registrarHidratacion(nombre, descripcion);
+    return repositorio.registrarTipoHidratacion(nombre, descripcion);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:zuustento_tracker/domain/registrarHidratacionUseCase.dart';
+import 'package:zuustento_tracker/domain/registrarTipoHidratacionUseCase.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/hidratacionRepository.dart';
 
@@ -9,7 +9,7 @@ import '../../data/repositories/hidratacionRepository.dart';
 /// Extiende [ChangeNotifier] para notificar a la UI de cambios.
 class HidratacionViewModel extends ChangeNotifier {
   final HidratacionRepository _repo;
-  final RegistrarHidratacionCasoUso _registrarCasoUso;
+  final registrarTipoHidratacionCasoUso _registrarCasoUso;
 
   /// Tamaño de cada “chunk” que se mostrará por scroll.
   static const int _chunkSize = 20;
@@ -28,11 +28,11 @@ class HidratacionViewModel extends ChangeNotifier {
 
   HidratacionViewModel({
     HidratacionRepository? repo,
-    RegistrarHidratacionCasoUso? registrarCasoUso,
+    registrarTipoHidratacionCasoUso? registrarCasoUso,
   }) : _repo = repo ?? HidratacionRepository(),
        _registrarCasoUso =
            registrarCasoUso ??
-           RegistrarHidratacionCasoUsoImpl(
+           registrarTipoHidratacionCasoUsoImpl(
              repositorio: repo ?? HidratacionRepository(),
            );
 
@@ -94,7 +94,7 @@ class HidratacionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> registrarHidratacion(
+  Future<String?> registrarTipoHidratacion(
     String nombre,
     String descripcion,
   ) async {

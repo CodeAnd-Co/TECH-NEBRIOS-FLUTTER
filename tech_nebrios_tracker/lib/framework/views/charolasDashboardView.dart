@@ -231,11 +231,28 @@ class VistaCharolas extends StatelessWidget {
                     child: Center(child: CircularProgressIndicator()),
                   )
                 /// Mensaje cuando no hay resultados
-                else if (!vm.cargandoLista && vm.charolas.isEmpty)
+                else if (!vm.cargandoLista &&
+                    vm.charolas.isEmpty &&
+                    vm.busquedaController.text.isEmpty)
                   const Expanded(
                     child: Center(
                       child: Text(
                         'No hay charolas registradas 🧺',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                /// Mensaje cuando la búsqueda no encuentra resultados
+                else if (!vm.cargandoLista &&
+                    vm.charolasFiltradas.isEmpty &&
+                    vm.busquedaController.text.isNotEmpty)
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        'Charola no encontrada. Verifica el nombre ingresado.',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,

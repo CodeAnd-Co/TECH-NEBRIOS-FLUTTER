@@ -478,34 +478,46 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                               ),
                             ),
                             onPressed: () async {
-                              await charolaViewModel.eliminarCharola(charolaId);
-                              if (charolaViewModel.error) {
+                              try{
+                                await charolaViewModel.eliminarCharola(charolaId);
+                                if (charolaViewModel.error) {
+                                  Navigator.of(dialogContext).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Ocurrió un error al eliminar la charola',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                } else {
+                                  await charolaViewModel.cargarCharolas(
+                                    reset: true,
+                                  );
+                                  Navigator.of(dialogContext).pop();
+                                  widget
+                                      .onRegresar(); // Usa el callback para volver
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Charola eliminada con éxito',
+                                      ),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                }
+                            } catch (e) {
                                 Navigator.of(dialogContext).pop();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content: Text(
-                                      'Ocurrió un error al eliminar la charola',
+                                      'Error al eliminar la charola: $e',
                                     ),
                                     backgroundColor: Colors.red,
                                   ),
                                 );
-                              } else {
-                                await charolaViewModel.cargarCharolas(
-                                  reset: true,
-                                );
-                                Navigator.of(dialogContext).pop();
-                                widget
-                                    .onRegresar(); // Usa el callback para volver
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Charola eliminada con éxito',
-                                    ),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
                               }
-                            },
+                            }
                           ),
                     ],
                   ),

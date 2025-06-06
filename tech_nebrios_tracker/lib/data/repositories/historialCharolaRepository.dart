@@ -7,7 +7,7 @@ import '../models/constantes.dart';
 import '../../domain/usuarioUseCases.dart';
 
 class HistorialCharolaRepository {
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   Future<List<HistorialAncestros>> obtenerAncestros(int charolaId) async {
     final uri = Uri.parse('${APIRutas.HISTORIAL_CHAROLA}/$charolaId/ancestros');

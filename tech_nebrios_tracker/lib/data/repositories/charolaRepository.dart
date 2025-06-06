@@ -13,7 +13,7 @@ import '../../domain/usuarioUseCases.dart';
 /// Encapsula llamadas HTTP y transformación de datos.
 class CharolaRepository {
   final Logger _logger = Logger();
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   /// Obtiene charolas paginadas.
   Future<Map<String, dynamic>?> obtenerCharolasPaginadas(

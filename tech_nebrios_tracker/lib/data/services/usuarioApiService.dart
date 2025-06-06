@@ -1,3 +1,7 @@
+import 'package:zuustento_tracker/data/models/loginModel.dart';
+
 abstract class UserApiService{
-    Future<Map<String, dynamic>?> postUsuario(String usuario, String contrasena);
+  Future<LoginRespuesta?> iniciarSesion(String usuario, String contrasena);
+  
+  Future<Map<dynamic, dynamic>> obtenerUsuarios();
 }

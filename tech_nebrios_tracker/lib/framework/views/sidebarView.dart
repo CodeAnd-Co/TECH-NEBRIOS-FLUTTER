@@ -5,6 +5,7 @@ import 'package:zuustento_tracker/framework/views/charolasDashboardView.dart';
 import 'package:zuustento_tracker/framework/views/reporteView.dart';
 import 'package:zuustento_tracker/framework/views/alimentacionView.dart';
 import 'package:zuustento_tracker/framework/views/seleccionarTamizadoView.dart';
+import 'package:zuustento_tracker/framework/views/usuarioView.dart';
 import './detalleCharolaView.dart';
 import './tamizarCharolaIndividualView.dart';
 
@@ -96,6 +97,7 @@ class _SidebarViewState extends State<SidebarView> {
       const Placeholder(),           // espacio para futuros ítems
       const AlimentacionScreen(),
       const VistaTablaCharolas(),
+      VistaUsuario()
     ];
   }
 
@@ -128,6 +130,8 @@ class _SidebarViewState extends State<SidebarView> {
                         _buildNavItem(icon: Icons.edit_note, label: 'Nutrición', index: 3),
                         const SizedBox(height: 20),
                         _buildNavItem(icon: Icons.download, label: 'Excel', index: 4),
+                        const SizedBox(height: 20),
+                        _buildNavItem(icon: Icons.person, label: 'Usuarios', index: 5)
                       ],
                     ),
                   ),

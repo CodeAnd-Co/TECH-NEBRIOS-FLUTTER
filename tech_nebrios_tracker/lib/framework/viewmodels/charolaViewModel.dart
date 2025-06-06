@@ -88,8 +88,8 @@ class CharolaViewModel extends ChangeNotifier {
   final TextEditingController densidadLarvaController = TextEditingController();
   final TextEditingController fechaController = TextEditingController();
   final TextEditingController comidaCicloController = TextEditingController();
-  final TextEditingController hidratacionCicloController =
-      TextEditingController();
+  final TextEditingController hidratacionCicloController = TextEditingController();
+  final TextEditingController razonEliminacionController = TextEditingController();
 
   /// Valida el formulario y registra la charola si es válido.
   /// Si el formulario no es válido, muestra un mensaje de error.
@@ -188,10 +188,12 @@ class CharolaViewModel extends ChangeNotifier {
   Future<void> eliminarCharola(int id) async {
     _error = false;
     _cargandoCharola = true;
+    final razon = razonEliminacionController.text;
     notifyListeners();
     try {
       await _eliminarUseCase.eliminar(
         id,
+        razon,
       );
       _charola = null;
       _cargandoCharola = false;

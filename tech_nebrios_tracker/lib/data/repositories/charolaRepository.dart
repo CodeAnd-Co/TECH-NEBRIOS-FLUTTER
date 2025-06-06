@@ -4,6 +4,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:logger/logger.dart';
 import '../models/constantes.dart';
 import '../models/charolaModel.dart';
@@ -107,21 +108,28 @@ class CharolaRepository {
   }
 
   /// Elimina una charola por ID.
-  Future<void> eliminarCharola(int id) async {
+  Future<void> eliminarCharola(int id, String razon) async {
     final token = await _userUseCases.obtenerTokenActual();
     if (token == null) {
       throw Exception('Debe iniciar sesión para continuar');
     }
 
+    Map<String, dynamic> sesion = Jwt.parseJwt(token);
+    final usuario = sesion['nombreDeUsuario'];
+
     final uri = Uri.parse('${APIRutas.CHAROLA}/eliminarCharola/$id');
 
     try {
-      final response = await http.delete(
+      final response = await http.post(
         uri,
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
+        body: json.encode({
+          'razon': razon,
+          'usuario': usuario,
+        }),
       );
 
       if (response.statusCode == 200) return;

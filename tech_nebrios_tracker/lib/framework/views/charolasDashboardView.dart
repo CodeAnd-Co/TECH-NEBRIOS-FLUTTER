@@ -2,6 +2,7 @@
 // RF6 Buscar charolas por nombre - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF6
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/charolaModel.dart' as modelo;
@@ -145,7 +146,31 @@ class VistaCharolas extends StatelessWidget {
                           Expanded(
                             child: TextField(
                               controller: vm.busquedaController,
-                              onChanged: (value) => vm.filtrarCharolas(value),
+                              onChanged: (value) {
+                                vm.filtrarCharolas(value);
+                                if (value.length == 20) {
+                                  // Mostrar mensaje de error si se excede el límite
+                                  ScaffoldMessenger.of(
+                                    context,
+                                  ).removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Máximo 20 caracteres permitidos.',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
+                              },
+                              inputFormatters: [
+                                // Solo permite letras y números, máximo 15 caracteres, sin espacios
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z0-9\-]'),
+                                ),
+                                LengthLimitingTextInputFormatter(20),
+                              ],
                               decoration: InputDecoration(
                                 hintText: 'Buscar Charola',
                                 prefixIcon: Icon(Icons.search),

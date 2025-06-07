@@ -267,7 +267,9 @@ class _LoginViewState extends State<LoginView> {
                 actionsAlignment: MainAxisAlignment.spaceEvenly,
                 actions: [
                   loginViewModel.cargandoRegistro ? const CircularProgressIndicator() :
-                  Row(
+                  Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                     children: [
                       ElevatedButton(
                       onPressed: () {
@@ -287,6 +289,7 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       child: const Text('Cancelar'),
                     ),
+                    const SizedBox(width: 20),
                     ElevatedButton(
                       onPressed: () async {
                         if(formKey4.currentState!.validate()){
@@ -306,7 +309,6 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             );
                         }
-                        
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
@@ -324,6 +326,8 @@ class _LoginViewState extends State<LoginView> {
                     ),
 
                   ],)
+                  
+                  )
                   
                 ],
               );

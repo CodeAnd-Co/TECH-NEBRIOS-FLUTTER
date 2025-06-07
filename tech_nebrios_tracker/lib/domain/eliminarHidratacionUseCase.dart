@@ -17,11 +17,11 @@ abstract class EliminarHidratacionCasoUso {
 ///
 /// Recibe un [HidratacionRepository] para ejecutar la lógica
 /// de edición en la fuente de datos.
-class EliminarAlimentoCasoUsoImpl implements EliminarHidratacionCasoUso {
+class EliminarHidratacionCasoUsoImpl implements EliminarHidratacionCasoUso {
   /// Repositorio inyectado (por defecto usa [HidratacionRepository]).
   final HidratacionRepository repositorio;
 
-  EliminarAlimentoCasoUsoImpl({HidratacionRepository? repositorio})
+  EliminarHidratacionCasoUsoImpl({HidratacionRepository? repositorio})
     : repositorio = repositorio ?? HidratacionRepository();
 
   @override

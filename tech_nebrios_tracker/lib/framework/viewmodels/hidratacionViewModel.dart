@@ -1,4 +1,5 @@
 // RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
+// RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
 // RF42 Registrar la hidratación de la charola - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF42
 
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import '../../data/models/hidratacionModel.dart';
 import '../../data/repositories/hidratacionRepository.dart';
+import '../../domain/editarHidratacionUseCase.dart';
 import '../../domain/hidratarCharolaUseCase.dart';
 import '../../domain/eliminarHidratacionUseCase.dart';
 
@@ -18,8 +20,9 @@ enum EstadoViewModel { inicial, cargando, exito, error }
 /// Extiende [ChangeNotifier] para notificar a la UI de cambios.
 class HidratacionViewModel extends ChangeNotifier {
   final HidratacionRepository _repo;
+  final HidratarCharolaUseCase _hidratarCasoUso;  
+  final EditarHidratacionCasoUso _editarCasoUso;
   final EliminarHidratacionCasoUso _eliminarCasoUso;
-  final HidratarCharolaUseCase _hidratarCasoUso;
 
   final formKey = GlobalKey<FormState>();
 
@@ -45,11 +48,13 @@ class HidratacionViewModel extends ChangeNotifier {
 
   HidratacionViewModel({
     HidratacionRepository? repo,
+    EditarHidratacionCasoUso? editarCasoUso,
     HidratarCharolaUseCase? hidratarCasoUso,
     EliminarHidratacionCasoUso? eliminarCasoUso,
   })  : _repo = repo ?? HidratacionRepository(),
-        _hidratarCasoUso = hidratarCasoUso ?? HidratarCharolaUseCase(repositorio: repo ?? HidratacionRepository()),
-        _eliminarCasoUso = eliminarCasoUso ?? EliminarAlimentoCasoUsoImpl(repositorio: repo ?? HidratacionRepository()); 
+              _editarCasoUso = editarCasoUso ?? EditarHidratacionCasoUsoImpl(repositorio: repo ?? HidratacionRepository()),
+              _eliminarCasoUso = eliminarCasoUso ?? EliminarHidratacionCasoUsoImpl(repositorio: repo ?? HidratacionRepository()),
+              _hidratarCasoUso = hidratarCasoUso ?? HidratarCharolaUseCase(repositorio: repo ?? HidratacionRepository());     
 
   /// Indica si actualmente se está cargando más datos.
   bool get isLoading => _isLoading;
@@ -60,7 +65,7 @@ class HidratacionViewModel extends ChangeNotifier {
   /// Lista inmutable que la UI puede leer.
   List<Hidratacion> get listaHidratacion => List.unmodifiable(_pagedHidratacion);
 
-  /// True si quedan más ítems en [_allAlimentos] que no se han mostrado.
+  /// True si quedan más ítems en [_allHidratacion] que no se han mostrado.
   bool get hasMore => _currentIndex < _allHidratacion.length;
 
   /// Descarga toda la lista y carga el primer chunk.
@@ -88,9 +93,78 @@ class HidratacionViewModel extends ChangeNotifier {
       _setLoading(false);
     });
   }
+
+  Future<String?> eliminarHidratacion(int idHidratacion) async {
+    _setLoading(true);
+    _estado = EstadoViewModel.cargando;
+    notifyListeners();
+
+    try {
+      await _repo.eliminarHidratacion(idHidratacion);
+      _estado = EstadoViewModel.exito;
+      await cargarHidratacion();
+      return null;
+    } catch (e) {
+      
+      final msg = e.toString().contains('401')
+          ? '🚫 401: No autorizado'
+          : e.toString().contains('101')
+          ? '🌐 101: Problemas de red'
+          : e.toString().contains('400')
+          ? '❌ 400: Datos no válidos'
+          : e.toString().contains('409')
+          ? '❌ No se puede eliminar la hidratación porque está asignado a una charola'
+          : '💥 Error de conexión';
+
+      _logger.e(msg);
+      _estado = EstadoViewModel.error;
+
+      return msg;
+    } finally {
+      notifyListeners();
+      _setLoading(false);
+    }
+  }
+
+  Future<String?> editarHidratacion(Hidratacion hidratacion) async {
+    if (hidratacion.nombreHidratacion.trim().isEmpty || hidratacion.descripcionHidratacion.trim().isEmpty) {
+      return 'Nombre y descripción no pueden estar vacíos.';
+    }
+    if (RegExp(r'[0-9]').hasMatch(hidratacion.nombreHidratacion)) {
+      return 'El nombre no debe contener números.';
+    }
+
+    _setLoading(true);
+      _estado = EstadoViewModel.cargando;
+      notifyListeners();
+      try {
+        await _repo.editarHidratacion(hidratacion);
+        _estado = EstadoViewModel.exito;
+        await cargarHidratacion();
+        return null;
+      } catch (e) {
+        _logger.e('ERROR INTERNO: $e');
+
+        final msg = e.toString().contains('401')
+            ? '🚫 401: No autorizado'
+            : e.toString().contains('101')
+            ? '🌐 101: Problemas de red'
+            : e.toString().contains('400')
+            ? '❌ 400: Datos no válidos'
+            : '💥 Error de conexión';
+
+        _logger.e(msg);
+        _estado = EstadoViewModel.error;
+        return msg;
+      } finally {
+        notifyListeners();
+        _setLoading(false);
+      }
+  }
+
   /// Registra una nueva hidratación para una charola mediante el caso de uso asociado.
   ///
-  /// Este método construye un objeto [HidratarCharola] con los parámetros proporcionados
+  /// Este método construye un objeto [HidratacionCharola] con los parámetros proporcionados
   /// y llama al caso de uso para realizar el registro en el backend. Durante el proceso:
   ///
   /// - Se activa un estado de carga mediante `_setLoading(true)`.
@@ -120,55 +194,13 @@ class HidratacionViewModel extends ChangeNotifier {
 
       await _hidratarCasoUso(hidratacionCharola);
 
-    } on Exception catch (e) {
-      final mensaje = e.toString();
-
-      if (mensaje.contains('400')) {
-        _error = '❌ Datos inválidos. Revisa la información ingresada.';
-      } else if (mensaje.contains('101')) {
-        _error = '❌ Sin conexión a internet.';
-      } else if (mensaje.contains('500')) {
-        _error = '❌ Error del servidor. Intenta más tarde.';
-      } else {
-        _error = '❌ Ocurrió un error: ${mensaje.replaceAll('Exception: ', '')}';
-      }
-
-    } finally {
-      _setLoading(false);
-    }
-  }
-
-  Future<String?> eliminarHidratacion(int idHidratacion) async {
-    _setLoading(true);
-    _estado = EstadoViewModel.cargando;
-    notifyListeners();
-
-    try {
-      await _repo.eliminarHidratacion(idHidratacion);
-      _estado = EstadoViewModel.exito;
-      await cargarHidratacion();
-      return null;
     } catch (e) {
-      final msg = e.toString().contains('401')
-          ? '🚫 401: No autorizado'
-          : e.toString().contains('101')
-          ? '🌐 101: Problemas de red'
-          : e.toString().contains('400')
-          ? '❌ 400: Datos no válidos'
-          : e.toString().contains('409')
-          ? '❌ No se puede eliminar la hidratación porque está asignado a una charola'
-          : '💥 Error de conexión';
-
-      _logger.e(msg);
-      _estado = EstadoViewModel.error;
-
-      return msg;
+    _error = 'Error al registrar hidratación: ${e.toString()}';
     } finally {
-      notifyListeners();
       _setLoading(false);
     }
   }
-
+  
   /// Toma el siguiente rango de [_chunkSize] ítems y los añade.
   void _agregarSiguienteChunk() {
     final nextIndex = (_currentIndex + _chunkSize).clamp(

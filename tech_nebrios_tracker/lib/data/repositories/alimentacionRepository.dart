@@ -15,7 +15,7 @@ import '../../domain/usuarioUseCases.dart';
 /// Responsable de:
 ///  - Construir URIs (endpoints).
 ///  - Gestionar respuestas y errores HTTP.
-///  - Convertir JSON a modelos [Hidratacion].
+///  - Convertir JSON a modelos [Alimentacion].
 class AlimentacionRepository extends AlimentacionService {
   final UserUseCases _userUseCases = UserUseCases();
 

@@ -24,6 +24,7 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
     final dd = today.day.toString().padLeft(2, '0');
     final mm = today.month.toString().padLeft(2, '0');
     vm.fechaController.text = '$dd/$mm/${today.year}';
+    vm.fechaController.text = '${today.day}/${today.month}/${today.year}';
     vm.cargarHidratacion();
     vm.cargarAlimentos();
   }

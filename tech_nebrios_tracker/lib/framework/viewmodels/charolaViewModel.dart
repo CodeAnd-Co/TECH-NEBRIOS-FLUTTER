@@ -88,8 +88,16 @@ class CharolaViewModel extends ChangeNotifier {
   final TextEditingController densidadLarvaController = TextEditingController();
   final TextEditingController fechaController = TextEditingController();
   final TextEditingController comidaCicloController = TextEditingController();
-  final TextEditingController hidratacionCicloController = TextEditingController();
   final TextEditingController razonEliminacionController = TextEditingController();
+  final TextEditingController hidratacionCicloController =
+      TextEditingController();
+  final TextEditingController busquedaController = TextEditingController();
+  String _busqueda = '';
+  List<CharolaTarjeta> _charolasFiltradas = [];
+  List<CharolaTarjeta> get charolasFiltradas =>
+      _charolasFiltradas.isEmpty && _busqueda.isEmpty
+          ? charolas
+          : _charolasFiltradas;
 
   /// Valida el formulario y registra la charola si es válido.
   /// Si el formulario no es válido, muestra un mensaje de error.
@@ -122,7 +130,7 @@ class CharolaViewModel extends ChangeNotifier {
         ],
       );
       final data = await _registrarUseCase.registrar(charola: registro);
-            final tarjeta = CharolaTarjeta(
+      final tarjeta = CharolaTarjeta(
         charolaId: data['charolaId'] as int,
         nombreCharola: data['nombreCharola'] as String,
         fechaCreacion: DateTime.parse(data['fechaCreacion'] as String),
@@ -130,7 +138,7 @@ class CharolaViewModel extends ChangeNotifier {
       _cargandoRegistro = false;
       notifyListeners();
       return tarjeta;
-      } catch (e) {
+    } catch (e) {
       _cargandoRegistro = false;
       notifyListeners();
       rethrow;
@@ -149,6 +157,22 @@ class CharolaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void filtrarCharolas(String query) {
+    _busqueda = query;
+    if (query.isEmpty) {
+      _charolasFiltradas = [];
+    } else {
+      _charolasFiltradas =
+          charolas
+              .where(
+                (c) =>
+                    c.nombreCharola.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList();
+    }
+    notifyListeners();
+  }
+
   // === DETALLE DE UNA CHAROLA ===
   CharolaDetalle? _charola; // Detalle de la charola actual
   CharolaDetalle? get charola => _charola; // Getter del detalle
@@ -163,6 +187,10 @@ class CharolaViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       _charola = await _obtenerUseCase.obtenerCharola(id);
+      // Al final de cargarCharolas()
+      if (_busqueda.isNotEmpty) {
+        filtrarCharolas(_busqueda);
+      }
     } catch (e) {
       _logger.e('Error cargando detalle: $e');
 

@@ -8,7 +8,7 @@ import '../services/reporteAPIService.dart';
 import '../../domain/usuarioUseCases.dart';
 
 class ReporteRepository extends ReporteAPIService {
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   @override
   Future<Map<dynamic, dynamic>> getDatos() async {

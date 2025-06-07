@@ -6,7 +6,7 @@ import '../services/editarCharolaAPIService.dart';
 import '../../domain/usuarioUseCases.dart';
 
 class EditarCharolaRepository extends EditarCharolaAPIService {
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   @override
   Future<Map<dynamic, dynamic>> putEditarCharola(

@@ -21,7 +21,7 @@ class _LoginViewState extends State<LoginView> {
         child: SingleChildScrollView(
           child: Container(
             width: 900,
-            height: 500,
+            height: 600,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -63,6 +63,7 @@ class _LoginViewState extends State<LoginView> {
                               keyboardType: TextInputType.emailAddress,
                               autocorrect: false,
                               textCapitalization: TextCapitalization.none,
+                              maxLength: 20,
                             ),
                           ),
                           const SizedBox(height: 50),
@@ -105,6 +106,7 @@ class _LoginViewState extends State<LoginView> {
                               textInputAction: TextInputAction.done,
                               autocorrect: false,
                               textCapitalization: TextCapitalization.none,
+                              maxLength: 20,
                               onSubmitted: (_) async {
                                 await viewModel.iniciarSesion();
                                 if (!viewModel.hasError) {

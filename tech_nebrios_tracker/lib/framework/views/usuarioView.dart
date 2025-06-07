@@ -156,7 +156,7 @@ class _VistaUsuario extends State<VistaUsuario> {
                                                 Expanded(
                                                     child: Text(
                                                         usuario['tipo_usuario'])),
-                                                vistaModelo.esAdmin
+                                                vistaModelo.esAdmin && vistaModelo.idActual != usuario['usuarioId']
                                                     ? Expanded(
                                                         child: Row(
                                                           children: [
@@ -181,12 +181,16 @@ class _VistaUsuario extends State<VistaUsuario> {
                                                                   Icons.delete,
                                                                   color: Colors
                                                                       .red),
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                  mostrarPopUpEliminarUsuario(context: context, usuarioId: usuario['usuarioId']);
+                                                                },
                                                             ),
                                                           ],
                                                         ),
                                                       )
-                                                    : const SizedBox.shrink(),
+                                                    : 
+                                                    vistaModelo.idActual == usuario['usuarioId'] ?  Expanded(child: Text("")):
+                                                    const SizedBox.shrink(),
                                               ],
                                             ),
                                           );
@@ -563,4 +567,104 @@ class _VistaUsuario extends State<VistaUsuario> {
       },
     );
   }
+
+  void mostrarPopUpEliminarUsuario({
+    required BuildContext context,
+    required int usuarioId,
+  }) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Consumer<UsuarioViewModel>(
+          builder: (context, usuarioViewModel, _) {
+            return AlertDialog(
+              title: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Center(
+                    child: Text(
+                      'Eliminar Usuario',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                    ),
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Image.asset(
+                        'assets/images/alert-icon.png',
+                        height: 60,
+                        color: Colors.amber[700],
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "¿Estás seguro de querer continuar con esta acción?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "(Una vez eliminado, no se puede recuperar.)",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      const SizedBox(height: 30),
+                      usuarioViewModel.cargandoRegistro
+                          ? const CircularProgressIndicator()
+                          : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              minimumSize: const Size(150, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            child: const Text(
+                              'Eliminar',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
+                            onPressed: () async {
+                              await usuarioViewModel.eliminarUsuario(usuarioId);
+                              Navigator.of(dialogContext).pop();
+                              
+                              ScaffoldMessenger.of(context)
+                                .showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    usuarioViewModel.mensaje),
+                                backgroundColor:
+                                    usuarioViewModel.error
+                                        ? Colors.red
+                                        : Colors.green,
+                              ),
+                            );
+
+                            usuarioViewModel.obtenerUsuarios();
+                          }
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
 }

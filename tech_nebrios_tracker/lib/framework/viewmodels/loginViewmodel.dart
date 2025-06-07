@@ -11,10 +11,12 @@ class LoginViewModel extends ChangeNotifier {
   String _errorMessage = '';
   bool _hasError = false;
   bool _cargando = false;
+  bool _cargandoRegistro = false;
   
   String get errorMessage => _errorMessage;
   bool get hasError => _hasError;
   bool get cargando => _cargando;
+  bool get cargandoRegistro => _cargandoRegistro;
   
   LoginViewModel() {
     //_checkCurrentUser();
@@ -70,6 +72,30 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> recuperarContrasena() async {
+    _hasError = false;
+    _errorMessage = '';
+    _cargandoRegistro = true;
+    notifyListeners();
+
+    var respuesta = await _userUseCases.recuperarUsuario(nombreController.text);
+
+    if (respuesta['codigo'] == 200){
+      _errorMessage = respuesta['mensaje'];
+      _cargandoRegistro = false;
+    } else if (respuesta['codigo'] == 201){
+      _hasError = true;
+      _errorMessage = respuesta['mensaje'];
+      _cargandoRegistro = false;
+    }else {
+      _hasError = true;
+      _errorMessage = respuesta['mensaje'];
+      _cargandoRegistro = false;
+    }
+
+    notifyListeners();
+  }
+
   void limpiarCampos() {
     usuarioController.clear();
     contrasenaController.clear();
@@ -97,10 +123,6 @@ class LoginViewModel extends ChangeNotifier {
  
   }
   
-  void recuperarContrasenia(String usuario){
-
-  }
-
   @override
   void dispose() {
     usuarioController.dispose();

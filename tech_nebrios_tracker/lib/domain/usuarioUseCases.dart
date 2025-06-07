@@ -22,6 +22,8 @@ abstract class UsuarioUseCases {
   Future<Map<dynamic, dynamic>> editarUsuario(int usuarioId, Usuario infoUsuario);
 
   Future<Map<dynamic, dynamic>> eliminarUsuario(int usuarioId);
+
+  Future<Map<dynamic, dynamic>> recuperarUsuario(String nombre);
 }
 ///Clase que maneja los casos de uso relacionados con el usuario
 class UsuarioUseCasesImp extends UsuarioUseCases {
@@ -65,5 +67,9 @@ class UsuarioUseCasesImp extends UsuarioUseCases {
 
   Future<Map<dynamic, dynamic>> eliminarUsuario(int usuarioId) async {
     return await _repository.eliminarUsuario(usuarioId);
+  }
+
+  Future<Map<dynamic, dynamic>> recuperarUsuario(String nombre) async {
+    return await _repository.recuperarUsuario(nombre);
   }
 }

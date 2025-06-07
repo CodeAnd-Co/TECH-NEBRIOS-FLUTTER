@@ -14,6 +14,7 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   bool _obscurePassword = true;
+  final formKey4 = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +217,7 @@ class _LoginViewState extends State<LoginView> {
         return ChangeNotifierProvider.value(
           value: loginViewModel,
           child: Consumer<LoginViewModel>(
-            builder: (context, usuarioViewModel, _) {
+            builder: (context, loginViewModel, _) {
               return AlertDialog(
                 title: const Text(
                   'Recuperar Contraseña',
@@ -225,75 +226,105 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 content: SizedBox(
                   width: 500,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Divider(),
-                      const SizedBox(height: 8),
-                      CustomTextFormField(
-                        label: "Nombre de usuario", 
-                        controller: usuarioViewModel.nombreController,
-                        width: 400,
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Se mandará una contraseña diferente\npor correo electrónico',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                  child: Form(
+                    key: formKey4,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Divider(),
+                        const SizedBox(height: 8),
+                        CustomTextFormField(
+                          label: "Nombre de usuario", 
+                          controller: loginViewModel.nombreController,
+                          validator: (v) => v == null || v.isEmpty
+                              ? 'Nombre de usuario obligatorio'
+                              : null,
+                          maxLength: 20,
+                          width: 400,
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Comuniquese con el administrador para\nsu nueva contraseña',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Se mandará una contraseña diferente\npor correo electrónico',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Comuniquese con el administrador para\nsu nueva contraseña',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ),
                 actionsAlignment: MainAxisAlignment.spaceEvenly,
                 actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      textStyle: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                  loginViewModel.cargandoRegistro ? const CircularProgressIndicator() :
+                  Row(
+                    children: [
+                      ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        textStyle: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        minimumSize: const Size(150, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      minimumSize: const Size(150, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      child: const Text('Cancelar'),
                     ),
-                    child: const Text('Cancelar'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      textStyle: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    ElevatedButton(
+                      onPressed: () async {
+                        if(formKey4.currentState!.validate()){
+                          await loginViewModel.recuperarContrasena();
+
+                          Navigator.of(context).pop();
+
+                          ScaffoldMessenger.of(context)
+                            .showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    loginViewModel.errorMessage),
+                                backgroundColor:
+                                    loginViewModel.hasError
+                                        ? Colors.red
+                                        : Colors.green,
+                              ),
+                            );
+                        }
+                        
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        textStyle: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        minimumSize: const Size(150, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      minimumSize: const Size(150, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      child: const Text('Recuperar'),
                     ),
-                    child: const Text('Recuperar'),
-                  ),
+
+                  ],)
+                  
                 ],
               );
             }

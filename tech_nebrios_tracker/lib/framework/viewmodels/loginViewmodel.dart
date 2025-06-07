@@ -25,10 +25,12 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> iniciarSesion() async {
     final usuario = usuarioController.text.trim();
     final contrasena = contrasenaController.text.trim();
+    _cargando = true;
 
     if (usuario.isEmpty) {
       _errorMessage = 'Llena el campo de usuario';
       _hasError = true;
+      _cargando = false;
       notifyListeners();
           
       return;
@@ -37,13 +39,13 @@ class LoginViewModel extends ChangeNotifier {
     if (contrasena.isEmpty) {
       _errorMessage = 'Llena el campo de contraseña';
       _hasError = true;
+      _cargando = false;
       notifyListeners();
       
       return;
     }
 
     try {
-      _cargando = true;
       notifyListeners();
       final sesion = await _userUseCases.iniciarSesion(usuario, contrasena);
 

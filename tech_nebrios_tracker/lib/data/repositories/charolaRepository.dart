@@ -138,7 +138,6 @@ class CharolaRepository {
         throw Exception('No autorizado. Por favor, inicie sesión.');
       }
       _logger.e('Error HTTP: ${response.statusCode}');
-      throw Exception('Error al eliminar la charola');
     } on SocketException {
       throw ('💥 Error de conexión');
     } catch (e) {

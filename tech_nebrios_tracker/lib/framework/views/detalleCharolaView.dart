@@ -488,6 +488,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                   fontSize: 20,
                                 ),
                               ),
+
                               onPressed: () async {
                                 if (!formKey.currentState!.validate()) return;
 
@@ -515,6 +516,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                         'Charola eliminada con éxito',
                                       ),
                                       backgroundColor: Colors.green,
+
                                     ),
                                   );
                                 }

@@ -125,6 +125,7 @@ Future<void> mostrarPopUpEditarCharola({
                                       FilteringTextInputFormatter.digitsOnly,
                                       PositiveNumberFormatter(),
                                     ],
+                                    maxLength: 4,
                                     validator: (v) =>
                                         v == null || v.isEmpty
                                             ? 'Ingresa densidad'

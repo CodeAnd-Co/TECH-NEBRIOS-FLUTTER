@@ -1,3 +1,7 @@
+/// RF13 Registrar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF13
+/// RF19 Editar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF19
+/// RF14 Eliminar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF14
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../views/components/header.dart';
@@ -161,7 +165,16 @@ class _VistaUsuario extends State<VistaUsuario> {
                                                                   Icons.edit,
                                                                   color: Colors
                                                                       .black),
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                mostrarPopUpEditarUsuario(
+                                                                  context: context, 
+                                                                  usuarioId: usuario['usuarioId'],
+                                                                  nombre: usuario['nombre'],
+                                                                  apellidoM: usuario['apellido_m'],
+                                                                  apellidoP: usuario['apellido_p'],
+                                                                  usuario: usuario['user']
+                                                                );
+                                                              },
                                                             ),
                                                             IconButton(
                                                               icon: const Icon(
@@ -354,6 +367,172 @@ class _VistaUsuario extends State<VistaUsuario> {
                                         await usuarioViewModel.registrarUsuario();
                                         usuarioViewModel.resetForm();
                                         Navigator.of(dialogContext).pop();
+                                        
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                usuarioViewModel.mensaje),
+                                            backgroundColor:
+                                                usuarioViewModel.error
+                                                    ? Colors.red
+                                                    : Colors.green,
+                                          ),
+                                        );
+                                        usuarioViewModel.obtenerUsuarios();
+                                      }
+                                    },
+                                  ),
+                                ],
+                              )
+                      ],
+                    ),
+                  )
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void mostrarPopUpEditarUsuario({
+    required BuildContext context,
+    required int usuarioId,
+    required String nombre,
+    required String apellidoM,
+    required String apellidoP,
+    required String usuario
+  }) {
+    final usuarioViewModel =
+        Provider.of<UsuarioViewModel>(context, listen: false);
+    usuarioViewModel.nombreController.text = nombre;
+    usuarioViewModel.apellidoMController.text = apellidoM;
+    usuarioViewModel.apellidoPController.text = apellidoP;
+    usuarioViewModel.usuarioController.text = usuario;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return ChangeNotifierProvider.value(
+          value: usuarioViewModel,
+          child: Consumer<UsuarioViewModel>(
+            builder: (context, usuarioViewModel, _) {
+              return AlertDialog(
+                title: const Text(
+                  'Editar Usuario',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                content: SingleChildScrollView(
+                  child: Form(
+                    key: formKey3,
+                    child: Column(
+                      children: [
+                        const Divider(height: 1),
+                        const SizedBox(height: 30),
+                        CustomTextFormField(
+                          label: "Nombre *",
+                          controller: usuarioViewModel.nombreController,
+                          validator: (v) =>
+                              v == null || v.isEmpty ? 'Nombre obligatorio' : null,
+                          maxLength: 20,
+                          width: 400,
+                        ),
+                        const SizedBox(height: 20),
+                        CustomTextFormField(
+                          label: "Apellido paterno *",
+                          controller: usuarioViewModel.apellidoPController,
+                          validator: (v) => v == null || v.isEmpty
+                              ? 'Apellido paterno obligatorio'
+                              : null,
+                          maxLength: 20,
+                          width: 400,
+                        ),
+                        const SizedBox(height: 20),
+                        CustomTextFormField(
+                          label: "Apellido materno",
+                          controller: usuarioViewModel.apellidoMController,
+                          maxLength: 20,
+                          width: 400,
+                        ),
+                        const SizedBox(height: 10),
+                        const Divider(height: 1),
+                        const SizedBox(height: 20),
+                        CustomTextFormField(
+                          label: "Nombre de usuario *",
+                          controller: usuarioViewModel.usuarioController,
+                          validator: (v) => v == null || v.isEmpty
+                              ? 'Nombre de usuario obligatorio'
+                              : null,
+                          maxLength: 20,
+                          width: 400,
+                        ),
+                        const SizedBox(height: 20),
+                        CustomTextFormField(
+                          label: "Contraseña *",
+                          controller: usuarioViewModel.contrasenaController,
+                          validator: (v) => v == null || v.isEmpty
+                              ? 'Contraseña obligatoria'
+                              : null,
+                          maxLength: 20,
+                          width: 400,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                actions: [
+                  Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        usuarioViewModel.cargandoRegistro
+                            ? const CircularProgressIndicator()
+                            : Row(
+                                children: [
+                                  TextButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      minimumSize: const Size(150, 50),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Cancelar',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      usuarioViewModel.resetForm();
+                                      Navigator.of(dialogContext).pop();
+                                    },
+                                  ),
+                                  const SizedBox(width: 20),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      minimumSize: const Size(150, 50),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Editar',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      if (formKey3.currentState!.validate()) {
+                                        await usuarioViewModel.editarUsuario(usuarioId);
+                                        usuarioViewModel.resetForm();
+                                        Navigator.of(dialogContext).pop();
 
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
@@ -366,6 +545,8 @@ class _VistaUsuario extends State<VistaUsuario> {
                                                     : Colors.green,
                                           ),
                                         );
+
+                                        usuarioViewModel.obtenerUsuarios();
                                       }
                                     },
                                   ),

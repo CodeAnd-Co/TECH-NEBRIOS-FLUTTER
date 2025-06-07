@@ -1,3 +1,7 @@
+/// RF13 Registrar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF13
+/// RF19 Editar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF19
+/// RF14 Eliminar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF14
+/// 
 class Usuario {
   final int? usuarioId;
   final String nombre;
@@ -34,6 +38,6 @@ class Usuario {
     'contrasena': contrasena,
     'nombre': nombre,
     'apellido_m': apellido_m,
-    'apellido_p': apellido_m
+    'apellido_p': apellido_p
   };
 }

@@ -96,6 +96,10 @@ class LoginViewModel extends ChangeNotifier {
  
   }
   
+  void recuperarContrasenia(String usuario){
+
+  }
+
   @override
   void dispose() {
     usuarioController.dispose();

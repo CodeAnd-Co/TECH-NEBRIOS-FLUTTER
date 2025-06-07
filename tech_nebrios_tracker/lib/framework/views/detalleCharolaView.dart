@@ -420,6 +420,7 @@ class _PantallaCharolaState extends State<PantallaCharola> {
       builder: (dialogContext) {
         return Consumer<CharolaViewModel>(
           builder: (context, charolaViewModel, _) {
+            charolaViewModel.razonEliminacionController.clear();
             return AlertDialog(
               title: Stack(
                 alignment: Alignment.center,

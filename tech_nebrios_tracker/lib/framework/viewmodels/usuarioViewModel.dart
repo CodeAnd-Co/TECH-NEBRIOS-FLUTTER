@@ -20,13 +20,14 @@ class UsuarioViewModel extends ChangeNotifier{
   bool _error = false;
   String _mensaje = '';
   bool _esAdmin = false;
+  int _idActual = 0;
 
   bool get cargando => _cargando;
   bool get cargandoRegistro => _cargandoRegistro;
   bool get error => _error;
   String get mensaje => _mensaje;
   bool get esAdmin => _esAdmin;
-
+  int get idActual => _idActual;
 
   List _usuarios = [];
   List get usuarios => _usuarios;
@@ -88,6 +89,7 @@ class UsuarioViewModel extends ChangeNotifier{
   Future<void> esAdministrador() async {
     final token = await usuarioUseCases.obtenerTokenActual();
     Map<String, dynamic> sesion = Jwt.parseJwt(token!);
+    _idActual = sesion['id'];
     if (sesion['rol'] == 'admin'){
       _esAdmin = true;
       notifyListeners();
@@ -102,6 +104,28 @@ class UsuarioViewModel extends ChangeNotifier{
   
     var nuevoUsuario = Usuario(nombre: nombreController.text, apellido_m: apellidoMController.text, apellido_p: apellidoPController.text, user: usuarioController.text, contrasena: contrasenaController.text);
     var respuesta = await usuarioUseCases.editarUsuario(usuarioId, nuevoUsuario);
+
+    if (respuesta['codigo'] == 200){
+      _mensaje = respuesta['mensaje'];
+    }else if (respuesta['codigo'] == 401){
+      _error = true;
+      _mensaje = respuesta['mensaje'];
+    }else if (respuesta['codigo'] == 500){
+      _error = true;
+      _mensaje = respuesta['mensaje'];
+    }
+
+    _cargandoRegistro = false;
+    notifyListeners();
+  }
+
+  Future<void> eliminarUsuario(usuarioId) async {
+    _error = false;
+    _mensaje = '';
+    _cargandoRegistro = true;
+    notifyListeners();
+
+    var respuesta = await usuarioUseCases.eliminarUsuario(usuarioId);
 
     if (respuesta['codigo'] == 200){
       _mensaje = respuesta['mensaje'];

@@ -150,4 +150,32 @@ class UserRepository implements LocalStorageService, UserApiService{
       return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
     }
   }
+
+  Future<Map<dynamic, dynamic>> eliminarUsuario(usuarioId) async {
+    final url = Uri.parse('${APIRutas.USUARIO}/eliminarUsuario?usuarioId=$usuarioId');
+    final token = await obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+    try{
+      final respuesta = await http.delete(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (respuesta.statusCode == 200){
+        return {'codigo': 200, 'mensaje': 'Usuario eliminado exitosamente.'};
+      }
+
+      if(respuesta.statusCode == 401){
+        return {'codigo': 401, 'mensaje': '❌ Por favor, vuelva a iniciar sesión. ❌'};
+      }
+
+      return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
+    } catch (error){
+      return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
+    }
+  }
 }

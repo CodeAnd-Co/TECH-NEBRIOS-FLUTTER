@@ -1,3 +1,7 @@
+/// RF13 Registrar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF13
+/// RF19 Editar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF19
+/// RF14 Eliminar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF14
+/// 
 import 'package:flutter/material.dart';
 import 'package:zuustento_tracker/data/models/usuarioModel.dart';
 import 'package:zuustento_tracker/domain/usuarioUseCases.dart';
@@ -52,7 +56,7 @@ class UsuarioViewModel extends ChangeNotifier{
     /// Limpia todos los campos del formulario y selecciones.
   void resetForm() {
     nombreController.clear();
-    apellidoMController.clear();
+    apellidoPController.clear();
     apellidoMController.clear();
     usuarioController.clear();
     contrasenaController.clear();
@@ -90,4 +94,26 @@ class UsuarioViewModel extends ChangeNotifier{
     }
   }
 
+  Future<void> editarUsuario(usuarioId) async{
+    _error = false;
+    _mensaje = '';
+    _cargandoRegistro = true;
+    notifyListeners();
+  
+    var nuevoUsuario = Usuario(nombre: nombreController.text, apellido_m: apellidoMController.text, apellido_p: apellidoPController.text, user: usuarioController.text, contrasena: contrasenaController.text);
+    var respuesta = await usuarioUseCases.editarUsuario(usuarioId, nuevoUsuario);
+
+    if (respuesta['codigo'] == 200){
+      _mensaje = respuesta['mensaje'];
+    }else if (respuesta['codigo'] == 401){
+      _error = true;
+      _mensaje = respuesta['mensaje'];
+    }else if (respuesta['codigo'] == 500){
+      _error = true;
+      _mensaje = respuesta['mensaje'];
+    }
+
+    _cargandoRegistro = false;
+    notifyListeners();
+  }
 }

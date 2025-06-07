@@ -8,7 +8,7 @@ import '../models/constantes.dart';
 import '../../domain/usuarioUseCases.dart';
 
 class TamizarCharolaRepository implements TamizadoApiService {
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   @override
   Future<TamizadoRespuesta?> tamizarCharolaIndividual(

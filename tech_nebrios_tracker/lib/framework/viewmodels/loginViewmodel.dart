@@ -5,7 +5,7 @@ import 'package:jwt_decode/jwt_decode.dart';
 class LoginViewModel extends ChangeNotifier {
   final usuarioController = TextEditingController();
   final contrasenaController = TextEditingController();
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
   
   String _errorMessage = '';
   bool _hasError = false;

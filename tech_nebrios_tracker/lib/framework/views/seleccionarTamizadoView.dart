@@ -125,6 +125,21 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
         }
       });
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final seleccionVM = Provider.of<TamizadoViewModel>(context, listen: false);
+      seleccionVM.addListener((){
+        if (seleccionVM.hasError && seleccionVM.errorMessage.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(seleccionVM.errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+          seleccionVM.limpiarError();
+        }
+      });
+    });
   }
 
   @override
@@ -364,18 +379,11 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder:
-                                                (_) => VistaTamizadoMultiple(
-                                                  onRegresar: () {
-                                                    Navigator.pop(context);
-                                                    seleccionVM
-                                                        .limpiarInformacion();
-                                                  },
-                                                ),
-                                          ),
+                                            builder: (_) => VistaTamizadoMultiple(onRegresar: () {Navigator.pop(context); seleccionVM.limpiarInformacion();})
+                                          )
                                         );
                                       }
-                                    }
+                                    } 
                                   },
                                   icon: Icon(
                                     Icons.done,

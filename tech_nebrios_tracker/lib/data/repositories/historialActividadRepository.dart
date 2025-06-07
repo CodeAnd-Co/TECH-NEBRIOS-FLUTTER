@@ -6,7 +6,7 @@ import '../services/historialActividadAPIService.dart';
 import '../../domain/usuarioUseCases.dart';
 
 class HistorialActividadRepository extends HistorialActividadAPIService {
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   @override
   Future<HistorialactividadRespuesta> historialActividad(charolaId) async {

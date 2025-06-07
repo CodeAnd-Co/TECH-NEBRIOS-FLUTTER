@@ -8,7 +8,7 @@ import '../services/hidratacionAPIService.dart';
 import '../../domain/usuarioUseCases.dart';
 
 class HidratacionRepository extends HidratacionService {
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   @override
   Future<List<Hidratacion>> obtenerHidratacion() async {

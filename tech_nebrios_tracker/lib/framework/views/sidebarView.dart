@@ -5,6 +5,7 @@ import 'package:zuustento_tracker/framework/views/charolasDashboardView.dart';
 import 'package:zuustento_tracker/framework/views/reporteView.dart';
 import 'package:zuustento_tracker/framework/views/alimentacionView.dart';
 import 'package:zuustento_tracker/framework/views/seleccionarTamizadoView.dart';
+import 'package:zuustento_tracker/framework/views/usuarioView.dart';
 import './detalleCharolaView.dart';
 import './tamizarCharolaIndividualView.dart';
 import './frasView.dart';
@@ -97,6 +98,7 @@ class _SidebarViewState extends State<SidebarView> {
       FrasScreen(),
       const AlimentacionScreen(),
       const VistaTablaCharolas(),
+      VistaUsuario()
     ];
   }
 
@@ -122,35 +124,17 @@ class _SidebarViewState extends State<SidebarView> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        _buildNavItem(
-                          icon: Icons.inventory_2,
-                          label: 'Charolas',
-                          index: 0,
-                        ),
+                        _buildNavItem(icon: Icons.inventory_2, label: 'Charolas', index: 0),
                         const SizedBox(height: 20),
-                        _buildNavItem(
-                          icon: Icons.storage,
-                          label: 'Tamizar',
-                          index: 1,
-                        ),
+                        _buildNavItem(icon: Icons.storage,     label: 'Tamizar', index: 1),
                         const SizedBox(height: 20),
-                        _buildNavItem(
-                          icon: Icons.grass,
-                          label: 'Fras',
-                          index: 2,
-                        ),
+                        _buildNavItem(icon: Icons.grass,       label: 'Fras',    index: 2),
                         const SizedBox(height: 20),
-                        _buildNavItem(
-                          icon: Icons.edit_note,
-                          label: 'Nutrición',
-                          index: 3,
-                        ),
+                        _buildNavItem(icon: Icons.edit_note,   label: 'Nutrición', index: 3),
                         const SizedBox(height: 20),
-                        _buildNavItem(
-                          icon: Icons.download,
-                          label: 'Excel',
-                          index: 4,
-                        ),
+                        _buildNavItem(icon: Icons.download,    label: 'Excel',   index: 4),
+                        const SizedBox(height: 20),
+                        _buildNavItem(icon: Icons.person, label: 'Usuarios', index: 5)
                       ],
                     ),
                   ),
@@ -171,8 +155,7 @@ class _SidebarViewState extends State<SidebarView> {
           // ─── Vista Activa ─────────────────────────────────────
           Expanded(
             child: IndexedStack(
-              index:
-                  _currentIndex, // siempre 0 porque _views devuelve sólo un elemento
+              index: _currentIndex, // siempre 0 porque _views devuelve sólo un elemento
               children: _views,
             ),
           ),
@@ -198,20 +181,13 @@ class _SidebarViewState extends State<SidebarView> {
 
         if (index == 1) {
           // limpia datos específicos de tamizado
-          final viewModel = Provider.of<TamizadoViewModel>(
-            context,
-            listen: false,
-          );
+          final viewModel = Provider.of<TamizadoViewModel>(context, listen: false);
           viewModel.limpiarInformacion();
         }
       },
       child: Column(
         children: [
-          Icon(
-            icon,
-            color: Colors.white.withOpacity(isSelected ? 1 : 0.6),
-            size: 28,
-          ),
+          Icon(icon, color: Colors.white.withOpacity(isSelected ? 1 : 0.6), size: 28),
           const SizedBox(height: 4),
           Text(
             label,

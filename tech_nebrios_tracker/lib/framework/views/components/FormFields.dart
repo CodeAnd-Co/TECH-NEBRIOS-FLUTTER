@@ -8,6 +8,7 @@ class CustomTextFormField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
   final int? maxLength;
+  final double? width;
 
   const CustomTextFormField({
     super.key,
@@ -17,6 +18,7 @@ class CustomTextFormField extends StatelessWidget {
     this.inputFormatters,
     this.validator,
     this.maxLength,
+    this.width = 200
   });
 
   @override
@@ -24,7 +26,7 @@ class CustomTextFormField extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(5),
       child: SizedBox(
-        width: 200,
+        width: width,
         child: TextFormField(
           controller: controller,
           keyboardType: keyboardType,

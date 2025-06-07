@@ -66,6 +66,7 @@ class CharolaViewModel extends ChangeNotifier {
     }
   }
 
+
   Future<void> cargarAlimentos() async {
     try {
       alimentos = await _alimentoRepo.obtenerAlimentos();
@@ -192,10 +193,9 @@ class CharolaViewModel extends ChangeNotifier {
     } catch (e) {
       _logger.e('Error cargando detalle: $e');
 
-      final msg =
-          e.toString().contains('401')
-              ? '🚫 Error 401: No autorizado'
-              : e.toString().contains('101')
+      final msg = e.toString().contains('401')
+          ? '🚫 Error 401: No autorizado'
+          : e.toString().contains('101')
               ? '🌐 Error 101: Sin conexión a internet'
               : '💥 Error de conexión';
 
@@ -206,6 +206,7 @@ class CharolaViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
 
   /// Elimina una charola por ID
   bool _error = false;
@@ -264,15 +265,15 @@ class CharolaViewModel extends ChangeNotifier {
         _mensajeError = null;
       }
     } catch (e) {
-      final msg =
-          e.toString().contains('401')
-              ? '🚫 Error 401: No autorizado'
-              : e.toString().contains('101')
+      final msg = e.toString().contains('401')
+          ? '🚫 Error 401: No autorizado'
+          : e.toString().contains('101')
               ? '🌐 Error 101: Sin conexión a internet'
               : '💥 Error de conexión';
 
       _logger.e(_mensajeError);
       mostrarErrorSnackBar(msg);
+
     } finally {
       _cargandoLista = false;
       notifyListeners();

@@ -2,6 +2,7 @@
 // RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 // RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
 // RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
+//RF15  Filtrar charola por fecha - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/rf15/
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -16,6 +17,7 @@ import '../../domain/consultarCharolaUseCase.dart';
 import '../../domain/eliminarCharolaUseCase.dart';
 import '../../domain/charolasDashboardUseCase.dart';
 import '../../domain/registrarCharolaUseCase.dart';
+import '../../domain/filtrarCharolasFechasUseCase.dart';
 
 /// ViewModel encargado de gestionar el estado de la vista de charolas.
 class CharolaViewModel extends ChangeNotifier {
@@ -31,6 +33,7 @@ class CharolaViewModel extends ChangeNotifier {
   late final EliminarCharolaUseCase _eliminarUseCase;
   late final ObtenerMenuCharolas _menuUseCase;
   late final RegistrarCharolaUseCase _registrarUseCase;
+  late final FiltrarCharolasFechasUseCase _filtrarUseCase;
 
   /// Constructor sin parámetros que inicializa los casos de uso con el repositorio
   CharolaViewModel() {
@@ -38,6 +41,8 @@ class CharolaViewModel extends ChangeNotifier {
     _eliminarUseCase = EliminarCharolaUseCaseImpl(charolaRepository: _repo);
     _menuUseCase = ObtenerCharolasUseCaseImpl(repositorio: _repo);
     _registrarUseCase = RegistrarCharolaUseCaseImpl(repositorio: _repo);
+    _filtrarUseCase = FiltrarCharolasFechasUseCaseImpl(charolaRepository: _repo);
+
 
     // Carga inicial de charolas y dropdowns
     cargarCharolas();
@@ -300,5 +305,33 @@ class CharolaViewModel extends ChangeNotifier {
     estadoActual = nuevoEstado;
     pagActual = 1;
     cargarCharolas(reset: true);
+  }
+  /// Filtra charolas según un rango de fechas.
+  Future<void> filtrarCharolasPorFecha(DateTime inicio, DateTime fin) async {
+    _cargandoLista = true;
+    notifyListeners();
+
+    try {
+      final filtradas = await _filtrarUseCase.filtrar(inicio, fin);
+      charolas = filtradas;
+      hayMas = false; // el filtro no es paginado
+      _mensajeError = null;
+    } catch (e) {
+      final msg = e.toString().contains('401')
+          ? '🚫 Error 401: No autorizado'
+          : e.toString().contains('101')
+              ? '🌐 Error 101: Sin conexión a internet'
+              : '💥 Error al filtrar charolas';
+
+      mostrarErrorSnackBar(msg);
+    } finally {
+      _cargandoLista = false;
+      notifyListeners();
+    }
+  }
+
+  /// Alias más intuitivo para usar desde la vista
+  void filtrarPorFechas(DateTime desde, DateTime hasta) {
+    filtrarCharolasPorFecha(desde, hasta);
   }
 }

@@ -3,6 +3,8 @@ import '../data/repositories/reporteRepository.dart';
 abstract class ReporteUseCases{
   Future<Map<dynamic, dynamic>> execute();
 
+  Future<Map<dynamic,dynamic>> getEliminadas();
+
   Future<Map<dynamic, dynamic>> postExecute();
 }
 
@@ -14,6 +16,11 @@ class TablaUseCasesImp extends ReporteUseCases{
   @override
   Future<Map<dynamic, dynamic>> execute() async {
     return await repositorio.getDatos();
+  }
+
+  @override
+  Future<Map<dynamic, dynamic>> getEliminadas() async {
+    return await repositorio.getEliminadas();
   }
 
   @override

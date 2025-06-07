@@ -1,3 +1,7 @@
+/// RF13 Registrar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF13
+/// RF19 Editar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF19
+/// RF14 Eliminar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF14
+/// 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:zuustento_tracker/data/services/localStorageService.dart';
@@ -106,6 +110,35 @@ class UserRepository implements LocalStorageService, UserApiService{
       );
       if (respuesta.statusCode == 200){
         return {'codigo': 200, 'mensaje': 'Usuario creado exitosamente.'};
+      }
+
+      if(respuesta.statusCode == 401){
+        return {'codigo': 401, 'mensaje': '❌ Por favor, vuelva a iniciar sesión. ❌'};
+      }
+
+      return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
+    } catch (error){
+      return {'codigo': 500, 'mensaje': '❌ Ocurrió un error en el servidor, favor de intentar mas tarde. ❌'};
+    }
+  }
+
+  Future<Map<dynamic, dynamic>> editarUsuario(usuarioId, infoUsuario) async{
+    final url = Uri.parse('${APIRutas.USUARIO}/editarUsuario?usuarioId=$usuarioId');
+    final token = await obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+    try{
+      final respuesta = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(infoUsuario.toJson())
+      );
+      if (respuesta.statusCode == 200){
+        return {'codigo': 200, 'mensaje': 'Usuario editado exitosamente.'};
       }
 
       if(respuesta.statusCode == 401){

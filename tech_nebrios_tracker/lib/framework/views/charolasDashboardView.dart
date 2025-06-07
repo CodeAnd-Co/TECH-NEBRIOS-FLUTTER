@@ -94,10 +94,25 @@ class CharolaTarjeta extends StatelessWidget {
 }
 
 /// Vista principal que muestra todas las charolas en un grid paginado.
-class VistaCharolas extends StatelessWidget {
+class VistaCharolas extends StatefulWidget {
   final void Function(int charolaId) onVerDetalle;
 
   const VistaCharolas({super.key, required this.onVerDetalle});
+
+  @override
+  State<VistaCharolas> createState() => _VistaCharolasState();
+}
+
+
+class _VistaCharolasState extends State<VistaCharolas> {
+  DateTimeRange? rangoFechas;
+  final TextEditingController rangoController = TextEditingController();
+
+  @override
+  void dispose() {
+    rangoController.dispose();
+    super.dispose();
+  }
 
 @override
 Widget build(BuildContext context) {
@@ -202,7 +217,125 @@ Widget build(BuildContext context) {
                   ),
                 ),
                 const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: TextFormField(
+                          controller: rangoController,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            labelText: 'Rango de fechas',
+                            prefixIcon: const Icon(Icons.date_range, size: 20),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.clear),
+                              tooltip: 'Limpiar filtro',
+                              onPressed: () {
+                                setState(() {
+                                  rangoFechas = null;
+                                  rangoController.clear();
+                                });
+                                context.read<CharolaViewModel>().cargarCharolas(reset: true);
+                              },
+                            ),
+                            border: const OutlineInputBorder(),
+                          ),
+                          onTap: () async {
+                            final DateTime now = DateTime.now();
 
+                            final DateTime? fechaInicio = await showDatePicker(
+                              context: context,
+                              initialDate: now.subtract(const Duration(days: 7)),
+                              firstDate: DateTime(2020),
+                              lastDate: DateTime(2050),
+                              locale: const Locale('es', 'ES'),
+                              cancelText: 'Cancelar',
+                              confirmText: 'Aceptar',
+                              helpText: 'Inicio',
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    datePickerTheme: const DatePickerThemeData(
+                                      headerHelpStyle: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
+                            );
+
+                            if (fechaInicio == null) return;
+
+                            final DateTime? fechaFin = await showDatePicker(
+                              context: context,
+                              initialDate: now,
+                              firstDate: fechaInicio,
+                              lastDate: DateTime(2050),
+                              locale: const Locale('es', 'ES'),
+                              cancelText: 'Cancelar',
+                              confirmText: 'Aceptar',
+                              helpText: 'Fin',
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    datePickerTheme: const DatePickerThemeData(
+                                      headerHelpStyle: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
+                            );
+
+                            if (fechaFin == null) return;
+
+                            setState(() {
+                              rangoFechas = DateTimeRange(start: fechaInicio, end: fechaFin);
+                              rangoController.text =
+                                  "${fechaInicio.day}/${fechaInicio.month}/${fechaInicio.year} a ${fechaFin.day}/${fechaFin.month}/${fechaFin.year}";
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      SizedBox(
+                        height: 44,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            if (rangoFechas != null) {
+                              context.read<CharolaViewModel>().filtrarPorFechas(
+                                    rangoFechas!.start,
+                                    rangoFechas!.end,
+                                  );
+                            }
+                          },
+                          icon: const Icon(Icons.search, size: 20),
+                          label: const Text('Filtrar'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF0066FF),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
                 /// Toggle Activas / Pasadas
                 ToggleButtons(
                   isSelected: [
@@ -235,12 +368,14 @@ Widget build(BuildContext context) {
                     child: Center(child: CircularProgressIndicator()),
                   )
                 /// Mensaje cuando no hay resultados
-                else if (!vm.cargandoLista && vm.charolas.isEmpty)
-                  const Expanded(
+               else if (!vm.cargandoLista && vm.charolas.isEmpty)
+                  Expanded(
                     child: Center(
                       child: Text(
-                        'No hay charolas registradas 🧺',
-                        style: TextStyle(
+                        rangoFechas != null
+                            ? 'No hay charolas registradas en esa fecha 🧺'
+                            : 'No hay charolas registradas 🧺',
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -278,7 +413,7 @@ Widget build(BuildContext context) {
                                     await vmCharola.cargarCharola(charola.charolaId);
 
                                     if (vmCharola.charola != null) {
-                                      onVerDetalle(charola.charolaId);
+                                      widget.onVerDetalle(charola.charolaId);
                                     }
                                   },
                                 ),
@@ -393,6 +528,7 @@ Widget build(BuildContext context) {
     );
   }
 }
+
 
 /// Asigna un color al encabezado de la tarjeta basado en el nombre.
 Color obtenerColorPorNombre(String nombre) {

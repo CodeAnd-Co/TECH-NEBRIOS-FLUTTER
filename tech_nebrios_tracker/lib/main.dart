@@ -12,8 +12,8 @@ import 'framework/viewmodels/tamizarCharolaViewModel.dart';
 import 'framework/viewmodels/frasViewModel.dart';
 import 'framework/viewmodels/editarCharolaViewModel.dart';
 import 'framework/viewmodels/alimentacionViewModel.dart';
-import 'framework/viewmodels/historialCharolaViewModel.dart';
 import 'framework/viewmodels/hidratacionViewModel.dart';
+import 'framework/viewmodels/historialCharolaViewModel.dart';
 import 'framework/viewmodels/usuarioViewModel.dart';
 
 /// Punto de entrada principal para la aplicación Tech Nebrios Tracker.

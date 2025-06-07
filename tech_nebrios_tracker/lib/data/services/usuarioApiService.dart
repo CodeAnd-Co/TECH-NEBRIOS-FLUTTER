@@ -15,4 +15,6 @@ abstract class UserApiService{
   Future<Map<dynamic, dynamic>> editarUsuario(int usuarioId, Usuario infoUsuario);
 
   Future<Map<dynamic, dynamic>> eliminarUsuario(int usuarioId);
+
+  Future<Map<dynamic, dynamic>> recuperarUsuario(String nombre);
 }

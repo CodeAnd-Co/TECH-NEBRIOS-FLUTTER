@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/loginViewModel.dart';
+import 'package:zuustento_tracker/framework/views/components/FormFields.dart';
 
 class LoginView extends StatefulWidget {
   final VoidCallback onLogin;
@@ -188,117 +189,8 @@ class _LoginViewState extends State<LoginView> {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      final TextEditingController _usuarioController =
-                          TextEditingController();
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        title: const Center(
-                          child: Text(
-                            'Recuperar contraseña',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        content: SizedBox(
-                          width: 500,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Divider(),
-                              FractionallySizedBox(
-                                widthFactor: 0.8, // 80% del ancho disponible
-                                alignment:
-                                    Alignment
-                                        .centerLeft, // Alinea el contenido a la izquierda
-                                child: const Text(
-                                  'Usuario:',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              FractionallySizedBox(
-                                widthFactor: 0.8,
-                                child: TextField(
-                                  controller: _usuarioController,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Nombre de usuario',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              const Text(
-                                'Se mandará una contraseña diferente\npor correo electrónico',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              const Text(
-                                'Comuniquese con el administrador para\nsu nueva contraseña',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        actionsAlignment: MainAxisAlignment.spaceEvenly,
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              textStyle: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              minimumSize: const Size(150, 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text('Cancelar'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Aquí puedes manejar la lógica de recuperación con el valor de usuario
-                              Navigator.of(context).pop();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              textStyle: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              minimumSize: const Size(150, 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text('Recuperar'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  mostrarPopUpRegistrarUsuario(context: context);
                 },
-
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.pink.shade400,
@@ -316,6 +208,104 @@ class _LoginViewState extends State<LoginView> {
           ),
         ),
       ),
+    );
+  }
+
+  void mostrarPopUpRegistrarUsuario({
+    required BuildContext context
+  }) {
+    final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+
+    showDialog(
+      context: context, 
+      builder: (dialogContext) {
+        return ChangeNotifierProvider.value(
+          value: loginViewModel,
+          child: Consumer<LoginViewModel>(
+            builder: (context, usuarioViewModel, _) {
+              return AlertDialog(
+                title: const Text(
+                  'Recuperar Contraseña',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                content: SizedBox(
+                  width: 500,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      CustomTextFormField(
+                        label: "Nombre de usuario", 
+                        controller: usuarioViewModel.nombreController,
+                        width: 400,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Se mandará una contraseña diferente\npor correo electrónico',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Comuniquese con el administrador para\nsu nueva contraseña',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actionsAlignment: MainAxisAlignment.spaceEvenly,
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      textStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      minimumSize: const Size(150, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text('Cancelar'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      textStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      minimumSize: const Size(150, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text('Recuperar'),
+                  ),
+                ],
+              );
+            }
+          )
+        );
+      }
     );
   }
 }

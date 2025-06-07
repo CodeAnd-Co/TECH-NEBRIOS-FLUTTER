@@ -6,6 +6,7 @@ class LoginViewModel extends ChangeNotifier {
   final usuarioController = TextEditingController();
   final contrasenaController = TextEditingController();
   final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
+  final TextEditingController nombreController = TextEditingController();
   
   String _errorMessage = '';
   bool _hasError = false;

@@ -1,6 +1,8 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
+// RF6 Buscar charolas por nombre - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF6
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/charolaViewModel.dart';
 import '../../data/models/charolaModel.dart' as modelo;
@@ -94,10 +96,25 @@ class CharolaTarjeta extends StatelessWidget {
 }
 
 /// Vista principal que muestra todas las charolas en un grid paginado.
-class VistaCharolas extends StatelessWidget {
+class VistaCharolas extends StatefulWidget {
   final void Function(int charolaId) onVerDetalle;
 
   const VistaCharolas({super.key, required this.onVerDetalle});
+
+  @override
+  State<VistaCharolas> createState() => _VistaCharolasState();
+}
+
+
+class _VistaCharolasState extends State<VistaCharolas> {
+  DateTimeRange? rangoFechas;
+  final TextEditingController rangoController = TextEditingController();
+
+  @override
+  void dispose() {
+    rangoController.dispose();
+    super.dispose();
+  }
 
 @override
 Widget build(BuildContext context) {
@@ -121,88 +138,171 @@ Widget build(BuildContext context) {
             });
           }
 
-          return Column(
-            children: [
-              const Header(
-                titulo: 'Charolas',
-                showDivider: true,
-                subtitulo: null, // No usas subtítulo en esta pantalla
-              ),
+            return Column(
+              children: [
+                const Header(
+                  titulo: 'Charolas',
+                  showDivider: true,
+                  subtitulo: null, // No usas subtítulo en esta pantalla
+                ),
                 // const SizedBox(height: 4),
+                // Reemplaza el bloque que contiene el Row del buscador, filtro y registrar charola por este:
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final screenWidth = constraints.maxWidth;
-
-                      // Escalado responsivo
-                      final fontSize = screenWidth * 0.012;
-                      final iconSize = screenWidth * 0.015;
-
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Campo de búsqueda expandido
-                          Expanded(
-                            child: Visibility(
-                              visible: false,
-                              maintainSize: true,
-                              maintainAnimation: true,
-                              maintainState: true,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'Buscar',
-                                  prefixIcon: const Icon(Icons.search),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Buscar Charola
+                      Expanded(
+                        flex: 2,
+                        child: SizedBox(
+                          height: 44,
+                          child: TextField(
+                            controller: vm.busquedaController,
+                            onChanged: (value) {
+                              vm.filtrarCharolas(value);
+                              if (value.length == 20) {
+                                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Máximo 20 caracteres permitidos.'),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 2),
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-
-                          // Botón responsivo
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => RegistrarCharolaView(),
-                                ),
-                              );
+                                );
+                              }
                             },
-                            icon: Icon(Icons.add, size: iconSize.clamp(20, 30)),
-                            label: Text(
-                              'Registrar charola',
-                              style: TextStyle(
-                                fontSize: fontSize.clamp(15, 22),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 22,
-                              ),
-                              backgroundColor: const Color(0xFF0066FF),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-]')),
+                              LengthLimitingTextInputFormatter(20),
+                            ],
+                            decoration: InputDecoration(
+                              hintText: 'Buscar Charola',
+                              prefixIcon: const Icon(Icons.search),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             ),
                           ),
-                        ],
-                      );
-                    },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+
+                      // Rango de fechas
+                      Expanded(
+                        flex: 2,
+                        child: SizedBox(
+                          height: 44,
+                          child: TextFormField(
+                            controller: rangoController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              hintText: 'Rango de fechas',
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              prefixIcon: const Icon(Icons.date_range),
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.clear),
+                                tooltip: 'Limpiar filtro',
+                                onPressed: () {
+                                  setState(() {
+                                    rangoFechas = null;
+                                    rangoController.clear();
+                                  });
+                                  context.read<CharolaViewModel>().cargarCharolas(reset: true);
+                                },
+                              ),
+                              border: const OutlineInputBorder(),
+                            ),
+                            onTap: () async {
+                              final DateTime now = DateTime.now();
+
+                              final DateTime? fechaInicio = await showDatePicker(
+                                context: context,
+                                initialDate: now.subtract(const Duration(days: 7)),
+                                firstDate: DateTime(2020),
+                                lastDate: DateTime(2050),
+                                locale: const Locale('es', 'ES'),
+                                cancelText: 'Cancelar',
+                                confirmText: 'Aceptar',
+                                helpText: 'Inicio',
+                              );
+
+                              if (fechaInicio == null) return;
+
+                              final DateTime? fechaFin = await showDatePicker(
+                                context: context,
+                                initialDate: now,
+                                firstDate: fechaInicio,
+                                lastDate: DateTime(2050),
+                                locale: const Locale('es', 'ES'),
+                                cancelText: 'Cancelar',
+                                confirmText: 'Aceptar',
+                                helpText: 'Fin',
+                              );
+
+                              if (fechaFin == null) return;
+
+                              setState(() {
+                                rangoFechas = DateTimeRange(start: fechaInicio, end: fechaFin);
+                                rangoController.text =
+                                    "${fechaInicio.day}/${fechaInicio.month}/${fechaInicio.year} a ${fechaFin.day}/${fechaFin.month}/${fechaFin.year}";
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+
+                      // Botón Filtrar
+                      SizedBox(
+                        height: 44,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            if (rangoFechas != null) {
+                              context.read<CharolaViewModel>().filtrarPorFechas(
+                                    rangoFechas!.start,
+                                    rangoFechas!.end,
+                                  );
+                            }
+                          },
+                          icon: const Icon(Icons.search),
+                          label: const Text('Filtrar'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE2387B),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+
+                      // Botón Registrar charola
+                      SizedBox(
+                        height: 44,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RegistrarCharolaView(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.add),
+                          label: const Text('Registrar charola'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0066FF),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 10),
 
+                const SizedBox(height: 10),
                 /// Toggle Activas / Pasadas
                 ToggleButtons(
                   isSelected: [
@@ -212,6 +312,8 @@ Widget build(BuildContext context) {
                   onPressed: (index) {
                     final estado = index == 0 ? 'activa' : 'pasada';
                     vm.cambiarEstado(estado);
+                    vm.busquedaController.clear();
+                    vm.filtrarCharolas('');
                   },
                   borderRadius: BorderRadius.circular(10),
                   selectedColor: Colors.white,
@@ -235,11 +337,30 @@ Widget build(BuildContext context) {
                     child: Center(child: CircularProgressIndicator()),
                   )
                 /// Mensaje cuando no hay resultados
-                else if (!vm.cargandoLista && vm.charolas.isEmpty)
+                else if (!vm.cargandoLista &&
+                    vm.charolas.isEmpty &&
+                    vm.busquedaController.text.isEmpty)
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        rangoFechas != null
+                            ? 'No hay charolas registradas en esa fecha 🧺'
+                            : 'No hay charolas registradas 🧺',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                /// Mensaje cuando la búsqueda no encuentra resultados
+                else if (!vm.cargandoLista &&
+                    vm.charolasFiltradas.isEmpty &&
+                    vm.busquedaController.text.isNotEmpty)
                   const Expanded(
                     child: Center(
                       child: Text(
-                        'No hay charolas registradas 🧺',
+                        'Charola no encontrada. Verifica el nombre ingresado.',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
@@ -253,7 +374,7 @@ Widget build(BuildContext context) {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: GridView.builder(
-                        itemCount: vm.charolas.length,
+                        itemCount: vm.charolasFiltradas.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 5,
@@ -263,7 +384,7 @@ Widget build(BuildContext context) {
                             ),
                         itemBuilder: (context, index) {
                           final modelo.CharolaTarjeta charola =
-                              vm.charolas[index];
+                              vm.charolasFiltradas[index];
                           return LayoutBuilder(
                             builder: (context, constraints) {
                               return AspectRatio(
@@ -272,13 +393,18 @@ Widget build(BuildContext context) {
                                   fecha:
                                       "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
                                   nombreCharola: charola.nombreCharola,
-                                  color: obtenerColorPorNombre(charola.nombreCharola),
+                                  color: obtenerColorPorNombre(
+                                    charola.nombreCharola,
+                                  ),
                                   onTap: () async {
-                                    final vmCharola = context.read<CharolaViewModel>();
-                                    await vmCharola.cargarCharola(charola.charolaId);
+                                    final vmCharola =
+                                        context.read<CharolaViewModel>();
+                                    await vmCharola.cargarCharola(
+                                      charola.charolaId,
+                                    );
 
                                     if (vmCharola.charola != null) {
-                                      onVerDetalle(charola.charolaId);
+                                      widget.onVerDetalle(charola.charolaId);
                                     }
                                   },
                                 ),
@@ -393,6 +519,7 @@ Widget build(BuildContext context) {
     );
   }
 }
+
 
 /// Asigna un color al encabezado de la tarjeta basado en el nombre.
 Color obtenerColorPorNombre(String nombre) {

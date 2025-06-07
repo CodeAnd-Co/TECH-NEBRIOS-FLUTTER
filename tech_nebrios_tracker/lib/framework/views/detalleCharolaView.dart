@@ -1,6 +1,7 @@
 // RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 import './historialActividadView.dart';
@@ -412,11 +413,14 @@ class _PantallaCharolaState extends State<PantallaCharola> {
     required BuildContext context,
     required int charolaId,
   }) {
+    final formKey = GlobalKey<FormState>();
+
     showDialog(
       context: context,
       builder: (dialogContext) {
         return Consumer<CharolaViewModel>(
           builder: (context, charolaViewModel, _) {
+            charolaViewModel.razonEliminacionController.clear();
             return AlertDialog(
               title: Stack(
                 alignment: Alignment.center,
@@ -439,46 +443,55 @@ class _PantallaCharolaState extends State<PantallaCharola> {
               ),
               content: SizedBox(
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      Image.asset(
-                        'assets/images/alert-icon.png',
-                        height: 60,
-                        color: Colors.amber[700],
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        "¿Estás seguro de querer continuar con esta acción?",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        "(Una vez eliminado, no se puede recuperar.)",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      const SizedBox(height: 30),
-                      charolaViewModel.cargandoCharola
-                          ? const CircularProgressIndicator()
-                          : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              minimumSize: const Size(150, 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Image.asset(
+                          'assets/images/alert-icon.png',
+                          height: 60,
+                          color: Colors.amber[700],
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          "¿Estás seguro de querer continuar con esta acción?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        const SizedBox(height: 10),
+                        _buildTextFormField(
+                          label: 'Razón *',
+                          controller: charolaViewModel.razonEliminacionController,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) return 'Este campo es obligatorio';
+                            if (v.trim().length < 15) return 'Debe tener al menos 15 letras';
+                            return null;
+                          },
+                          maxLength: 200,
+                        ),
+                        const SizedBox(height: 30),
+                        charolaViewModel.cargandoCharola
+                            ? const CircularProgressIndicator()
+                            : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                minimumSize: const Size(150, 50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
                               ),
-                            ),
-                            child: const Text(
-                              'Eliminar',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
+                              child: const Text(
+                                'Eliminar',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
                               ),
-                            ),
-                            onPressed: () async {
-                              try{
+
+                              onPressed: () async {
+                                if (!formKey.currentState!.validate()) return;
+
                                 await charolaViewModel.eliminarCharola(charolaId);
                                 if (charolaViewModel.error) {
                                   Navigator.of(dialogContext).pop();
@@ -503,23 +516,14 @@ class _PantallaCharolaState extends State<PantallaCharola> {
                                         'Charola eliminada con éxito',
                                       ),
                                       backgroundColor: Colors.green,
+
                                     ),
                                   );
                                 }
-                            } catch (e) {
-                                Navigator.of(dialogContext).pop();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Error al eliminar la charola: $e',
-                                    ),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            }
-                          ),
-                    ],
+                              },
+                            ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -527,6 +531,32 @@ class _PantallaCharolaState extends State<PantallaCharola> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildTextFormField({
+    required String label,
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
+    String? Function(String?)? validator,
+    int? maxLength,
+  }) {
+    return Container(
+      margin: const EdgeInsets.all(5),
+      child: SizedBox(
+        child: TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          maxLength: maxLength,
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          ),
+          validator: validator,
+        ),
+      ),
     );
   }
 }

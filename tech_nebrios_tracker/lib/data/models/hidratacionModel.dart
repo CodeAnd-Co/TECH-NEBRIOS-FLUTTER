@@ -1,31 +1,39 @@
+// RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
+// RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
 // RF42 Registrar la hidratación de la charola - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF42
 
 /// Modelo que representa una hidratación en la aplicación.
 ///
 /// Corresponde al JSON devuelto por la API:
+/// ```json
 /// {
 ///   "hidratacionId": 1,
 ///   "nombre": "pepino",
 ///   "descripcion": "Fruta verde"
 /// }
-
+/// ```
 class Hidratacion {
-  /// Identificador único de hidratación.
+  /// Identificador único de la hidratación.
   final int idHidratacion;
 
-  /// Nombre descriptivo de hidratación.
+  /// Nombre asignado a la hidratación.
   final String nombreHidratacion;
 
-  /// Descripción extendida o detalles de hidratación.
+  /// Descripción adicional o detalles sobre la hidratación.
   final String descripcionHidratacion;
 
+  /// Constructor de la clase [Hidratacion].
+  ///
+  /// Requiere [idHidratacion], [nombreHidratacion] y [descripcionHidratacion].
   Hidratacion({
     required this.idHidratacion,
     required this.nombreHidratacion,
     required this.descripcionHidratacion,
   });
 
-  /// Crea una instancia de [Hidratacion] a partir de un [json] Map.
+  /// Crea una instancia de [Hidratacion] a partir de un objeto JSON [json].
+  ///
+  /// Utiliza las claves `hidratacionId`, `nombre` y `descripcion` para mapear los valores.
   factory Hidratacion.fromJson(Map<String, dynamic> json) {
     return Hidratacion(
       idHidratacion: json['hidratacionId'] as int,
@@ -35,38 +43,33 @@ class Hidratacion {
   }
 }
 
-/// Representa una relación de hidratación registrada para una charola.
-///
-/// Esta clase se utiliza para modelar la cantidad de hidratación otorgada a una
-/// charola específica, junto con la fecha en la que se realizó.
-///
-/// Generalmente se utiliza para serializar o enviar los datos a través de una API.
-class HidratarCharola {
-  /// ID único de la charola que recibió la hidratación.
+/// Modelo que representa el registro de hidratación aplicada a una charola.
+class HidratacionCharola {
+  /// ID de la charola a la que se aplicó la hidratación.
   final int charolaId;
 
-  /// ID del tipo de hidratación otorgada.
+  /// ID del tipo de hidratación aplicada.
   final int hidratacionId;
 
-  /// Cantidad otorgada de hidratación, expresada en mililitros (u otra unidad definida).
+  /// Cantidad de hidratación otorgada, en unidades determinadas (por ejemplo, mililitros).
   final int cantidadOtorgada;
 
-  /// Fecha en la que se otorgó la hidratación, en formato ISO 8601.
+  /// Fecha en la que se otorgó la hidratación, como cadena en formato ISO 8601.
   final String fechaOtorgada;
 
-  /// Constructor de la clase [HidratacionCharola].
+  /// Constructor de [HidratacionCharola].
   ///
-  /// Todos los parámetros son requeridos para asegurar la integridad de los datos.
-  HidratarCharola({
+  /// Requiere [charolaId], [hidratacionId], [cantidadOtorgada] y [fechaOtorgada].
+  HidratacionCharola({
     required this.charolaId,
     required this.hidratacionId,
     required this.cantidadOtorgada,
     required this.fechaOtorgada,
   });
 
-  /// Convierte la instancia en un mapa JSON.
+  /// Convierte esta instancia de [HidratacionCharola] a un objeto JSON.
   ///
-  /// Este método es útil para enviar la instancia como cuerpo de una solicitud HTTP.
+  /// Devuelve un [Map] con las claves `charolaId`, `hidratacionId`, `cantidadOtorgada` y `fechaOtorgada`.
   Map<String, dynamic> toJson() => {
         'charolaId': charolaId,
         'hidratacionId': hidratacionId,
@@ -74,5 +77,3 @@ class HidratarCharola {
         'fechaOtorgada': fechaOtorgada,
       };
 }
-
-

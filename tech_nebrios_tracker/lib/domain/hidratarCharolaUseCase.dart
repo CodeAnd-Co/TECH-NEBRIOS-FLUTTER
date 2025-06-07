@@ -22,7 +22,7 @@ class HidratarCharolaUseCase {
   ///
   /// - [hidratarCharola]: Objeto con los datos de la hidratación a registrar.
   /// - Returns: `true` si el registro fue exitoso, o lanza una excepción si falla.
-  Future<bool> call(HidratarCharola hidratarCharola) {
+  Future<bool> call(HidratacionCharola hidratarCharola) {
     return repositorio.registrarHidratacion(hidratarCharola);
   }
 

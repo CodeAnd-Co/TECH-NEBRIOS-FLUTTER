@@ -8,7 +8,7 @@ import '../../domain/usuarioUseCases.dart';
 
 /// Repositorio para manejar las operaciones relacionadas con el Frass.
 class FrasRepository {
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   /// Obtiene la lista de Frass desde la API.
   /// Lanza una excepción si no hay token de usuario o si la respuesta es incorrecta.

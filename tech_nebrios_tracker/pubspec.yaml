@@ -1,6 +1,6 @@
 name: zuustento_tracker
 description: "Zuustento Tracker."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -12,22 +12,22 @@ dependencies:
 
   flutter_localizations:
     sdk: flutter
-    
+
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
   window_size: ^0.1.0
   logger: ^2.0.2
-  
+
   http: ^1.1.0 # Comunicación HTTP
-  dio: ^5.3.2  # Cliente HTTP más avanzado
+  dio: ^5.3.2 # Cliente HTTP más avanzado
   cached_network_image: ^3.2.3 # Cargar imágenes
-  intl: ^0.20.2 # Formateo de fechas
+  intl: 0.20.2 # Formateo de fechas
   open_file: ^3.3.2
   connectivity_plus: ^5.0.2
   dartz: ^0.10.1
   shared_preferences: ^2.1.1
   jwt_decode: ^0.3.1 # Decodificar JWT
-  mockito: ^5.4.6 
+  mockito: ^5.4.6
   build_runner: ^2.4.15
 
 dev_dependencies:
@@ -51,4 +51,3 @@ flutter:
   assets:
     - assets/images/
   uses-material-design: true
-

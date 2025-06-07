@@ -1,3 +1,5 @@
+// RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
+//RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
 // RF42 Registrar la hidratación de la charola - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF42
 
 import 'dart:convert';
@@ -7,6 +9,13 @@ import '../models/constantes.dart';
 import '../services/hidratacionAPIService.dart';
 import '../../domain/usuarioUseCases.dart';
 
+/// Repositorio que implementa [HidratacionService] y realiza
+/// las llamadas HTTP a la API de alimentación.
+///
+/// Responsable de:
+///  - Construir URIs (endpoints).
+///  - Gestionar respuestas y errores HTTP.
+///  - Convertir JSON a modelos [Hidratacion].
 class HidratacionRepository extends HidratacionService {
   final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
@@ -38,6 +47,108 @@ class HidratacionRepository extends HidratacionService {
     return data.map((item) => Hidratacion.fromJson(item)).toList();
   }
 
+  /// Elimina un hidrato existente en el sistema.
+  ///
+  /// [idHidratacion] es el identificador del alimento a eliminar.
+  @override
+  Future<void> eliminarHidratacion(int idHidratacion) async {
+    final uri = Uri.parse('${APIRutas.HIDRATACION}/eliminar/$idHidratacion');
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
+    final response = await http.delete(uri,
+    headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    var status = response.statusCode;
+
+    print("status code $status");
+
+    // Manejo de códigos de error específicos
+    if (response.statusCode == 500) {
+      throw Exception('❌ Error del servidor.');
+    } else if (response.statusCode != 200) {
+      throw Exception('❌ Error desconocido (${response.statusCode}).');
+    }
+  }
+  @override
+  Future<void> editarHidratacion(Hidratacion hidratacion) async {
+    final uri = Uri.parse(
+      '${APIRutas.HIDRATACION}/editar/${hidratacion.idHidratacion}',
+    );
+    final token = await _userUseCases.obtenerTokenActual();
+    if (token == null) {
+      throw Exception('Debe iniciar sesión para continuar');
+    }
+
+    final response = await http.put(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'nombreHidratacion': hidratacion.nombreHidratacion,
+        'descripcionHidratacion': hidratacion.descripcionHidratacion,
+      }),
+    );
+
+    // Manejo de códigos de error específicos
+    if (response.statusCode == 400) {
+      throw Exception('❌ Datos no válidos.');
+    } else if (response.statusCode == 500) {
+      throw Exception('❌ Error del servidor.');
+    } else if (response.statusCode != 200) {
+      throw Exception('❌ Error desconocido (${response.statusCode}).');
+    }
+    // Si es 200 OK, simplemente retorna
+  }
+
+  /// Envía los datos de un nuevo tipo de hidratacion al backend para su registro.
+  ///
+  /// Realiza una solicitud `POST` al endpoint `HIDRATACION/agregar` con el
+  /// nombre y la descripción del alimento como cuerpo en formato JSON.
+  ///
+  /// - Lanza una excepción si el servidor responde con un código distinto a 200.
+  /// - Maneja errores comunes como datos inválidos (400), problemas de conexión (101),
+  ///   o fallos del servidor (500).
+  ///
+  /// [nombre] Nombre del nuevo tipo de hidratacion a registrar.
+  /// [descripcion] Descripción asociada al tipo de hidratacion.
+  ///
+  /// @throws [Exception] si ocurre un error en la solicitud o respuesta.
+  @override
+  Future<void> registrarTipoHidratacion(
+    String nombre,
+    String descripcion,
+  ) async {
+    final uri = Uri.parse('${APIRutas.HIDRATACION}/agregar');
+    final token = await _userUseCases.obtenerTokenActual();
+    final response = await http.post(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'nombre': nombre, 'descripcion': descripcion}),
+    );
+
+    // Manejo de códigos de error específicos
+    if (response.statusCode == 400) {
+      throw Exception('Datos no válidos.');
+    } else if (response.statusCode == 101) {
+      throw Exception('Sin conexión a internet.');
+    } else if (response.statusCode == 500) {
+      throw Exception('Error del servidor.');
+    } else if (response.statusCode != 200) {
+      throw Exception('Error desconocido (${response.statusCode}).');
+    }
+  }
+
 /// Registra una hidratación para una charola a través de una solicitud HTTP POST.
 ///
 /// Este método toma un objeto [HidratarCharola], lo convierte a JSON y lo envía a la
@@ -57,10 +168,9 @@ class HidratacionRepository extends HidratacionService {
 /// Retorna:
 /// - [Future<bool>] que indica si la operación fue exitosa (`true`), o lanza una excepción si falla.
 @override
-Future<bool> registrarHidratacion(HidratarCharola hidratarCharola) async {
+Future<bool> registrarHidratacion(HidratacionCharola hidratacionCharola) async {
   final uri = Uri.parse('${APIRutas.CHAROLA}/hidratar');
   final token = await _userUseCases.obtenerTokenActual();
-
   if (token == null) {
     throw Exception('Debe iniciar sesión para continuar');
   }
@@ -71,20 +181,13 @@ Future<bool> registrarHidratacion(HidratarCharola hidratarCharola) async {
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     },
-    body: jsonEncode(hidratarCharola.toJson()),
+    body: jsonEncode(hidratacionCharola.toJson()),
   );
 
-  if (response.statusCode == 400) {
-    throw Exception('❌ Datos no válidos.');
-  } else if (response.statusCode == 101) {
-    throw Exception('❌ Sin conexión a internet.');
-  } else if (response.statusCode == 500) {
-    throw Exception('❌ Error del servidor.');
-  } else if (response.statusCode != 200 && response.statusCode != 201) {
-    throw Exception('❌ Error desconocido (${response.statusCode}).');
-  }
-
-  return true;
+  if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('Error al registrar alimentación: ${response.body}');
+    }
 }
-
 }

@@ -1,4 +1,6 @@
-//RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
+// RF23: Registrar un nuevo tipo de comida en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF23
+// RF41 Eliminar un tipo de hidratación en el sistema - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF41
+// RF40: Editar hidratacion - https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF40
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/alimentacionModel.dart';
@@ -168,7 +170,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
-  /// Construye la columna de hidratación (datos simulados).
+  /// Construye la columna de hidratación.
   Widget _buildColumnSectionHidratacion() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -190,14 +192,13 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
-              // IconButton(
-              //   icon: const Icon(Icons.add),
-              //   onPressed: _onAgregarHidratacion,
-              // ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: _onAgregarHidratacion,
+              ),
             ],
           ),
         ),
-        // Lista dinámica con scroll infinito
         // Lista dinámica con scroll infinito
         Expanded(
           child:
@@ -253,6 +254,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Construye una fila individual con un [hidratacion] y botones de acción.
   Widget _buildRowHidratacion(Hidratacion hidratacion, int index) {
     final bg = index.isEven ? Colors.white : Colors.grey.shade200;
     return Container(
@@ -263,9 +265,14 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
         children: [
           Expanded(child: Text(hidratacion.nombreHidratacion)),
           // placeholder para el espacio del icono “editar”
-          const SizedBox(width: 48),
-          // placeholder para el espacio del icono “borrar”
-          const SizedBox(width: 48),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => _onEditarHidratacion(hidratacion),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () => _onEliminarHidratacion(hidratacion.idHidratacion),
+          ),
         ],
       ),
     );
@@ -534,6 +541,137 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
     );
   }
 
+  /// Muestra un diálogo para editar [alimento] y guarda cambios.
+  void _onEditarHidratacion(Hidratacion hidratacion) {
+    final nombreController = TextEditingController(
+      text: hidratacion.nombreHidratacion,
+    );
+    final descripcionController = TextEditingController(
+      text: hidratacion.descripcionHidratacion,
+    );
+
+    showDialog(
+      context: context,
+      builder:
+          (BuildContext dialogContext) {
+            return  ChangeNotifierProvider.value(
+              value: vmHidratacion,
+              child: Consumer<HidratacionViewModel>(
+                builder: (context, vm, _) {
+                  return AlertDialog(
+                    title: const Center(
+                      child: Text(
+                        'Editar Hidratación',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Divider(height: 1),
+                      const SizedBox(height: 30),
+                      TextField(
+                        controller: nombreController,
+                        maxLength: 20,
+                        decoration: const InputDecoration(
+                          labelText: 'Nombre',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: descripcionController,
+                        maxLength: 200,
+                        decoration: const InputDecoration(
+                          labelText: 'Descripción',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                      ),
+                    ],
+                  ),
+                ),
+                actionsAlignment: MainAxisAlignment.center,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        vmHidratacion.isLoading ? CircularProgressIndicator() :
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                minimumSize: const Size(150, 50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: () => Navigator.of(dialogContext).pop(),
+                              child: const Text(
+                                'Cancelar',
+                                style: TextStyle(color: Colors.white, fontSize: 20),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              minimumSize: const Size(150, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                              onPressed: () async {
+                                final resultado = await vmHidratacion.editarHidratacion(
+                                  Hidratacion(
+                                    idHidratacion: hidratacion.idHidratacion,
+                                    nombreHidratacion: nombreController.text.trim(),
+                                    descripcionHidratacion: descripcionController.text.trim(),
+                                  ),
+                                );
+                                if (resultado == null) {
+                                  Navigator.of(dialogContext).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('✅ Hidratación registrada exitosamente'),
+                                      backgroundColor: Colors.green,
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                  await vmHidratacion.cargarHidratacion();
+                                } else {
+                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                  SnackBar(
+                                    content: Text(resultado),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                }
+                              },
+                              child: const Text(
+                                'Guardar',
+                                style: TextStyle(color: Colors.white, fontSize: 20),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ]
+                    )
+                  )
+                ],
+              );
+            }
+          )
+        );
+      }
+    );
+  }
+
   /// Muestra un diálogo para visualizar [alimento].
   void _visualizarDescripcion(Alimento alimento) {
     showDialog(
@@ -696,6 +834,237 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
           )
         );
       }
+    );
+  }
+
+    /// Muestra un diálogo de confirmación para eliminar [hidratacion].
+  /// Si se confirma, llama a [vm.eliminarHidratacion].
+  void _onEliminarHidratacion(int idHidratacion) {
+    showDialog(
+      context: context,
+      builder:
+          (BuildContext dialogContext) {
+            return ChangeNotifierProvider.value(
+              value: vmHidratacion,
+              child: Consumer<HidratacionViewModel>(
+                builder: (context, vm, _){
+                  return AlertDialog(
+                  title: const Center(
+                    child: Text(
+                      'Eliminar Alimento',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Divider(height: 1),
+                      SizedBox(height: 30),
+                      Text(
+                        '¿Estás seguro de eliminar este alimento?',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(height: 20),
+                    ]
+                  ),
+                  actionsAlignment: MainAxisAlignment.center,
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          vmAlimentacion.isLoading ? CircularProgressIndicator() :
+                          Row(
+                            children: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  minimumSize: const Size(150, 50),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                onPressed: () => Navigator.of(dialogContext).pop(),
+                                child: const Text(
+                                  'Cancelar',
+                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  minimumSize: const Size(150, 50),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  final resultado = await vmHidratacion.eliminarHidratacion(idHidratacion);
+                                  Navigator.of(dialogContext).pop();
+
+                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        resultado == null
+                                            ? '✅ Hidratación eliminado exitosamente'
+                                            : resultado,
+                                      ),
+                                      backgroundColor: resultado == null ? Colors.green : Colors.red,
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'Eliminar',
+                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                ),
+                              ),
+                            ]
+                          )
+                        ]
+                      )
+                    )
+                  ],
+                );
+              }
+          )
+        );
+      }
+    );
+  }
+
+  /// Muestra un formulario emergente para registrar una nueva hidratación.
+  void _onAgregarHidratacion() {
+    final nombreController = TextEditingController();
+    final descripcionController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return ChangeNotifierProvider.value(
+          value: vmHidratacion,
+          child: Consumer<HidratacionViewModel>(
+            builder: (context, vm, _) {
+              return AlertDialog(
+                title: const Center(
+                  child: Text(
+                    'Nueva Hidratación',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                content: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Divider(height: 1),
+                        const SizedBox(height: 30),
+                        TextField(
+                          controller: nombreController,
+                          maxLength: 25,
+                          decoration: const InputDecoration(
+                            labelText: 'Nombre:',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextField(
+                          controller: descripcionController,
+                          maxLength: 200,
+                          decoration: const InputDecoration(
+                            labelText: 'Descripción:',
+                            border: OutlineInputBorder(),
+                          ),
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                actionsAlignment: MainAxisAlignment.center,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        vmHidratacion.isLoading
+                            ? CircularProgressIndicator()
+                            : Row(
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    minimumSize: const Size(150, 50),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  onPressed:
+                                      () => Navigator.of(dialogContext).pop(),
+                                  child: const Text(
+                                    'Cancelar',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    final nombre = nombreController.text.trim();
+                                    final descripcion =
+                                        descripcionController.text.trim();
+
+                                    final resultado = await vm
+                                        .registrarTipoHidratacion(
+                                          nombre,
+                                          descripcion,
+                                        );
+                                    if (!mounted) return;
+
+                                    if (resultado == null) {
+                                      Navigator.of(dialogContext).pop();
+                                      await vm.cargarHidratacion();
+                                    } else {
+                                      ScaffoldMessenger.of(
+                                        dialogContext,
+                                      ).showSnackBar(
+                                        SnackBar(content: Text(resultado)),
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    minimumSize: const Size(150, 50),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Guardar',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

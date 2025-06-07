@@ -1,3 +1,7 @@
+/// RF13 Registrar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF13
+/// RF19 Editar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF19
+/// RF14 Eliminar usuario https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/RF14
+/// 
 import 'package:zuustento_tracker/data/repositories/usuarioRepository.dart';
 import 'package:zuustento_tracker/data/models/loginModel.dart';
 import 'package:zuustento_tracker/data/models/usuarioModel.dart';
@@ -14,6 +18,10 @@ abstract class UsuarioUseCases {
   Future<Map<dynamic, dynamic>> obtenerUsuarios();
 
   Future<Map<dynamic, dynamic>> registrarUsuario(Usuario nuevoUsuario);
+
+  Future<Map<dynamic, dynamic>> editarUsuario(int usuarioId, Usuario infoUsuario);
+
+  Future<Map<dynamic, dynamic>> eliminarUsuario(int usuarioId);
 }
 ///Clase que maneja los casos de uso relacionados con el usuario
 class UsuarioUseCasesImp extends UsuarioUseCases {
@@ -49,5 +57,13 @@ class UsuarioUseCasesImp extends UsuarioUseCases {
   
   Future<Map<dynamic, dynamic>> registrarUsuario(Usuario nuevoUsuario) async {
     return await _repository.registrarUsuario(nuevoUsuario);
+  }
+
+  Future<Map<dynamic, dynamic>> editarUsuario(int usuarioId, Usuario infoUsuario) async {
+    return await _repository.editarUsuario(usuarioId, infoUsuario);
+  }
+
+  Future<Map<dynamic, dynamic>> eliminarUsuario(int usuarioId) async {
+    return await _repository.eliminarUsuario(usuarioId);
   }
 }

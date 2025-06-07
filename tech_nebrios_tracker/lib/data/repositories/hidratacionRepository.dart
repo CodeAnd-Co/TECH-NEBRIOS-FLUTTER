@@ -17,7 +17,7 @@ import '../../domain/usuarioUseCases.dart';
 ///  - Gestionar respuestas y errores HTTP.
 ///  - Convertir JSON a modelos [Hidratacion].
 class HidratacionRepository extends HidratacionService {
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   @override
   Future<List<Hidratacion>> obtenerHidratacion() async {

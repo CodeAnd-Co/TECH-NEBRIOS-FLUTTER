@@ -21,7 +21,7 @@ dependencies:
   http: ^1.1.0 # Comunicación HTTP
   dio: ^5.3.2 # Cliente HTTP más avanzado
   cached_network_image: ^3.2.3 # Cargar imágenes
-  intl: ^0.19.0 # Formateo de fechas
+  intl: ^0.20.2 # Formateo de fechas
   open_file: ^3.3.2
   connectivity_plus: ^5.0.2
   dartz: ^0.10.1

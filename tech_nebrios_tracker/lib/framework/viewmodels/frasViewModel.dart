@@ -24,32 +24,54 @@ class FrasViewModel extends ChangeNotifier {
   FrasViewModel({
     FrasRepository? repo,
     VisualizarFrasUseCase? visualizarCasoUso,
-  })  : _repo = repo ?? FrasRepository();
+  }) : _repo = repo ?? FrasRepository();
 
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<String?> cargarFras() async {
+  Future<String?> cargarFras(int charolaId) async {
     _setLoading(true);
     try {
       _frasList = await _repo.obtenerFras();
       _error = null;
       return null;
     } catch (e) {
-      final msg = e.toString().contains('401')
-            ? '🚫 401: No autorizado'
-            : e.toString().contains('101')
-            ? '🌐 101: Problemas de red'
-            : e.toString().contains('400')
-            ? '❌ 400: Datos no válidos'
-            : '💥 Error de conexión';
+      final msg =
+          e.toString().contains('401')
+              ? '🚫 401: No autorizado'
+              : e.toString().contains('101')
+              ? '🌐 101: Problemas de red'
+              : e.toString().contains('400')
+              ? '❌ 400: Datos no válidos'
+              : '💥 Error de conexión';
 
-        _logger.e(msg);
-        return msg;
+      _logger.e(msg);
+      return msg;
     } finally {
-        notifyListeners();
-        _setLoading(false);
-      }
+      notifyListeners();
+      _setLoading(false);
+    }
+  }
+
+  Future<void> editarFras(int charolaId, double nuevosGramos) async {
+    _setLoading(true);
+    try {
+      final updatedList = await _repo.editarFras(charolaId, nuevosGramos);
+      _frasList = updatedList;
+      _error = null;
+    } catch (e) {
+      final msg =
+          e.toString().contains('401')
+              ? '🚫 401: No autorizado'
+              : e.toString().contains('400')
+              ? '❌ 400: Datos no válidos'
+              : '💥 Error de conexión';
+      _logger.e(msg);
+      _error = msg;
+    } finally {
+      _setLoading(false);
+      notifyListeners();
+    }
   }
 
   void _setLoading(bool value) {

@@ -27,6 +27,25 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
     vm.fechaController.text = '${today.day}/${today.month}/${today.year}';
     vm.cargarHidratacion();
     vm.cargarAlimentos();
+
+    // Prellenar campos
+    vm.densidadLarvaController.text = '900';
+    vm.hidratacionCicloController.text = '200';
+
+    // Cargar hidratación y seleccionar Zanahoria cuando termine
+    vm.cargarHidratacion().then((_) {
+      final posibles = vm.hidrataciones
+      .where((h) => h.nombreHidratacion.toLowerCase() == 'zanahoria')
+      .toList();
+
+      if (posibles.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            vm.selectedHidratacion = posibles.first;
+          });
+        });
+      }
+    });
   }
 
   @override

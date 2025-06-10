@@ -2,6 +2,7 @@
 // RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 // RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
 // RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
+//RF15  Filtrar charola por fecha - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/rf15/
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -16,6 +17,7 @@ import '../../domain/consultarCharolaUseCase.dart';
 import '../../domain/eliminarCharolaUseCase.dart';
 import '../../domain/charolasDashboardUseCase.dart';
 import '../../domain/registrarCharolaUseCase.dart';
+import '../../domain/filtrarCharolasFechasUseCase.dart';
 
 /// ViewModel encargado de gestionar el estado de la vista de charolas.
 class CharolaViewModel extends ChangeNotifier {
@@ -31,6 +33,7 @@ class CharolaViewModel extends ChangeNotifier {
   late final EliminarCharolaUseCase _eliminarUseCase;
   late final ObtenerMenuCharolas _menuUseCase;
   late final RegistrarCharolaUseCase _registrarUseCase;
+  late final FiltrarCharolasFechasUseCase _filtrarUseCase;
 
   /// Constructor sin parámetros que inicializa los casos de uso con el repositorio
   CharolaViewModel() {
@@ -38,6 +41,8 @@ class CharolaViewModel extends ChangeNotifier {
     _eliminarUseCase = EliminarCharolaUseCaseImpl(charolaRepository: _repo);
     _menuUseCase = ObtenerCharolasUseCaseImpl(repositorio: _repo);
     _registrarUseCase = RegistrarCharolaUseCaseImpl(repositorio: _repo);
+    _filtrarUseCase = FiltrarCharolasFechasUseCaseImpl(charolaRepository: _repo);
+
 
     // Carga inicial de charolas y dropdowns
     cargarCharolas();
@@ -88,8 +93,16 @@ class CharolaViewModel extends ChangeNotifier {
   final TextEditingController densidadLarvaController = TextEditingController();
   final TextEditingController fechaController = TextEditingController();
   final TextEditingController comidaCicloController = TextEditingController();
+  final TextEditingController razonEliminacionController = TextEditingController();
   final TextEditingController hidratacionCicloController =
       TextEditingController();
+  final TextEditingController busquedaController = TextEditingController();
+  String _busqueda = '';
+  List<CharolaTarjeta> _charolasFiltradas = [];
+  List<CharolaTarjeta> get charolasFiltradas =>
+      _charolasFiltradas.isEmpty && _busqueda.isEmpty
+          ? charolas
+          : _charolasFiltradas;
 
   /// Valida el formulario y registra la charola si es válido.
   /// Si el formulario no es válido, muestra un mensaje de error.
@@ -122,7 +135,7 @@ class CharolaViewModel extends ChangeNotifier {
         ],
       );
       final data = await _registrarUseCase.registrar(charola: registro);
-            final tarjeta = CharolaTarjeta(
+      final tarjeta = CharolaTarjeta(
         charolaId: data['charolaId'] as int,
         nombreCharola: data['nombreCharola'] as String,
         fechaCreacion: DateTime.parse(data['fechaCreacion'] as String),
@@ -130,7 +143,7 @@ class CharolaViewModel extends ChangeNotifier {
       _cargandoRegistro = false;
       notifyListeners();
       return tarjeta;
-      } catch (e) {
+    } catch (e) {
       _cargandoRegistro = false;
       notifyListeners();
       rethrow;
@@ -149,6 +162,22 @@ class CharolaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void filtrarCharolas(String query) {
+    _busqueda = query;
+    if (query.isEmpty) {
+      _charolasFiltradas = [];
+    } else {
+      _charolasFiltradas =
+          charolas
+              .where(
+                (c) =>
+                    c.nombreCharola.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList();
+    }
+    notifyListeners();
+  }
+
   // === DETALLE DE UNA CHAROLA ===
   CharolaDetalle? _charola; // Detalle de la charola actual
   CharolaDetalle? get charola => _charola; // Getter del detalle
@@ -163,6 +192,10 @@ class CharolaViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       _charola = await _obtenerUseCase.obtenerCharola(id);
+      // Al final de cargarCharolas()
+      if (_busqueda.isNotEmpty) {
+        filtrarCharolas(_busqueda);
+      }
     } catch (e) {
       _logger.e('Error cargando detalle: $e');
 
@@ -188,10 +221,12 @@ class CharolaViewModel extends ChangeNotifier {
   Future<void> eliminarCharola(int id) async {
     _error = false;
     _cargandoCharola = true;
+    final razon = razonEliminacionController.text;
     notifyListeners();
     try {
       await _eliminarUseCase.eliminar(
         id,
+        razon,
       );
       _charola = null;
       _cargandoCharola = false;
@@ -275,5 +310,33 @@ class CharolaViewModel extends ChangeNotifier {
     estadoActual = nuevoEstado;
     pagActual = 1;
     cargarCharolas(reset: true);
+  }
+  /// Filtra charolas según un rango de fechas.
+  Future<void> filtrarCharolasPorFecha(DateTime inicio, DateTime fin) async {
+    _cargandoLista = true;
+    notifyListeners();
+
+    try {
+      final filtradas = await _filtrarUseCase.filtrar(inicio, fin);
+      charolas = filtradas;
+      hayMas = false; // el filtro no es paginado
+      _mensajeError = null;
+    } catch (e) {
+      final msg = e.toString().contains('401')
+          ? '🚫 Error 401: No autorizado'
+          : e.toString().contains('101')
+              ? '🌐 Error 101: Sin conexión a internet'
+              : '💥 Error al filtrar charolas';
+
+      mostrarErrorSnackBar(msg);
+    } finally {
+      _cargandoLista = false;
+      notifyListeners();
+    }
+  }
+
+  /// Alias más intuitivo para usar desde la vista
+  void filtrarPorFechas(DateTime desde, DateTime hasta) {
+    filtrarCharolasPorFecha(desde, hasta);
   }
 }

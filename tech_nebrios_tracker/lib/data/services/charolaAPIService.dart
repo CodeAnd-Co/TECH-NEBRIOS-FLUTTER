@@ -2,6 +2,7 @@
 // RF10 Consultar información detallada de una charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF10
 // RF8 Eliminar Charola https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF8
 // RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
+//RF15  Filtrar charola por fecha - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/rf15/
 
 import 'package:zuustento_tracker/data/models/charolaModel.dart';
 
@@ -21,4 +22,8 @@ abstract class CharolaAPIService {
   ///
   /// [charola] es la instancia de [CharolaRegistro] con los datos necesarios.
   Future<Map<String, dynamic>> registrarCharola(CharolaRegistro charola);
+  /// Filtra las charolas por fecha de creación.
+  /// 
+  /// [fechaInicio] y [fechaFin] definen el rango de fechas.
+  Future<List<CharolaTarjeta>> filtrarCharolasPorFecha(String fechaInicio, String fechaFin);
   }

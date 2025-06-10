@@ -2,7 +2,7 @@ import '../data/repositories/charolaRepository.dart';
 
 abstract class EliminarCharolaUseCase {
   /// Elimina una charola por su ID.
-  Future<void> eliminar(int id);
+  Future<void> eliminar(int id, String razon);
 }
 class EliminarCharolaUseCaseImpl implements EliminarCharolaUseCase {
   /// Repositorio de charolas.
@@ -13,7 +13,7 @@ class EliminarCharolaUseCaseImpl implements EliminarCharolaUseCase {
       : _charolaRepository = charolaRepository ?? CharolaRepository();
 
   @override
-  Future<void> eliminar(int id) {
-    return _charolaRepository.eliminarCharola(id);
+  Future<void> eliminar(int id, String razon) {
+    return _charolaRepository.eliminarCharola(id, razon);
   }
 }

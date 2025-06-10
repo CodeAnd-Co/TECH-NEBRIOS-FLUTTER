@@ -44,14 +44,18 @@ class CharolaTarjeta extends StatelessWidget {
 
             return Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
                     decoration: BoxDecoration(
                       color: color,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(8),
+                      ),
                     ),
                     padding: EdgeInsets.symmetric(vertical: paddingVertical),
                     child: Text(
@@ -91,7 +95,8 @@ class VistaSeleccionarTamizado extends StatefulWidget {
   const VistaSeleccionarTamizado({super.key});
 
   @override
-  State<VistaSeleccionarTamizado> createState() => _VistaSeleccionarTamizadoState();
+  State<VistaSeleccionarTamizado> createState() =>
+      _VistaSeleccionarTamizadoState();
 }
 
 class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
@@ -100,7 +105,25 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final vm = Provider.of<CharolaViewModel>(context, listen: false);
-      vm.cambiarEstado('activa'); 
+      vm.cambiarEstado('activa');
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final seleccionVM = Provider.of<TamizadoViewModel>(
+        context,
+        listen: false,
+      );
+      seleccionVM.addListener(() {
+        if (seleccionVM.hasError && seleccionVM.errorMessage.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(seleccionVM.errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+          seleccionVM.limpiarError();
+        }
+      });
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -138,56 +161,67 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: const Text(
-                              'Charolas seleccionadas',
-                              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: const Text(
+                            'Charolas seleccionadas',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 10),
-                          SizedBox(
-                            height: 120,
-                            child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: seleccionVM.charolasParaTamizar.length,
-                              separatorBuilder: (_, __) => const SizedBox(width: 12),
-                              itemBuilder: (context, index) {
-                                final charola = seleccionVM.charolasParaTamizar[index];
-                                return SizedBox(
-                                  width: 180,
-                                  child: CharolaTarjeta(
-                                    fecha: "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
-                                    nombreCharola: charola.nombreCharola,
-                                    color: obtenerColorPorNombre(charola.nombreCharola),
-                                    onTap: () {
-                                      seleccionVM.quitarCharola(charola);
-                                    }
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 120,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: seleccionVM.charolasParaTamizar.length,
+                            separatorBuilder:
+                                (_, __) => const SizedBox(width: 12),
+                            itemBuilder: (context, index) {
+                              final charola =
+                                  seleccionVM.charolasParaTamizar[index];
+                              return SizedBox(
+                                width: 180,
+                                child: CharolaTarjeta(
+                                  fecha:
+                                      "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
+                                  nombreCharola: charola.nombreCharola,
+                                  color: obtenerColorPorNombre(
+                                    charola.nombreCharola,
                                   ),
-                                );
-                              },
-                            ),
+                                  onTap: () {
+                                    seleccionVM.quitarCharola(charola);
+                                  },
+                                ),
+                              );
+                            },
                           ),
-                          SizedBox(height: 10),
-                          Divider(height: 1, thickness: 2,)
-                        ]
+                        ),
+                        SizedBox(height: 10),
+                        Divider(height: 1, thickness: 2),
+                      ],
                     ),
-                    
                   ),
                 const SizedBox(height: 10),
                 if (vm.cargandoLista && vm.charolas.isEmpty)
-                  const Expanded(child: Center(child: CircularProgressIndicator()))
+                  const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  )
                 else if (!vm.cargandoLista && vm.charolas.isEmpty)
                   const Expanded(
                     child: Center(
                       child: Text(
                         'No hay charolas registradas 🧺',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   )
-
                 /// Grid de charolas
                 else
                   Expanded(
@@ -195,22 +229,27 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: GridView.builder(
                         itemCount: vm.charolas.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: 1.3,
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 5,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                              childAspectRatio: 1.3,
+                            ),
                         itemBuilder: (context, index) {
-                          final modelo.CharolaTarjeta charola = vm.charolas[index];
+                          final modelo.CharolaTarjeta charola =
+                              vm.charolas[index];
                           return LayoutBuilder(
                             builder: (context, constraints) {
                               return AspectRatio(
                                 aspectRatio: 1.3,
                                 child: CharolaTarjeta(
-                                  fecha: "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
+                                  fecha:
+                                      "${charola.fechaCreacion.day}/${charola.fechaCreacion.month}/${charola.fechaCreacion.year}",
                                   nombreCharola: charola.nombreCharola,
-                                  color: obtenerColorPorNombre(charola.nombreCharola),
+                                  color: obtenerColorPorNombre(
+                                    charola.nombreCharola,
+                                  ),
                                   onTap: () {
                                     seleccionVM.agregarCharola(charola);
                                   },
@@ -227,7 +266,10 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                 if (vm.charolas.isNotEmpty) ...[
                   Text(
                     "Página ${vm.pagActual} de ${vm.totalPags}",
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Padding(
@@ -249,15 +291,29 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ElevatedButton.icon(
-                                    onPressed: vm.pagActual > 1 ? vm.cargarPaginaAnterior : null,
-                                    icon: Icon(Icons.arrow_back, size: iconSize.clamp(18, 32)),
+                                    onPressed:
+                                        vm.pagActual > 1
+                                            ? vm.cargarPaginaAnterior
+                                            : null,
+                                    icon: Icon(
+                                      Icons.arrow_back,
+                                      size: iconSize.clamp(18, 32),
+                                    ),
                                     label: Text(
                                       "Anterior",
-                                      style: TextStyle(fontSize: fontSize.clamp(17, 22)),
+                                      style: TextStyle(
+                                        fontSize: fontSize.clamp(17, 22),
+                                      ),
                                     ),
                                     style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
-                                      minimumSize: Size(buttonWidth.clamp(80, 200), 48),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 22,
+                                        vertical: 20,
+                                      ),
+                                      minimumSize: Size(
+                                        buttonWidth.clamp(80, 200),
+                                        48,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -265,15 +321,29 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                   ),
                                   const SizedBox(width: 16),
                                   ElevatedButton.icon(
-                                    onPressed: vm.pagActual < vm.totalPags ? vm.cargarPaginaSiguiente : null,
-                                    icon: Icon(Icons.arrow_forward, size: iconSize.clamp(18, 32)),
+                                    onPressed:
+                                        vm.pagActual < vm.totalPags
+                                            ? vm.cargarPaginaSiguiente
+                                            : null,
+                                    icon: Icon(
+                                      Icons.arrow_forward,
+                                      size: iconSize.clamp(18, 32),
+                                    ),
                                     label: Text(
                                       "Siguiente",
-                                      style: TextStyle(fontSize: fontSize.clamp(17, 22)),
+                                      style: TextStyle(
+                                        fontSize: fontSize.clamp(17, 22),
+                                      ),
                                     ),
                                     style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                      minimumSize: Size(buttonWidth.clamp(120, 200), 48),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 20,
+                                      ),
+                                      minimumSize: Size(
+                                        buttonWidth.clamp(120, 200),
+                                        48,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -285,15 +355,27 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                 right: 20,
                                 child: ElevatedButton.icon(
                                   onPressed: () {
-                                    if(seleccionVM.siguienteInterfaz(context)){
-                                      if(seleccionVM.charolasParaTamizar.length == 1){
+                                    if (seleccionVM.siguienteInterfaz(
+                                      context,
+                                    )) {
+                                      if (seleccionVM
+                                              .charolasParaTamizar
+                                              .length ==
+                                          1) {
                                         Navigator.push(
-                                          context, 
+                                          context,
                                           MaterialPageRoute(
-                                            builder: (_) => VistaTamizadoIndividual(onRegresar: () {Navigator.pop(context); seleccionVM.limpiarInformacion();})
-                                            )
+                                            builder:
+                                                (_) => VistaTamizadoIndividual(
+                                                  onRegresar: () {
+                                                    Navigator.pop(context);
+                                                    seleccionVM
+                                                        .limpiarInformacion();
+                                                  },
+                                                ),
+                                          ),
                                         );
-                                      }else {
+                                      } else {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -303,7 +385,10 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                       }
                                     } 
                                   },
-                                  icon: Icon(Icons.done, size: iconSize.clamp(20, 30)),
+                                  icon: Icon(
+                                    Icons.done,
+                                    size: iconSize.clamp(20, 30),
+                                  ),
                                   label: Text(
                                     'Finalizar Selección',
                                     style: TextStyle(
@@ -312,7 +397,10 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
                                     ),
                                   ),
                                   style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 18,
+                                    ),
                                     backgroundColor: const Color(0xFF0066FF),
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
@@ -340,14 +428,14 @@ class _VistaSeleccionarTamizadoState extends State<VistaSeleccionarTamizado> {
 /// Asigna un color al encabezado de la tarjeta basado en el nombre.
 Color obtenerColorPorNombre(String nombre) {
   if (nombre.startsWith('C-')) {
-    return const Color(0xFF22A63A); 
+    return const Color(0xFF22A63A);
   } else if (nombre.startsWith('E-')) {
-    return const Color(0xFFE2387B); 
+    return const Color(0xFFE2387B);
   } else if (nombre.startsWith('T1-') ||
-             nombre.startsWith('T2-') ||
-             nombre.startsWith('T3-') ||
-             nombre.startsWith('T4-')) {
-    return const Color(0xFF22A63A); 
+      nombre.startsWith('T2-') ||
+      nombre.startsWith('T3-') ||
+      nombre.startsWith('T4-')) {
+    return const Color(0xFF22A63A);
   }
   return Colors.grey; // Color por defecto
 }

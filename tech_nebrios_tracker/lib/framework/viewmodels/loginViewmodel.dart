@@ -5,15 +5,18 @@ import 'package:jwt_decode/jwt_decode.dart';
 class LoginViewModel extends ChangeNotifier {
   final usuarioController = TextEditingController();
   final contrasenaController = TextEditingController();
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
+  final TextEditingController nombreController = TextEditingController();
   
   String _errorMessage = '';
   bool _hasError = false;
   bool _cargando = false;
+  bool _cargandoRegistro = false;
   
   String get errorMessage => _errorMessage;
   bool get hasError => _hasError;
   bool get cargando => _cargando;
+  bool get cargandoRegistro => _cargandoRegistro;
   
   LoginViewModel() {
     //_checkCurrentUser();
@@ -25,10 +28,12 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> iniciarSesion() async {
     final usuario = usuarioController.text.trim();
     final contrasena = contrasenaController.text.trim();
+    _cargando = true;
 
     if (usuario.isEmpty) {
       _errorMessage = 'Llena el campo de usuario';
       _hasError = true;
+      _cargando = false;
       notifyListeners();
           
       return;
@@ -37,13 +42,13 @@ class LoginViewModel extends ChangeNotifier {
     if (contrasena.isEmpty) {
       _errorMessage = 'Llena el campo de contraseña';
       _hasError = true;
+      _cargando = false;
       notifyListeners();
       
       return;
     }
 
     try {
-      _cargando = true;
       notifyListeners();
       final sesion = await _userUseCases.iniciarSesion(usuario, contrasena);
 
@@ -67,6 +72,30 @@ class LoginViewModel extends ChangeNotifier {
       _hasError = true;
       notifyListeners();
     }
+  }
+
+  Future<void> recuperarContrasena() async {
+    _hasError = false;
+    _errorMessage = '';
+    _cargandoRegistro = true;
+    notifyListeners();
+
+    var respuesta = await _userUseCases.recuperarUsuario(nombreController.text);
+
+    if (respuesta['codigo'] == 200){
+      _errorMessage = respuesta['mensaje'];
+      _cargandoRegistro = false;
+    } else if (respuesta['codigo'] == 201){
+      _hasError = true;
+      _errorMessage = respuesta['mensaje'];
+      _cargandoRegistro = false;
+    }else {
+      _hasError = true;
+      _errorMessage = respuesta['mensaje'];
+      _cargandoRegistro = false;
+    }
+
+    notifyListeners();
   }
 
   void limpiarCampos() {

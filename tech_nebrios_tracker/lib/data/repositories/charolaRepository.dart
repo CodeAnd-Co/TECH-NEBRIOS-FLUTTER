@@ -1,9 +1,11 @@
 // RF16 Visualizar todas las charolas registradas en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF16
 // RF5 Registrar una nueva charola en el sistema - https://codeandco-wiki.netlify.app/docs/proyectos/larvas/documentacion/requisitos/RF5
+//RF15  Filtrar charola por fecha - Documentación: https://codeandco-wiki.netlify.app/docs/next/proyectos/larvas/documentacion/requisitos/rf15/
 
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:logger/logger.dart';
 import '../models/constantes.dart';
 import '../models/charolaModel.dart';
@@ -13,7 +15,7 @@ import '../../domain/usuarioUseCases.dart';
 /// Encapsula llamadas HTTP y transformación de datos.
 class CharolaRepository {
   final Logger _logger = Logger();
-  final UserUseCases _userUseCases = UserUseCases();
+  final UsuarioUseCasesImp _userUseCases = UsuarioUseCasesImp();
 
   /// Obtiene charolas paginadas.
   Future<Map<String, dynamic>?> obtenerCharolasPaginadas(
@@ -107,21 +109,28 @@ class CharolaRepository {
   }
 
   /// Elimina una charola por ID.
-  Future<void> eliminarCharola(int id) async {
+  Future<void> eliminarCharola(int id, String razon) async {
     final token = await _userUseCases.obtenerTokenActual();
     if (token == null) {
       throw Exception('Debe iniciar sesión para continuar');
     }
 
+    Map<String, dynamic> sesion = Jwt.parseJwt(token);
+    final usuario = sesion['nombreDeUsuario'];
+
     final uri = Uri.parse('${APIRutas.CHAROLA}/eliminarCharola/$id');
 
     try {
-      final response = await http.delete(
+      final response = await http.post(
         uri,
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
+        body: json.encode({
+          'razon': razon,
+          'usuario': usuario,
+        }),
       );
 
       if (response.statusCode == 200) return;
@@ -129,7 +138,6 @@ class CharolaRepository {
         throw Exception('No autorizado. Por favor, inicie sesión.');
       }
       _logger.e('Error HTTP: ${response.statusCode}');
-      throw Exception('Error al eliminar la charola');
     } on SocketException {
       throw ('💥 Error de conexión');
     } catch (e) {
@@ -173,4 +181,47 @@ class CharolaRepository {
       rethrow;
     }
   }
+
+  /// Filtra charolas por un rango de fechas (fechaCreacion)
+  Future<List<CharolaTarjeta>> filtrarCharolasPorFecha({
+    required DateTime fechaInicio,
+    required DateTime fechaFin,
+    }) async {
+      final token = await _userUseCases.obtenerTokenActual();
+      if (token == null) {
+        throw Exception('Debe iniciar sesión para continuar');
+      }
+
+      final String inicio = fechaInicio.toIso8601String().split('T').first;
+      final String fin = fechaFin.toIso8601String().split('T').first;
+
+      final uri = Uri.parse('${APIRutas.CHAROLA}/charolas/filtrar?inicio=$inicio&fin=$fin');
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        final List<dynamic> lista = decoded['data'];
+        return lista.map((item) => CharolaTarjeta.fromJson(item)).toList();
+      } else if (response.statusCode == 401) {
+        throw Exception('No autorizado. Por favor, inicie sesión.');
+      } else {
+        _logger.e('Error HTTP: ${response.statusCode}');
+        throw Exception('Error al filtrar charolas por fecha');
+      }
+    } on SocketException {
+      throw ('💥 Error de conexión');
+    } catch (e) {
+      _logger.e('Error al filtrar charolas: $e');
+      rethrow;
+    }
+  }
+
 }

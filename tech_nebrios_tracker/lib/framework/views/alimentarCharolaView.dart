@@ -5,11 +5,17 @@ import 'package:provider/provider.dart';
 import '../viewmodels/alimentacionViewModel.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 
+final ValueNotifier<bool> _dialogoAbierto = ValueNotifier(false);
+
 void mostrarDialogoAlimentar(
   BuildContext context,
   int charolaId,
   CharolaViewModel charolaViewModel,
 ) async {
+  if (_dialogoAbierto.value) return;
+
+  _dialogoAbierto.value = true;
+
   final comidaCharolaVM = Provider.of<AlimentacionViewModel>(
     context,
     listen: false,
@@ -251,4 +257,5 @@ void mostrarDialogoAlimentar(
       );
     },
   );
+  _dialogoAbierto.value = false;
 }

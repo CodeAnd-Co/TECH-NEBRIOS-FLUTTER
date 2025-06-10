@@ -6,8 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/editarCharolaViewModel.dart';
 import '../viewmodels/charolaViewModel.dart';
-import '../../data/models/alimentacionModel.dart';
-import '../../data/models/hidratacionModel.dart';
 import '../../utils/positive_number_formatter.dart';
 
 Future<void> mostrarPopUpEditarCharola({
@@ -127,6 +125,7 @@ Future<void> mostrarPopUpEditarCharola({
                                       FilteringTextInputFormatter.digitsOnly,
                                       PositiveNumberFormatter(),
                                     ],
+                                    maxLength: 4,
                                     validator: (v) =>
                                         v == null || v.isEmpty
                                             ? 'Ingresa densidad'

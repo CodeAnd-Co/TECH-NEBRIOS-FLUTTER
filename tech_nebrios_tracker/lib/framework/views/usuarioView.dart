@@ -189,7 +189,7 @@ class _VistaUsuario extends State<VistaUsuario> {
                                                         ),
                                                       )
                                                     : 
-                                                    vistaModelo.idActual == usuario['usuarioId'] ?  Expanded(child: Text("")):
+                                                    vistaModelo.esAdmin && vistaModelo.idActual == usuario['usuarioId'] ?  Expanded(child: Text("")):
                                                     const SizedBox.shrink(),
                                               ],
                                             ),

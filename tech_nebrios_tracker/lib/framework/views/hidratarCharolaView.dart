@@ -5,11 +5,17 @@ import 'package:provider/provider.dart';
 import '../viewmodels/hidratacionViewModel.dart';
 import '../../framework/viewmodels/charolaViewModel.dart';
 
+bool _dialogoAbierto = false;
+
 void mostrarDialogoHidratar(
   BuildContext context,
   int charolaId,
   CharolaViewModel charolaViewModel,
 ) async {
+  if (_dialogoAbierto) return;
+
+  _dialogoAbierto = true;
+
   final comidaCharolaVM = Provider.of<HidratacionViewModel>(
     context,
     listen: false,
@@ -251,4 +257,5 @@ void mostrarDialogoHidratar(
       );
     },
   );
+  _dialogoAbierto = false;
 }

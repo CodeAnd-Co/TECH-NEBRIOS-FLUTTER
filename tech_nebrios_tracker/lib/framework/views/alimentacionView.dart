@@ -965,7 +965,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                           controller: nombreController,
                           maxLength: 25,
                           decoration: const InputDecoration(
-                            labelText: 'Nombre:',
+                            labelText: 'Nombre',
                             border: OutlineInputBorder(),
                           ),
                         ),
@@ -974,7 +974,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                           controller: descripcionController,
                           maxLength: 200,
                           decoration: const InputDecoration(
-                            labelText: 'Descripción:',
+                            labelText: 'Descripción',
                             border: OutlineInputBorder(),
                           ),
                           maxLines: null,

@@ -116,6 +116,18 @@ class _VistaCharolasState extends State<VistaCharolas> {
     super.dispose();
   }
 
+  @override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final vm = context.read<CharolaViewModel>();
+    vm.rangoFiltrado = null;
+    vm.busquedaController.clear();
+    vm.cargarCharolas(reset: true);
+  });
+}
+
+
 @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -207,36 +219,81 @@ Widget build(BuildContext context) {
                                     rangoFechas = null;
                                     rangoController.clear();
                                   });
-                                  context.read<CharolaViewModel>().cargarCharolas(reset: true);
+
+                                  final vm = context.read<CharolaViewModel>();
+                                  vm.rangoFiltrado = null;
+
+                                  // Guarda el estado actual para restaurarlo después
+                                  final estadoOriginal = vm.estadoActual;
+
+                                  // Carga charolas activas
+                                  vm.cambiarEstado('activa');
+                                  vm.cargarCharolas(reset: true);
+
+                                  // Carga charolas pasadas
+                                  vm.cambiarEstado('pasada');
+                                  vm.cargarCharolas(reset: true);
+
+                                  // Regresa al estado en el que el usuario estaba
+                                  vm.cambiarEstado(estadoOriginal);
                                 },
                               ),
+
                               border: const OutlineInputBorder(),
                             ),
                             onTap: () async {
-                              final DateTime now = DateTime.now();
+                              final now = DateTime.now();
+                              final fechaMinima = DateTime(2020);
+                              final initialInicio = now.isBefore(fechaMinima) ? fechaMinima : now;
 
+                              // Seleccionar fecha de inicio
                               final DateTime? fechaInicio = await showDatePicker(
                                 context: context,
-                                initialDate: now.subtract(const Duration(days: 7)),
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2050),
+                                initialDate: initialInicio,
+                                firstDate: fechaMinima,
+                                lastDate: now, // evita fechas futuras
                                 locale: const Locale('es', 'ES'),
                                 cancelText: 'Cancelar',
                                 confirmText: 'Aceptar',
                                 helpText: 'Inicio',
+                                builder: (BuildContext context, Widget? child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      textTheme: const TextTheme(
+                                        titleLarge: TextStyle(fontSize: 24),
+                                        bodyLarge: TextStyle(fontSize: 20),
+                                        labelLarge: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
                               );
 
                               if (fechaInicio == null) return;
 
+                              // Seleccionar fecha de fin (mínimo igual a fechaInicio)
                               final DateTime? fechaFin = await showDatePicker(
                                 context: context,
-                                initialDate: now,
-                                firstDate: fechaInicio,
-                                lastDate: DateTime(2050),
+                                initialDate: fechaInicio,
+                                firstDate: fechaInicio, // evita que elijan una fecha anterior
+                                lastDate: now,
                                 locale: const Locale('es', 'ES'),
                                 cancelText: 'Cancelar',
                                 confirmText: 'Aceptar',
                                 helpText: 'Fin',
+                                builder: (BuildContext context, Widget? child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      textTheme: const TextTheme(
+                                        titleLarge: TextStyle(fontSize: 24),
+                                        bodyLarge: TextStyle(fontSize: 20),
+                                        labelLarge: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
                               );
 
                               if (fechaFin == null) return;
@@ -247,6 +304,7 @@ Widget build(BuildContext context) {
                                     "${fechaInicio.day}/${fechaInicio.month}/${fechaInicio.year} a ${fechaFin.day}/${fechaFin.month}/${fechaFin.year}";
                               });
                             },
+
                           ),
                         ),
                       ),

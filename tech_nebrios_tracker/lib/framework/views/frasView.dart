@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../viewmodels/frasViewModel.dart';
 import 'components/header.dart';
 import '../../data/models/frasModel.dart';
+import 'package:zuustento_tracker/framework/views/components/FormFields.dart';
+import 'package:zuustento_tracker/utils/positive_number_formatter.dart';
+import 'package:flutter/services.dart';
 
 class FrasScreen extends StatefulWidget {
   final int charolaId;
@@ -279,6 +282,17 @@ class _FrasScreenState extends State<FrasScreen> {
                     children: [
                       const Divider(height: 1),
                       const SizedBox(height: 30),
+                      CustomTextFormField(
+                        label: 'Gramos generados*', 
+                        controller: controller,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          PositiveNumberFormatter()
+                        ],
+                        maxLength: 4,
+                        width: 400,
+                      ),
                       TextField(
                         controller: controller,
                         keyboardType: TextInputType.number,

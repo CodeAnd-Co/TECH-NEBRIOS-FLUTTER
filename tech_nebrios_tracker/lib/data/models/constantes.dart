@@ -1,5 +1,5 @@
 class APIRutas{
-  static const String BASEURL = "http://localhost:3000";
+  static const String BASEURL = "https://zuustentotracker.duckdns.org";
 
   static const String USUARIO = "$BASEURL/usuario";
 

@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../viewmodels/frasViewModel.dart';
 import 'components/header.dart';
 import '../../data/models/frasModel.dart';
+import 'package:zuustento_tracker/framework/views/components/FormFields.dart';
+import 'package:zuustento_tracker/utils/positive_number_formatter.dart';
+import 'package:flutter/services.dart';
 
 class FrasScreen extends StatefulWidget {
   final int charolaId;
@@ -13,6 +16,7 @@ class FrasScreen extends StatefulWidget {
 }
 
 class _FrasScreenState extends State<FrasScreen> {
+  final formKey4 = GlobalKey<FormState>();
   bool _hasLoadedOnce = false;
 
   @override
@@ -60,24 +64,25 @@ class _FrasScreenState extends State<FrasScreen> {
                       child: Text('No hay registros de Fras para mostrar.'),
                     );
                   }
-
                   return GridView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 16.0,
-                    ),
                     itemCount: lista.length,
                     gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 300,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 1.0,
-                        ),
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                        crossAxisSpacing: 4,
+                        childAspectRatio: 0.9,
+                    ),
                     itemBuilder: (context, index) {
-                      final item = lista[index];
-                      return _buildFrasCard(item);
-                    },
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          final item = lista[index];
+                          return AspectRatio(
+                            aspectRatio: 1.1,
+                            child: _buildFrasCard(item)
+                          );
+                        },
+                      );
+                    }
                   );
                 },
               ),
@@ -89,11 +94,22 @@ class _FrasScreenState extends State<FrasScreen> {
   }
 
   Widget _buildFrasCard(Fras data) {
-    final fecha = data.fechaRegistro;
-    final fechaStr =
-        '${fecha.day.toString().padLeft(2, '0')}/'
-        '${fecha.month.toString().padLeft(2, '0')}/'
-        '${fecha.year}';
+  final fecha = data.fechaRegistro;
+  final fechaStr =
+      '${fecha.day.toString().padLeft(2, '0')}/'
+      '${fecha.month.toString().padLeft(2, '0')}/'
+      '${fecha.year}';
+
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      final ancho = constraints.maxWidth;
+      final alto = constraints.maxHeight;
+      final double fontSizeTitle = (ancho * 0.08);
+      final double fontSizeValue = (ancho * 0.12);
+      final double fontSizeLabel = (ancho * 0.06);
+      final double fontSizeFecha = (ancho * 0.06);
+      final double fontSizeEditar = (ancho * 0.06);
+      final paddingVertical = alto * 0.06;
 
     return Card(
       margin: const EdgeInsets.all(4.0),
@@ -102,23 +118,23 @@ class _FrasScreenState extends State<FrasScreen> {
       child: Column(
         children: [
           Container(
+            height: 60, 
             decoration: const BoxDecoration(
               color: Color(0xFF2E7D32),
               borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14.0),
-                    child: Center(
-                      child: Text(
-                        'Fras Generado',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Generado',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: fontSizeTitle,
                       ),
                     ),
                   ),
@@ -127,20 +143,18 @@ class _FrasScreenState extends State<FrasScreen> {
                   child: Container(
                     decoration: const BoxDecoration(
                       color: Color(0xFF43A047),
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(12),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(12),
                       ),
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 14.0),
-                      child: Center(
-                        child: Text(
-                          'Producción',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Origen',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: fontSizeTitle,
                         ),
                       ),
                     ),
@@ -149,12 +163,10 @@ class _FrasScreenState extends State<FrasScreen> {
               ],
             ),
           ),
+
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 16.0,
-              ),
+              padding: EdgeInsets.symmetric(vertical: paddingVertical),
               child: Row(
                 children: [
                   Expanded(
@@ -164,17 +176,17 @@ class _FrasScreenState extends State<FrasScreen> {
                       children: [
                         Text(
                           '${data.gramosGenerados.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                            fontSize: 36,
+                          style: TextStyle(
+                            fontSize: fontSizeValue,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
+                        Text(
                           'gramos',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: fontSizeLabel,
                             color: Colors.black54,
                           ),
                         ),
@@ -185,8 +197,8 @@ class _FrasScreenState extends State<FrasScreen> {
                     child: Center(
                       child: Text(
                         data.nombreCharola,
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style: TextStyle(
+                          fontSize: fontSizeLabel,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
@@ -199,18 +211,15 @@ class _FrasScreenState extends State<FrasScreen> {
           ),
           const Divider(height: 1, thickness: 1, color: Colors.grey),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 25.0,
-            ),
+            padding: EdgeInsets.symmetric(vertical: paddingVertical),
             child: Row(
               children: [
                 Expanded(
                   child: Center(
                     child: Text(
                       fechaStr,
-                      style: const TextStyle(
-                        fontSize: 17,
+                      style: TextStyle(
+                        fontSize: fontSizeFecha,
                         color: Colors.black54,
                       ),
                     ),
@@ -222,13 +231,13 @@ class _FrasScreenState extends State<FrasScreen> {
                       onTap: () => _showEditDialog(data),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
+                        children: [
                           Icon(Icons.edit, size: 18, color: Colors.pink),
                           SizedBox(width: 4),
                           Text(
                             'Editar',
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: fontSizeEditar,
                               fontWeight: FontWeight.w600,
                               color: Colors.pink,
                             ),
@@ -241,123 +250,144 @@ class _FrasScreenState extends State<FrasScreen> {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
- void _showEditDialog(Fras data) {
-  // Aquí cargamos SIN DECIMALES usando toStringAsFixed(0)
-  final controller = TextEditingController(
-    text: data.gramosGenerados.toStringAsFixed(0),
-  );
-
-  showDialog(
-    context: context,
-    builder: (BuildContext dialogContext) {
-      return ChangeNotifierProvider.value(
-        value: context.read<FrasViewModel>(),
-        child: Consumer<FrasViewModel>(
-          builder: (context, vm, _) {
-            return AlertDialog(
-              title: const Center(
-                child: Text(
-                  'Editar Gramos',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Divider(height: 1),
-                    const SizedBox(height: 30),
-                    TextField(
-                      controller: controller,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Gramos generados',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actionsAlignment: MainAxisAlignment.center,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                  child: vm.isLoading
-                      ? const CircularProgressIndicator()
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                minimumSize: const Size(150, 50),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                              onPressed: () => Navigator.of(dialogContext).pop(),
-                              child: const Text(
-                                'Cancelar',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                minimumSize: const Size(150, 50),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                              onPressed: () async {
-                                final nuevos = double.tryParse(controller.text) ??
-                                    data.gramosGenerados;
-                                await vm.editarFras(data.charolaId, nuevos);
-                                if (vm.error == null) {
-                                  Navigator.of(dialogContext).pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          '✅ Gramos actualizados exitosamente'),
-                                      backgroundColor: Colors.green,
-                                      duration: Duration(seconds: 3),
-                                      behavior: SnackBarBehavior.floating,
-                                    ),
-                                  );
-                                  vm.cargarFras(data.charolaId);
-                                } else {
-                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                    SnackBar(
-                                      content: Text(vm.error!),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                }
-                              },
-                              child: const Text(
-                                'Guardar',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-              ],
-            );
-          },
+          ],
         ),
       );
     },
   );
 }
 
+  void _showEditDialog(Fras data) {
+    // Aquí cargamos SIN DECIMALES usando toStringAsFixed(0)
+    final controller = TextEditingController(
+      text: data.gramosGenerados.toStringAsFixed(0),
+    );
 
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return ChangeNotifierProvider.value(
+          value: context.read<FrasViewModel>(),
+          child: Consumer<FrasViewModel>(
+            builder: (context, vm, _) {
+              return AlertDialog(
+                title: const Center(
+                  child: Text(
+                    'Editar Gramos',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                content: SingleChildScrollView(
+                  child: Form(
+                    key: formKey4,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Divider(height: 1),
+                      const SizedBox(height: 30),
+                      CustomTextFormField(
+                        label: 'Gramos generados*', 
+                        controller: controller,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          PositiveNumberFormatter()
+                        ],
+                        validator: (v) => v == null || v.isEmpty
+                              ? 'Cantidad obligatoria'
+                              : null,
+                        maxLength: 4,
+                        width: 400,
+                      ),
+                    ],
+                  ),
+                ),
+                ),
+                actionsAlignment: MainAxisAlignment.center,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child:
+                        vm.isLoading
+                            ? const CircularProgressIndicator()
+                            : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    minimumSize: const Size(150, 50),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  onPressed:
+                                      () => Navigator.of(dialogContext).pop(),
+                                  child: const Text(
+                                    'Cancelar',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    minimumSize: const Size(150, 50),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    if (formKey4.currentState!.validate()) {
+                                      final nuevos = double.tryParse(controller.text);
+                                      await vm.editarFras(data.charolaId, nuevos!);
+                                      if (vm.error == null) {
+                                        Navigator.of(dialogContext).pop();
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              '✅ Gramos actualizados exitosamente',
+                                            ),
+                                            backgroundColor: Colors.green,
+                                            duration: Duration(seconds: 3),
+                                            behavior: SnackBarBehavior.floating,
+                                          ),
+                                        );
+                                        vm.cargarFras(data.charolaId);
+                                      } else {
+                                        ScaffoldMessenger.of(
+                                          dialogContext,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(vm.error!),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Guardar',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 }

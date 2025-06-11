@@ -60,33 +60,25 @@ class _FrasScreenState extends State<FrasScreen> {
                       child: Text('No hay registros de Fras para mostrar.'),
                     );
                   }
-
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      // Calcula el número de columnas según el ancho disponible
-                      int crossAxisCount = (constraints.maxWidth / 260)
-                          .floor()
-                          .clamp(1, 5);
-
-                      return GridView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0,
-                          vertical: 16.0,
-                        ),
-                        itemCount: lista.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 12,
-                          childAspectRatio:
-                              1.3, // Ajusta la proporción de las tarjetas
-                        ),
-                        itemBuilder: (context, index) {
+                  return GridView.builder(
+                    itemCount: lista.length,
+                    gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                        crossAxisSpacing: 4,
+                        childAspectRatio: 0.9,
+                    ),
+                    itemBuilder: (context, index) {
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
                           final item = lista[index];
-                          return _buildFrasCard(item);
+                          return AspectRatio(
+                            aspectRatio: 1.1,
+                            child: _buildFrasCard(item)
+                          );
                         },
                       );
-                    },
+                    }
                   );
                 },
               ),
@@ -106,65 +98,105 @@ class _FrasScreenState extends State<FrasScreen> {
 
   return LayoutBuilder(
     builder: (context, constraints) {
-      // Ajusta tamaños según el ancho de la tarjeta
-      final double width = constraints.maxWidth;
-      final double fontSizeTitle = (width * 0.10).clamp(12, 18);
-      final double fontSizeValue = (width * 0.22).clamp(18, 36);
-      final double fontSizeLabel = (width * 0.08).clamp(10, 16);
-      final double fontSizeFecha = (width * 0.09).clamp(10, 17);
-      final double fontSizeEditar = (width * 0.09).clamp(10, 17);
+      final ancho = constraints.maxWidth;
+      final alto = constraints.maxHeight;
+      final double fontSizeTitle = (ancho * 0.08);
+      final double fontSizeValue = (ancho * 0.12);
+      final double fontSizeLabel = (ancho * 0.06);
+      final double fontSizeFecha = (ancho * 0.06);
+      final double fontSizeEditar = (ancho * 0.06);
+      final paddingVertical = alto * 0.06;
 
-      return Card(
-        margin: const EdgeInsets.all(4.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 2,
-        child: Column(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFF2E7D32),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              ),
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Center(
-                        child: Text(
-                          'Fras Generado',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: fontSizeTitle,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+    return Card(
+      margin: const EdgeInsets.all(4.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      child: Column(
+        children: [
+          Container(
+            height: 60, 
+            decoration: const BoxDecoration(
+              color: Color(0xFF2E7D32),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Generado',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: fontSizeTitle,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF43A047),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(12),
+                      ),
+                    ),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Origen',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: fontSizeTitle,
                         ),
                       ),
                     ),
                   ),
-                  Flexible(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF43A047),
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: Center(
-                          child: Text(
-                            'Producción',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: fontSizeTitle,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: paddingVertical),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${data.gramosGenerados.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            fontSize: fontSizeValue,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
                           ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'gramos',
+                          style: TextStyle(
+                            fontSize: fontSizeLabel,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        data.nombreCharola,
+                        style: TextStyle(
+                          fontSize: fontSizeLabel,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
                         ),
                       ),
                     ),
@@ -172,117 +204,48 @@ class _FrasScreenState extends State<FrasScreen> {
                 ],
               ),
             ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 8.0,
+          ),
+          const Divider(height: 1, thickness: 1, color: Colors.grey),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: paddingVertical),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      fechaStr,
+                      style: TextStyle(
+                        fontSize: fontSizeFecha,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                Expanded(
+                  child: Center(
+                    child: InkWell(
+                      onTap: () => _showEditDialog(data),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              '${data.gramosGenerados.toStringAsFixed(0)}',
-                              style: TextStyle(
-                                fontSize: fontSizeValue,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                              maxLines: 1,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              'gramos',
-                              style: TextStyle(
-                                fontSize: fontSizeLabel,
-                                color: Colors.black54,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          Icon(Icons.edit, size: 18, color: Colors.pink),
+                          SizedBox(width: 4),
+                          Text(
+                            'Editar',
+                            style: TextStyle(
+                              fontSize: fontSizeEditar,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.pink,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Flexible(
-                      child: Center(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            data.nombreCharola,
-                            style: TextStyle(
-                              fontSize: fontSizeValue * 0.7,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-            const Divider(height: 1, thickness: 1, color: Colors.grey),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 10.0,
-              ),
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Center(
-                      child: Text(
-                        fechaStr,
-                        style: TextStyle(
-                          fontSize: fontSizeFecha,
-                          color: Colors.black54,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  Flexible(
-                    child: Center(
-                      child: InkWell(
-                        onTap: () => _showEditDialog(data),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.edit,
-                              size: fontSizeEditar,
-                              color: Colors.pink,
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
-                              'Editar',
-                              style: TextStyle(
-                                fontSize: fontSizeEditar,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.pink,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          ),
           ],
         ),
       );

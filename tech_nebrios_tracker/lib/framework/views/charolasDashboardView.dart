@@ -258,10 +258,12 @@ Widget build(BuildContext context) {
                         child: ElevatedButton.icon(
                           onPressed: () {
                             if (rangoFechas != null) {
-                              context.read<CharolaViewModel>().filtrarPorFechas(
-                                    rangoFechas!.start,
-                                    rangoFechas!.end,
-                                  );
+                              final vm = context.read<CharolaViewModel>();
+                              vm.filtrarCharolasPorFecha(
+                                rangoFechas!.start,
+                                rangoFechas!.end,
+                                vm.estadoActual,
+                              );
                             }
                           },
                           icon: const Icon(Icons.search),
@@ -274,20 +276,23 @@ Widget build(BuildContext context) {
                           ),
                         ),
                       ),
+
                       const SizedBox(width: 12),
 
                       // Botón Registrar charola
                       SizedBox(
                         height: 44,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => RegistrarCharolaView(),
-                              ),
-                            );
-                          },
+                        onPressed: () {
+                          setState(() {
+                            rangoFechas = null;
+                            rangoController.clear();
+                          });
+                          final vm = context.read<CharolaViewModel>();
+                          vm.rangoFiltrado = null; // limpia el filtro guardado
+                          vm.cargarCharolas(reset: true); // vuelve a cargar sin filtros
+                        },
+
                           icon: const Icon(Icons.add),
                           label: const Text('Registrar charola'),
                           style: ElevatedButton.styleFrom(
@@ -332,42 +337,38 @@ Widget build(BuildContext context) {
                 const SizedBox(height: 10),
 
                 /// Carga inicial
-                if (vm.cargandoLista && vm.charolas.isEmpty)
-                  const Expanded(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+              if (vm.cargandoLista)
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
                 /// Mensaje cuando no hay resultados
-                else if (!vm.cargandoLista &&
-                    vm.charolas.isEmpty &&
-                    vm.busquedaController.text.isEmpty)
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        rangoFechas != null
-                            ? 'No hay charolas registradas en esa fecha 🧺'
-                            : 'No hay charolas registradas 🧺',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+              else if (vm.charolas.isEmpty && vm.busquedaController.text.isEmpty)
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      rangoFechas != null
+                          ? 'No hay charolas registradas en esa fecha 🧺'
+                          : 'No hay charolas registradas 🧺',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  )
+                  ),
+                )
                 /// Mensaje cuando la búsqueda no encuentra resultados
-                else if (!vm.cargandoLista &&
-                    vm.charolasFiltradas.isEmpty &&
-                    vm.busquedaController.text.isNotEmpty)
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'Charola no encontrada. Verifica el nombre ingresado.',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+              else if (vm.charolasFiltradas.isEmpty && vm.busquedaController.text.isNotEmpty)
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      'Charola no encontrada. Verifica el nombre ingresado.',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  )
+                  ),
+                )
                 /// Grid de charolas
                 else
                   Expanded(
@@ -376,12 +377,12 @@ Widget build(BuildContext context) {
                       child: GridView.builder(
                         itemCount: vm.charolasFiltradas.length,
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 5,
-                              crossAxisSpacing: 4,
-                              // mainAxisSpacing: 16,
-                              childAspectRatio: 1.3,
-                            ),
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 5,
+                            crossAxisSpacing: 4,
+                            // mainAxisSpacing: 16,
+                            childAspectRatio: 1.3,
+                          ),
                         itemBuilder: (context, index) {
                           final modelo.CharolaTarjeta charola =
                               vm.charolasFiltradas[index];

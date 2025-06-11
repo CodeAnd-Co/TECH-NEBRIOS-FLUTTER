@@ -309,17 +309,25 @@ class CharolaViewModel extends ChangeNotifier {
   void cambiarEstado(String nuevoEstado) {
     estadoActual = nuevoEstado;
     pagActual = 1;
-    cargarCharolas(reset: true);
+
+    if (rangoFiltrado != null) {
+      filtrarCharolasPorFecha(rangoFiltrado!.start, rangoFiltrado!.end, estadoActual);
+    } else {
+      cargarCharolas(reset: true);
+    }
   }
-  /// Filtra charolas según un rango de fechas.
-  Future<void> filtrarCharolasPorFecha(DateTime inicio, DateTime fin) async {
+
+  DateTimeRange? rangoFiltrado;
+  /// Filtra charolas según un rango de fechas y estado actual.
+  Future<void> filtrarCharolasPorFecha(DateTime inicio, DateTime fin, String estado) async {
+    rangoFiltrado = DateTimeRange(start: inicio, end: fin);
     _cargandoLista = true;
     notifyListeners();
 
     try {
-      final filtradas = await _filtrarUseCase.filtrar(inicio, fin);
+      final filtradas = await _filtrarUseCase.filtrar(inicio, fin, estado);
       charolas = filtradas;
-      hayMas = false; // el filtro no es paginado
+      hayMas = false;
       _mensajeError = null;
     } catch (e) {
       final msg = e.toString().contains('401')
@@ -335,8 +343,9 @@ class CharolaViewModel extends ChangeNotifier {
     }
   }
 
+
   /// Alias más intuitivo para usar desde la vista
   void filtrarPorFechas(DateTime desde, DateTime hasta) {
-    filtrarCharolasPorFecha(desde, hasta);
+    filtrarCharolasPorFecha(desde, hasta, estadoActual);
   }
 }

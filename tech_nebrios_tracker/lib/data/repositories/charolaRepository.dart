@@ -186,6 +186,7 @@ class CharolaRepository {
   Future<List<CharolaTarjeta>> filtrarCharolasPorFecha({
     required DateTime fechaInicio,
     required DateTime fechaFin,
+    required String estado,
     }) async {
       final token = await _userUseCases.obtenerTokenActual();
       if (token == null) {
@@ -195,7 +196,7 @@ class CharolaRepository {
       final String inicio = fechaInicio.toIso8601String().split('T').first;
       final String fin = fechaFin.toIso8601String().split('T').first;
 
-      final uri = Uri.parse('${APIRutas.CHAROLA}/charolas/filtrar?inicio=$inicio&fin=$fin');
+      final uri = Uri.parse('${APIRutas.CHAROLA}/charolas/filtrar?inicio=$inicio&fin=$fin&estado=$estado');
 
     try {
       final response = await http.get(

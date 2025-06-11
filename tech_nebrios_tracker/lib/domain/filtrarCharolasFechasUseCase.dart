@@ -5,22 +5,22 @@ import '../data/repositories/charolaRepository.dart';
 
 /// Contrato que define el caso de uso para filtrar charolas por fecha.
 abstract class FiltrarCharolasFechasUseCase {
-  Future<List<CharolaTarjeta>> filtrar(DateTime fechaInicio, DateTime fechaFin);
+  Future<List<CharolaTarjeta>> filtrar(DateTime fechaInicio, DateTime fechaFin, String estado);
+
 }
 
 /// Implementación del caso de uso que usa el repositorio de charolas.
 class FiltrarCharolasFechasUseCaseImpl implements FiltrarCharolasFechasUseCase {
-  final CharolaRepository _charolaRepository;
+  final CharolaRepository charolaRepository;
 
-  /// Permite inyectar un repositorio personalizado, útil para pruebas o mocks.
-  FiltrarCharolasFechasUseCaseImpl({CharolaRepository? charolaRepository})
-      : _charolaRepository = charolaRepository ?? CharolaRepository();
+  FiltrarCharolasFechasUseCaseImpl({required this.charolaRepository});
 
   @override
-  Future<List<CharolaTarjeta>> filtrar(DateTime fechaInicio, DateTime fechaFin) {
-    return _charolaRepository.filtrarCharolasPorFecha(
-      fechaInicio: fechaInicio,
-      fechaFin: fechaFin,
+  Future<List<CharolaTarjeta>> filtrar(DateTime inicio, DateTime fin, String estado) {
+    return charolaRepository.filtrarCharolasPorFecha(
+      fechaInicio: inicio,
+      fechaFin: fin,
+      estado: estado,
     );
   }
 }

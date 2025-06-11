@@ -116,6 +116,18 @@ class _VistaCharolasState extends State<VistaCharolas> {
     super.dispose();
   }
 
+  @override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final vm = context.read<CharolaViewModel>();
+    vm.rangoFiltrado = null;
+    vm.busquedaController.clear();
+    vm.cargarCharolas(reset: true);
+  });
+}
+
+
 @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -207,36 +219,81 @@ Widget build(BuildContext context) {
                                     rangoFechas = null;
                                     rangoController.clear();
                                   });
-                                  context.read<CharolaViewModel>().cargarCharolas(reset: true);
+
+                                  final vm = context.read<CharolaViewModel>();
+                                  vm.rangoFiltrado = null;
+
+                                  // Guarda el estado actual para restaurarlo después
+                                  final estadoOriginal = vm.estadoActual;
+
+                                  // Carga charolas activas
+                                  vm.cambiarEstado('activa');
+                                  vm.cargarCharolas(reset: true);
+
+                                  // Carga charolas pasadas
+                                  vm.cambiarEstado('pasada');
+                                  vm.cargarCharolas(reset: true);
+
+                                  // Regresa al estado en el que el usuario estaba
+                                  vm.cambiarEstado(estadoOriginal);
                                 },
                               ),
+
                               border: const OutlineInputBorder(),
                             ),
                             onTap: () async {
-                              final DateTime now = DateTime.now();
+                              final now = DateTime.now();
+                              final fechaMinima = DateTime(2020);
+                              final initialInicio = now.isBefore(fechaMinima) ? fechaMinima : now;
 
+                              // Seleccionar fecha de inicio
                               final DateTime? fechaInicio = await showDatePicker(
                                 context: context,
-                                initialDate: now.subtract(const Duration(days: 7)),
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2050),
+                                initialDate: initialInicio,
+                                firstDate: fechaMinima,
+                                lastDate: now, // evita fechas futuras
                                 locale: const Locale('es', 'ES'),
                                 cancelText: 'Cancelar',
                                 confirmText: 'Aceptar',
                                 helpText: 'Inicio',
+                                builder: (BuildContext context, Widget? child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      textTheme: const TextTheme(
+                                        titleLarge: TextStyle(fontSize: 24),
+                                        bodyLarge: TextStyle(fontSize: 20),
+                                        labelLarge: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
                               );
 
                               if (fechaInicio == null) return;
 
+                              // Seleccionar fecha de fin (mínimo igual a fechaInicio)
                               final DateTime? fechaFin = await showDatePicker(
                                 context: context,
-                                initialDate: now,
-                                firstDate: fechaInicio,
-                                lastDate: DateTime(2050),
+                                initialDate: fechaInicio,
+                                firstDate: fechaInicio, // evita que elijan una fecha anterior
+                                lastDate: now,
                                 locale: const Locale('es', 'ES'),
                                 cancelText: 'Cancelar',
                                 confirmText: 'Aceptar',
                                 helpText: 'Fin',
+                                builder: (BuildContext context, Widget? child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      textTheme: const TextTheme(
+                                        titleLarge: TextStyle(fontSize: 24),
+                                        bodyLarge: TextStyle(fontSize: 20),
+                                        labelLarge: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
                               );
 
                               if (fechaFin == null) return;
@@ -247,6 +304,7 @@ Widget build(BuildContext context) {
                                     "${fechaInicio.day}/${fechaInicio.month}/${fechaInicio.year} a ${fechaFin.day}/${fechaFin.month}/${fechaFin.year}";
                               });
                             },
+
                           ),
                         ),
                       ),
@@ -258,10 +316,12 @@ Widget build(BuildContext context) {
                         child: ElevatedButton.icon(
                           onPressed: () {
                             if (rangoFechas != null) {
-                              context.read<CharolaViewModel>().filtrarPorFechas(
-                                    rangoFechas!.start,
-                                    rangoFechas!.end,
-                                  );
+                              final vm = context.read<CharolaViewModel>();
+                              vm.filtrarCharolasPorFecha(
+                                rangoFechas!.start,
+                                rangoFechas!.end,
+                                vm.estadoActual,
+                              );
                             }
                           },
                           icon: const Icon(Icons.search),
@@ -274,20 +334,23 @@ Widget build(BuildContext context) {
                           ),
                         ),
                       ),
+
                       const SizedBox(width: 12),
 
                       // Botón Registrar charola
                       SizedBox(
                         height: 44,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => RegistrarCharolaView(),
-                              ),
-                            );
-                          },
+                        onPressed: () {
+                          setState(() {
+                            rangoFechas = null;
+                            rangoController.clear();
+                          });
+                          final vm = context.read<CharolaViewModel>();
+                          vm.rangoFiltrado = null; // limpia el filtro guardado
+                          vm.cargarCharolas(reset: true); // vuelve a cargar sin filtros
+                        },
+
                           icon: const Icon(Icons.add),
                           label: const Text('Registrar charola'),
                           style: ElevatedButton.styleFrom(
@@ -332,42 +395,38 @@ Widget build(BuildContext context) {
                 const SizedBox(height: 10),
 
                 /// Carga inicial
-                if (vm.cargandoLista && vm.charolas.isEmpty)
-                  const Expanded(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+              if (vm.cargandoLista)
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
                 /// Mensaje cuando no hay resultados
-                else if (!vm.cargandoLista &&
-                    vm.charolas.isEmpty &&
-                    vm.busquedaController.text.isEmpty)
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        rangoFechas != null
-                            ? 'No hay charolas registradas en esa fecha 🧺'
-                            : 'No hay charolas registradas 🧺',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+              else if (vm.charolas.isEmpty && vm.busquedaController.text.isEmpty)
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      rangoFechas != null
+                          ? 'No hay charolas registradas en esa fecha 🧺'
+                          : 'No hay charolas registradas 🧺',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  )
+                  ),
+                )
                 /// Mensaje cuando la búsqueda no encuentra resultados
-                else if (!vm.cargandoLista &&
-                    vm.charolasFiltradas.isEmpty &&
-                    vm.busquedaController.text.isNotEmpty)
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'Charola no encontrada. Verifica el nombre ingresado.',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+              else if (vm.charolasFiltradas.isEmpty && vm.busquedaController.text.isNotEmpty)
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      'Charola no encontrada. Verifica el nombre ingresado.',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  )
+                  ),
+                )
                 /// Grid de charolas
                 else
                   Expanded(
@@ -376,12 +435,12 @@ Widget build(BuildContext context) {
                       child: GridView.builder(
                         itemCount: vm.charolasFiltradas.length,
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 5,
-                              crossAxisSpacing: 4,
-                              // mainAxisSpacing: 16,
-                              childAspectRatio: 1.3,
-                            ),
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 5,
+                            crossAxisSpacing: 4,
+                            // mainAxisSpacing: 16,
+                            childAspectRatio: 1.3,
+                          ),
                         itemBuilder: (context, index) {
                           final modelo.CharolaTarjeta charola =
                               vm.charolasFiltradas[index];

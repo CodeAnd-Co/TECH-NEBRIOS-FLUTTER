@@ -908,7 +908,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                     SnackBar(
                                       content: Text(
                                         resultado == null
-                                            ? '✅ Hidratación eliminado exitosamente'
+                                            ? '✅ Hidratación eliminada exitosamente'
                                             : resultado,
                                       ),
                                       backgroundColor: resultado == null ? Colors.green : Colors.red,
@@ -1030,12 +1030,22 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
                                     if (resultado == null) {
                                       Navigator.of(dialogContext).pop();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('✅ Hidratación registrada exitosamente'),
+                                          backgroundColor: Colors.green,
+                                          duration: Duration(seconds: 3),
+                                        ),
+                                      );
                                       await vm.cargarHidratacion();
                                     } else {
                                       ScaffoldMessenger.of(
                                         dialogContext,
                                       ).showSnackBar(
-                                        SnackBar(content: Text(resultado)),
+                                        SnackBar(
+                                          content: Text(resultado),
+                                          backgroundColor: Colors.red,
+                                          ),
                                       );
                                     }
                                   },

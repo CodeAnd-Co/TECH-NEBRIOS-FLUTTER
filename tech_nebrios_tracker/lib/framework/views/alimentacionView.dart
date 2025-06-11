@@ -851,7 +851,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                   return AlertDialog(
                   title: const Center(
                     child: Text(
-                      'Eliminar Alimento',
+                      'Eliminar Hidratación',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -861,7 +861,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       Divider(height: 1),
                       SizedBox(height: 30),
                       Text(
-                        '¿Estás seguro de eliminar este alimento?',
+                        '¿Estás seguro de eliminar esta hidratación?',
                         style: TextStyle(fontSize: 20),
                       ),
                       SizedBox(height: 20),

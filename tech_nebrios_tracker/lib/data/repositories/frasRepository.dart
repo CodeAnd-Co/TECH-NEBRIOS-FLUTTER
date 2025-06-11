@@ -37,12 +37,12 @@ class FrasRepository {
   }
 
   Future<List<Fras>> editarFras(
-    int charolaId,
+    int frasId,
     double nuevosGramos,
   ) async {
     final token = await _userUseCases.obtenerTokenActual();
     final uri = Uri.parse(
-      '${APIRutas.FRAS}/editar/$charolaId',
+      '${APIRutas.FRAS}/editar/$frasId',
     );
 
     final response = await http.post(
@@ -81,7 +81,6 @@ return data
     // Cualquier otro caso
     return [];
   } catch (e) {
-
     throw Exception('Error en el decode POST: $e');
   }
 }

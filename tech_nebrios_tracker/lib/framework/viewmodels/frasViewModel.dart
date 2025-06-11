@@ -53,10 +53,10 @@ class FrasViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> editarFras(int charolaId, double nuevosGramos) async {
+  Future<void> editarFras(int frasId, double nuevosGramos) async {
     _setLoading(true);
     try {
-      final updatedList = await _repo.editarFras(charolaId, nuevosGramos);
+      final updatedList = await _repo.editarFras(frasId, nuevosGramos);
       _frasList = updatedList;
       _error = null;
     } catch (e) {

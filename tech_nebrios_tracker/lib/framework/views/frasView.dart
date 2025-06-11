@@ -16,6 +16,7 @@ class FrasScreen extends StatefulWidget {
 }
 
 class _FrasScreenState extends State<FrasScreen> {
+  final formKey4 = GlobalKey<FormState>();
   bool _hasLoadedOnce = false;
 
   @override
@@ -277,6 +278,8 @@ class _FrasScreenState extends State<FrasScreen> {
                   ),
                 ),
                 content: SingleChildScrollView(
+                  child: Form(
+                    key: formKey4,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -290,19 +293,15 @@ class _FrasScreenState extends State<FrasScreen> {
                           FilteringTextInputFormatter.digitsOnly,
                           PositiveNumberFormatter()
                         ],
+                        validator: (v) => v == null || v.isEmpty
+                              ? 'Cantidad obligatoria'
+                              : null,
                         maxLength: 4,
                         width: 400,
                       ),
-                      TextField(
-                        controller: controller,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Gramos generados',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
                     ],
                   ),
+                ),
                 ),
                 actionsAlignment: MainAxisAlignment.center,
                 actions: [
@@ -342,34 +341,34 @@ class _FrasScreenState extends State<FrasScreen> {
                                     ),
                                   ),
                                   onPressed: () async {
-                                    final nuevos =
-                                        double.tryParse(controller.text) ??
-                                        data.gramosGenerados;
-                                    await vm.editarFras(data.charolaId, nuevos);
-                                    if (vm.error == null) {
-                                      Navigator.of(dialogContext).pop();
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            '✅ Gramos actualizados exitosamente',
+                                    if (formKey4.currentState!.validate()) {
+                                      final nuevos = double.tryParse(controller.text);
+                                      await vm.editarFras(data.charolaId, nuevos!);
+                                      if (vm.error == null) {
+                                        Navigator.of(dialogContext).pop();
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              '✅ Gramos actualizados exitosamente',
+                                            ),
+                                            backgroundColor: Colors.green,
+                                            duration: Duration(seconds: 3),
+                                            behavior: SnackBarBehavior.floating,
                                           ),
-                                          backgroundColor: Colors.green,
-                                          duration: Duration(seconds: 3),
-                                          behavior: SnackBarBehavior.floating,
-                                        ),
-                                      );
-                                      vm.cargarFras(data.charolaId);
-                                    } else {
-                                      ScaffoldMessenger.of(
-                                        dialogContext,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(vm.error!),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
+                                        );
+                                        vm.cargarFras(data.charolaId);
+                                      } else {
+                                        ScaffoldMessenger.of(
+                                          dialogContext,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(vm.error!),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
                                     }
                                   },
                                   child: const Text(

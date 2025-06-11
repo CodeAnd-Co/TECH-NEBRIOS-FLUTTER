@@ -46,14 +46,14 @@ class _FrasScreenState extends State<FrasScreen> {
                   if (frasVM.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  if (frasVM.error != null) {
+                  /*if (frasVM.error != null) {
                     return Center(
                       child: Text(
                         frasVM.error!,
                         style: const TextStyle(color: Colors.red),
                       ),
                     );
-                  }
+                  }*/
                   final lista = frasVM.frasList;
                   if (lista.isEmpty) {
                     return const Center(
@@ -319,7 +319,7 @@ class _FrasScreenState extends State<FrasScreen> {
                               onPressed: () async {
                                 final nuevos = double.tryParse(controller.text) ??
                                     data.gramosGenerados;
-                                await vm.editarFras(data.charolaId, nuevos);
+                                await vm.editarFras(data.frasId, nuevos);
                                 if (vm.error == null) {
                                   Navigator.of(dialogContext).pop();
                                   ScaffoldMessenger.of(context).showSnackBar(

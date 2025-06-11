@@ -94,6 +94,10 @@ class UsuarioViewModel extends ChangeNotifier{
       _esAdmin = true;
       notifyListeners();
     }
+    else {
+      _esAdmin = false;
+      notifyListeners();
+    }
   }
 
   Future<void> editarUsuario(usuarioId) async{

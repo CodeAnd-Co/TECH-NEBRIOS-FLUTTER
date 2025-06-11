@@ -851,7 +851,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                   return AlertDialog(
                   title: const Center(
                     child: Text(
-                      'Eliminar Alimento',
+                      'Eliminar Hidratación',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -861,7 +861,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                       Divider(height: 1),
                       SizedBox(height: 30),
                       Text(
-                        '¿Estás seguro de eliminar este alimento?',
+                        '¿Estás seguro de eliminar esta hidratación?',
                         style: TextStyle(fontSize: 20),
                       ),
                       SizedBox(height: 20),
@@ -908,7 +908,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                                     SnackBar(
                                       content: Text(
                                         resultado == null
-                                            ? '✅ Hidratación eliminado exitosamente'
+                                            ? '✅ Hidratación eliminada exitosamente'
                                             : resultado,
                                       ),
                                       backgroundColor: resultado == null ? Colors.green : Colors.red,
@@ -965,7 +965,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                           controller: nombreController,
                           maxLength: 25,
                           decoration: const InputDecoration(
-                            labelText: 'Nombre:',
+                            labelText: 'Nombre',
                             border: OutlineInputBorder(),
                           ),
                         ),
@@ -974,7 +974,7 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
                           controller: descripcionController,
                           maxLength: 200,
                           decoration: const InputDecoration(
-                            labelText: 'Descripción:',
+                            labelText: 'Descripción',
                             border: OutlineInputBorder(),
                           ),
                           maxLines: null,
@@ -1030,12 +1030,22 @@ class _AlimentacionScreenState extends State<AlimentacionScreen> {
 
                                     if (resultado == null) {
                                       Navigator.of(dialogContext).pop();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('✅ Hidratación registrada exitosamente'),
+                                          backgroundColor: Colors.green,
+                                          duration: Duration(seconds: 3),
+                                        ),
+                                      );
                                       await vm.cargarHidratacion();
                                     } else {
                                       ScaffoldMessenger.of(
                                         dialogContext,
                                       ).showSnackBar(
-                                        SnackBar(content: Text(resultado)),
+                                        SnackBar(
+                                          content: Text(resultado),
+                                          backgroundColor: Colors.red,
+                                          ),
                                       );
                                     }
                                   },

@@ -95,7 +95,7 @@ class _SidebarViewState extends State<SidebarView> {
     return [
       VistaCharolas(onVerDetalle: _mostrarDetalleCharola),
       VistaSeleccionarTamizado(),
-     FrasScreen(charolaId: _currentIndex,), 
+      FrasScreen(), 
       const AlimentacionScreen(),
       const VistaTablaCharolas(),
       VistaUsuario()

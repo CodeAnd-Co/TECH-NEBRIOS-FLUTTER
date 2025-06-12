@@ -31,6 +31,7 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
     // Prellenar campos
     vm.densidadLarvaController.text = '900';
     vm.hidratacionCicloController.text = '200';
+    vm.comidaCicloController.text = '1000';
 
     // Cargar hidratación y seleccionar Zanahoria cuando termine
     vm.cargarHidratacion().then((_) {
@@ -42,6 +43,20 @@ class _RegistrarCharolaView extends State<RegistrarCharolaView> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
             vm.selectedHidratacion = posibles.first;
+          });
+        });
+      }
+    });
+
+    vm.cargarAlimentos().then((_) {
+      final posibles = vm.alimentos
+      .where((h) => h.nombreAlimento.toLowerCase() == 'salvado')
+      .toList();
+
+      if (posibles.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            vm.selectedAlimentacion = posibles.first;
           });
         });
       }

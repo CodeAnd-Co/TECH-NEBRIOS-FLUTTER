@@ -29,7 +29,7 @@ class FrasViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<String?> cargarFras(int charolaId) async {
+  Future<String?> cargarFras() async {
     _setLoading(true);
     try {
       _frasList = await _repo.obtenerFras();

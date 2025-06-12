@@ -8,8 +8,7 @@ import 'package:zuustento_tracker/utils/positive_number_formatter.dart';
 import 'package:flutter/services.dart';
 
 class FrasScreen extends StatefulWidget {
-  final int charolaId;
-  const FrasScreen({super.key, required this.charolaId});
+  const FrasScreen({super.key});
 
   @override
   _FrasScreenState createState() => _FrasScreenState();
@@ -17,22 +16,14 @@ class FrasScreen extends StatefulWidget {
 
 class _FrasScreenState extends State<FrasScreen> {
   final formKey4 = GlobalKey<FormState>();
-  bool _hasLoadedOnce = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_hasLoadedOnce) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Cargar FRAS usando el charolaId de la ruta
-        context.read<FrasViewModel>().cargarFras(widget.charolaId);
-      });
-      _hasLoadedOnce = true;
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<FrasViewModel>().cargarFras(widget.charolaId);
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<FrasViewModel>().cargarFras();
+    });
+    
   }
 
   @override
@@ -50,14 +41,6 @@ class _FrasScreenState extends State<FrasScreen> {
                   if (frasVM.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  /*if (frasVM.error != null) {
-                    return Center(
-                      child: Text(
-                        frasVM.error!,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    );
-                  }*/
                   final lista = frasVM.frasList;
                   if (lista.isEmpty) {
                     return const Center(
@@ -358,7 +341,7 @@ class _FrasScreenState extends State<FrasScreen> {
                                             behavior: SnackBarBehavior.floating,
                                           ),
                                         );
-                                        vm.cargarFras(data.charolaId);
+                                        vm.cargarFras();
                                       } else {
                                         ScaffoldMessenger.of(
                                           dialogContext,

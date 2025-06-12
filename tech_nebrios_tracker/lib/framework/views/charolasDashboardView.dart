@@ -341,16 +341,14 @@ Widget build(BuildContext context) {
                       SizedBox(
                         height: 44,
                         child: ElevatedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            rangoFechas = null;
-                            rangoController.clear();
-                          });
-                          final vm = context.read<CharolaViewModel>();
-                          vm.rangoFiltrado = null; // limpia el filtro guardado
-                          vm.cargarCharolas(reset: true); // vuelve a cargar sin filtros
-                        },
-
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RegistrarCharolaView(),
+                              ),
+                            );
+                          },
                           icon: const Icon(Icons.add),
                           label: const Text('Registrar charola'),
                           style: ElevatedButton.styleFrom(
